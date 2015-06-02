@@ -9,7 +9,7 @@ US 1: As a project manager, I want to manage all my projects with the applicatio
 			else
 				notify project name exists, chose another, otherwise cancel
 			use case ends successfully
-			
+
 	- close project
 		Use Case:
 			Primary Actor selects close project.
@@ -20,7 +20,7 @@ US 1: As a project manager, I want to manage all my projects with the applicatio
 			use case ends successfully
 	- delete project
 		Use Case:
-			Primary Actor selects delete project; option offered only
+			Primary Actor selects delete project; system offers option only if valid
 			System checks for any unsaved modifications
 			if unsaved modifications exist
 				Save modifications
@@ -35,7 +35,7 @@ US 1: As a project manager, I want to manage all my projects with the applicatio
 		Use Case:
 			Note: System offers option only if valid
 			Primary Actor selects add activity.
-			System opens resizable form to input acitivy details (name, duration, precedence)
+			System opens resizable form to input activity details (name, duration, precedence)
 			Primary Actor enters data, validated by system.
 			use case ends successfully
 	- modify activity
@@ -58,7 +58,7 @@ US 1: As a project manager, I want to manage all my projects with the applicatio
 	activity has:
 		data: name, duration, precedence
 		computed: ES, EF, LS, LF, float
-		
+
 
 US 3: As a project manager, I want to assign resources (project members) and project-relevant properties to my activities.
 
@@ -75,7 +75,7 @@ US 4: As a project member, I want to be able to see which tasks have been assign
 US 5: As a project manager, I want to generate GANTT charts.
 	- generate GANTT chart
 		requires activity list
-	
+
 US 6: As a project manager, I want to perform a critical path analysis.
 	- compute CPM
 		requires activity list
