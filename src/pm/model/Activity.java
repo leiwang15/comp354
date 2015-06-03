@@ -1,4 +1,4 @@
-package comp354;
+package pm.model;
 
 
 public class Activity {

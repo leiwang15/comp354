@@ -1,4 +1,4 @@
-package comp354;
+package pm.model;
 
 import java.util.Date;
 import java.util.List;

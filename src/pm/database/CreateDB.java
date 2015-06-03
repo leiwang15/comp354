@@ -1,24 +1,30 @@
-package comp354;
+package pm.database;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.sql.*;
 
 
 
-public class Driver {
+public class CreateDB {
+	
+	static String databasePath = "project.db";
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+	
 		Connection c = null;
 		Statement stmt = null;
 		try {
 			
 			try {
-			    Files.delete(Paths.get("test.db"));
+				File f = new File(databasePath);
+				if(f.exists()){
+					Files.delete(Paths.get(databasePath));
+				}
+			    
 			} catch (NoSuchFileException x) {
-			    System.err.format("%s: no such" + " file or directory%n");
+			    System.err.format("no such" + " file or directory%n");
 			} catch (DirectoryNotEmptyException x) {
 			    System.err.format("%s not empty%n");
 			} catch (IOException x) {
@@ -26,7 +32,7 @@ public class Driver {
 			    System.err.println(x);
 			}
 			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:test.db");
+			c = DriverManager.getConnection("jdbc:sqlite:project.db");
 			System.out.println("Opened database successfully");
 
 			//Create table User

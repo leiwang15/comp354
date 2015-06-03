@@ -1,4 +1,4 @@
-package comp354.pm.pert;
+package pm.pert;
 
 /**
  * Created by joao on 15-05-26.

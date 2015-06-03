@@ -1,4 +1,4 @@
-package comp354;
+package pm.model;
 
 public class User {
     private String first_name;
