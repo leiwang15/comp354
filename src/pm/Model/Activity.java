@@ -1,13 +1,25 @@
-package pm.model;
+package pm.Model;
 
-
+import pm.Controller.ActivityController;
 public class Activity {
     private int activity_id;
+    private int project_id;
     private String activity_name;
     private String activity_desc;
     private int progress;
     private int duration; //in hours
+    private int finished;
 
+    
+    public Activity (int project_id, String name, String desc, int duration){
+    	this.project_id = project_id;
+    	this.activity_name = name;
+    	this.activity_desc = desc;
+    	this.duration = duration;
+    	
+    	ActivityController ac = new ActivityController();
+    	this.setActivity_id(ac.addActivity(this));
+    }
     /**
      * @return the activity_id
      */
@@ -76,5 +88,31 @@ public class Activity {
 	 */
 	public void setProgress(int progress) {
 		this.progress = progress;
+	}
+
+	/**
+	 * @return the project_id
+	 */
+	public int getProject_id() {
+		return project_id;
+	}
+
+	/**
+	 * @param project_id the project_id to set
+	 */
+	public void setProject_id(int project_id) {
+		this.project_id = project_id;
+	}
+	/**
+	 * @return the finished
+	 */
+	public int getFinished() {
+		return finished;
+	}
+	/**
+	 * @param finished the finished to set
+	 */
+	public void setFinished(int finished) {
+		this.finished = finished;
 	}
 }

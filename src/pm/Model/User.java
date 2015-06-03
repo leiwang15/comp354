@@ -1,10 +1,21 @@
-package pm.model;
-
+package pm.Model;
+import pm.Controller.UserController;
 public class User {
+	private int user_id;
     private String first_name;
     private String last_name;
     private String role;
 
+    
+    public User(String first_name, String last_name, String role) {
+		this.first_name = first_name;
+		this.last_name = last_name;
+		this.role = role;
+		
+		UserController uc = new UserController();
+		this.user_id = uc.addUser(this);
+		
+	}
     /**
      * @return the role
      */
@@ -46,5 +57,19 @@ public class User {
     public void setFirst_name(String first_name) {
         this.first_name = first_name;
     }
+
+	/**
+	 * @return the user_id
+	 */
+	public int getUser_id() {
+		return user_id;
+	}
+
+	/**
+	 * @param user_id the user_id to set
+	 */
+	public void setUser_id(int user_id) {
+		this.user_id = user_id;
+	}
 
 }

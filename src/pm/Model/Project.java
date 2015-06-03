@@ -1,8 +1,9 @@
-package pm.model;
+package pm.Model;
 
 import java.util.Date;
 import java.util.List;
 
+import pm.Controller.ProjectController;
 public class Project {
     private int project_id;
     private String project_name;
@@ -11,6 +12,17 @@ public class Project {
     private Date end_date;
     private List<Activity> activities;
 
+    
+    public Project(User u, String name, String desc, Date start, Date end){
+    	this.project_name = name;
+    	this.project_desc = desc;
+    	this.start_date = start;
+    	this.end_date = end;
+    	
+    	ProjectController pc = new ProjectController();
+    	this.project_id = pc.addProject(this, u);
+    	
+    }
     /**
      * @return the project_id
      */
