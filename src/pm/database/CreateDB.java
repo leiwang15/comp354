@@ -32,7 +32,7 @@ public class CreateDB {
 			    System.err.println(x);
 			}
 			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:project.db");
+			c = DriverManager.getConnection("jdbc:sqlite:" + databasePath);
 			System.out.println("Opened database successfully");
 
 			//Create table User
@@ -63,10 +63,13 @@ public class CreateDB {
 			sql = 
 					"CREATE TABLE Activity "
 					+ "(ActivityID	INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
+					+ " Project_ID	INTEGER	NOT NULL, "
 					+ " Name		TEXT    NOT NULL, "
 					+ " Desc		TEXT	NOT NULL, "
 					+ " Duration	INT		NOT NULL, "
-					+ " Finished	INT		DEFAULT 0)";
+					+ " Progress	INT		DEFAULT 0, 	"
+					+ " Finished	INT		DEFAULT 0,	"
+					+ " FOREIGN KEY(Project_ID) 		REFERENCES Project(ProjectID));";
 			
 			
 			stmt.executeUpdate(sql);
@@ -99,23 +102,23 @@ public class CreateDB {
 			stmt.executeUpdate(sql);
 			
 			
-			//Create table Project_Activity
-			stmt = c.createStatement();
-			sql = 
-					"CREATE TABLE Project_Activity ("
-					+ "	PA_ID			INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
-					+ " Project_ID		INTEGER		NOT NULL, "
-					+ " Activity_ID		INTEGER		NOT NULL, "
-					+ " FOREIGN KEY(Project_ID) 	REFERENCES Project(ProjectID),"
-					+ " FOREIGN KEY(Activity_ID) 	REFERENCES Activity(ActivityID))";
-			
-	
-			stmt.executeUpdate(sql);
+//			//Create table Project_Activity
+//			stmt = c.createStatement();
+//			sql = 
+//					"CREATE TABLE Project_Activity ("
+//					+ "	PA_ID			INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
+//					+ " Project_ID		INTEGER		NOT NULL, "
+//					+ " Activity_ID		INTEGER		NOT NULL, "
+//					+ " FOREIGN KEY(Project_ID) 	REFERENCES Project(ProjectID),"
+//					+ " FOREIGN KEY(Activity_ID) 	REFERENCES Activity(ActivityID))";
+//			
+//	
+//			stmt.executeUpdate(sql);
 			
 			//Create table Activity_Prereq
 			stmt = c.createStatement();
 			sql = 
-					"CREATE TABLE Activity_Prereq ("
+					"CREATE TABLE Activity_Pre ("
 					+ "	AP_ID				INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
 					+ " Activity_ID1		INTEGER		NOT NULL, "
 					+ " Activity_ID2		INTEGER		NOT NULL, "

@@ -5,6 +5,7 @@ public class Activity {
     private int activity_id;
     private String activity_name;
     private String activity_desc;
+    private int progress;
     private int duration; //in hours
 
     /**
@@ -62,4 +63,18 @@ public class Activity {
     public void setDuration(int duration) {
         this.duration = duration;
     }
+
+	/**
+	 * @return the progress
+	 */
+	public int getProgress() {
+		return progress;
+	}
+
+	/**
+	 * @param progress the progress to set
+	 */
+	public void setProgress(int progress) {
+		this.progress = progress;
+	}
 }
