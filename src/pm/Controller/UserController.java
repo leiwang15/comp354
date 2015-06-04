@@ -95,4 +95,21 @@ public class UserController extends DB_Controller {
 		}
 		return feedback;
 	}
+	
+	public User getUserByID(int uid){
+		
+		String sql = "SELECT * FROM User WHERE UserID = " + uid + ";";
+		ResultSet res;
+		User u = null;
+		try {
+			st = c.createStatement();
+			res = st.executeQuery(sql);
+			res.next();
+			u= new User(res.getInt(1), res.getString(2), res.getString(3), res.getString(4));
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+		return u;
+	}
 }

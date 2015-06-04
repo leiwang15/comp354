@@ -10,7 +10,7 @@ public class Activity {
     private int duration; //in hours
     private int finished;
 
-    
+  //initialization with writing to DB
     public Activity (int project_id, String name, String desc, int duration){
     	this.project_id = project_id;
     	this.activity_name = name;
@@ -19,6 +19,20 @@ public class Activity {
     	
     	ActivityController ac = new ActivityController();
     	this.setActivity_id(ac.addActivity(this));
+    }
+    
+    //Local initialization without writing to DB
+    public Activity (int activity_id, int project_id, String name, String desc, int duration, int progress, int finished){
+    	
+    	this.activity_id = activity_id;
+    	this.project_id = project_id;
+    	this.activity_name = name;
+    	this.activity_desc = desc;
+    	this.duration = duration;
+    	this.progress = progress;
+    	this.finished = finished;
+    	
+    
     }
     /**
      * @return the activity_id
@@ -114,5 +128,25 @@ public class Activity {
 	 */
 	public void setFinished(int finished) {
 		this.finished = finished;
+	}
+	
+	@Override
+	
+	public String toString(){
+		
+		String s = "Activity ID: " +
+		this.getActivity_id() 
+		+ " Project Name: " 
+		+ this.getActivity_name()
+		+ " Project Desc: "
+		+ this.getActivity_desc()
+		+ " Duration: "
+		+ this.getDuration()
+		+ " Progress: "
+		+ this.getProgress()
+		+ " Is finished: "
+		+ this.getFinished()
+		+ "\n";
+		return s;
 	}
 }

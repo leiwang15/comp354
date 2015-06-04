@@ -16,6 +16,15 @@ public class User {
 		this.user_id = uc.addUser(this);
 		
 	}
+    
+    
+    public User(int uId, String first_name, String last_name, String role) {
+		this.user_id = uId;
+    	this.first_name = first_name;
+		this.last_name = last_name;
+		this.role = role;
+		
+	}
     /**
      * @return the role
      */

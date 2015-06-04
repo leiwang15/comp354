@@ -2,9 +2,12 @@ package pm.Controller;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import pm.Model.Activity;
 import pm.Model.User;
+
 
 public class ActivityController extends DB_Controller {
 
@@ -49,7 +52,7 @@ public class ActivityController extends DB_Controller {
 	public int assignUserToActivity(User u, Activity a) {
 
 		int status = 0;
-		String sql = "INSERT INTO Activity_Assign (Project_ID, User_ID)"
+		String sql = "INSERT INTO Activity_Assign (Activity_Id, User_ID)"
 				+ "VALUES(" + a.getActivity_id() + ", " + u.getUser_id() + ")";
 		try {
 			st = c.createStatement();
@@ -59,6 +62,66 @@ public class ActivityController extends DB_Controller {
 			e.printStackTrace();
 		}
 		return status;
+	}
+	
+	/**
+	 * @param Activity a, Activity pre
+	 * @return status 1 for successful
+	 */
+	public int setActPrecedence(Activity a, Activity pre){
+		int status = 0;
+		String sql = "INSERT INTO Activity_Pre (Activity_ID1, Activity_ID2)"
+				+ "VALUES(" + a.getActivity_id() + ", " + pre.getActivity_id() + ")";
+		try {
+			st = c.createStatement();
+			status = st.executeUpdate(sql);
+			c.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return status;
+		
+		
+	}
+	
+	
+	public List<Activity> getActByProjectId (int pID){
+		
+		String sql = "SELECT * FROM Activity "
+				+ "WHERE Project_ID = "	+ pID + ";";
+		
+		ResultSet res;
+		List<Activity> la = new ArrayList<Activity>();
+		Activity a;
+		int id =0;
+		String name = "";
+		String desc = "";
+		int duration = 0;
+		int progress =0;
+		int finished =0;
+		
+		try {
+			st = c.createStatement();
+			res = st.executeQuery(sql);
+			
+			while (res.next()) {
+				id = res.getInt("ActivityID");
+				name = res.getString("Name");
+				desc = res.getString("Desc");
+				duration = res.getInt("Duration");
+				finished = res.getInt("Finished");
+				a = new Activity(id, pID, name, desc, duration, progress, finished);
+				la.add(a);
+			}
+			c.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+		return la;
+	
+		
 	}
 
 }

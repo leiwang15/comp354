@@ -5,6 +5,11 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import pm.Model.Activity;
 import pm.Model.Project;
 import pm.Model.User;
 
@@ -57,4 +62,54 @@ public class ProjectController extends DB_Controller {
 		return id;
 	}
 
+	public List<Project> getProjectsByUser(User u) {
+
+		List<Project> lp = new ArrayList<Project>();
+
+		String sql = "SELECT P.* FROM Project P "
+				+ "INNER JOIN Project_Assign A ON P.ProjectID = A.Project_ID "
+				+ "WHERE A.User_ID = " + u.getUser_id();
+
+		ResultSet res;
+		int id = 0;
+		String name = "";
+		String desc = "";
+		Date startDate;
+		Date endDate;
+		int finished = 0;
+		Project temp;
+		try {
+
+			// get projects
+			st = c.createStatement();
+			res = st.executeQuery(sql);
+			while (res.next()) {
+				id = res.getInt("ProjectID");
+				name = res.getString("Name");
+				desc = res.getString("Desc");
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+				Date d =  df.parse(res.getString("StartDate"));
+				
+				//System.out.println(df.format(d));
+				startDate = d;
+				
+				d= df.parse(res.getString("EndDate"));
+				endDate = d;
+				finished = res.getInt("Finished");
+				// get activities for this project
+				ActivityController ac = new ActivityController();
+				List<Activity> la = ac.getActByProjectId(id);
+				// save project to arraylist
+				temp = new Project(id, name, desc, startDate, endDate, finished, la);
+				lp.add(temp);
+			}
+
+			c.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return lp;
+
+	}
 }
