@@ -1,11 +1,25 @@
 package comp354;
 
 
+import java.util.ArrayList;
+
 public class Activity {
     private int activity_id;
     private String activity_name;
     private String activity_desc;
     private int duration; //in hours
+    private ArrayList<Integer> predecessors;
+
+    public Activity() {
+    }
+
+    public Activity(int activity_id) {
+        this.activity_id = activity_id;
+        activity_name = "";
+        activity_desc = "";
+        duration = 0;
+        predecessors = new ArrayList<Integer>();
+    }
 
     /**
      * @return the activity_id
@@ -61,5 +75,19 @@ public class Activity {
      */
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    /**
+     * @return the predecessors
+     */
+    public ArrayList<Integer> getPredecessors() {
+        return this.predecessors;
+    }
+
+    /**
+     * @param predecessors the predecessors
+     */
+    public void setPredecessors(ArrayList<Integer> predecessors) {
+        this.predecessors = predecessors;
     }
 }
