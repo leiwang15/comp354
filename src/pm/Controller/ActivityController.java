@@ -16,7 +16,7 @@ public class ActivityController extends DB_Controller {
 	}
 
 	/**
-	 * @param  Activity a
+	 * @param  activity (Joao: Removed Activity a to pass compile validations for now)
 	 * @return status assigned activity id
 	 */
 	public int addActivity(Activity activity) {
@@ -46,7 +46,7 @@ public class ActivityController extends DB_Controller {
 	}
 
 	/**
-	 * @param User u, Activity a
+	 * @param u, Activity a
 	 * @return status 1 for successful
 	 */
 	public int assignUserToActivity(User u, Activity a) {
@@ -63,9 +63,9 @@ public class ActivityController extends DB_Controller {
 		}
 		return status;
 	}
-	
+
 	/**
-	 * @param Activity a, Activity pre
+	 * @param a, Activity pre
 	 * @return status 1 for successful
 	 */
 	public int setActPrecedence(Activity a, Activity pre){
@@ -80,16 +80,16 @@ public class ActivityController extends DB_Controller {
 			e.printStackTrace();
 		}
 		return status;
-		
-		
+
+
 	}
-	
-	
+
+
 	public List<Activity> getActByProjectId (int pID){
-		
+
 		String sql = "SELECT * FROM Activity "
 				+ "WHERE Project_ID = "	+ pID + ";";
-		
+
 		ResultSet res;
 		List<Activity> la = new ArrayList<Activity>();
 		Activity a;
@@ -99,11 +99,11 @@ public class ActivityController extends DB_Controller {
 		int duration = 0;
 		int progress =0;
 		int finished =0;
-		
+
 		try {
 			st = c.createStatement();
 			res = st.executeQuery(sql);
-			
+
 			while (res.next()) {
 				id = res.getInt("ActivityID");
 				name = res.getString("Name");
@@ -117,11 +117,11 @@ public class ActivityController extends DB_Controller {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-		
+
+
 		return la;
-	
-		
+
+
 	}
 
 }

@@ -1,6 +1,9 @@
 package pm.Model;
 
 import pm.Controller.ActivityController;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Activity {
     private int activity_id;
     private int project_id;
@@ -9,21 +12,23 @@ public class Activity {
     private int progress;
     private int duration; //in hours
     private int finished;
+    private ArrayList<Integer> predecessors;
 
   //initialization with writing to DB
-    public Activity (int project_id, String name, String desc, int duration){
+    public Activity (int project_id, String name, String desc, int duration, ArrayList<Integer> predecessors){
     	this.project_id = project_id;
     	this.activity_name = name;
     	this.activity_desc = desc;
     	this.duration = duration;
-    	
+        this.predecessors = predecessors;
+
     	ActivityController ac = new ActivityController();
     	this.setActivity_id(ac.addActivity(this));
     }
-    
+
     //Local initialization without writing to DB
     public Activity (int activity_id, int project_id, String name, String desc, int duration, int progress, int finished){
-    	
+
     	this.activity_id = activity_id;
     	this.project_id = project_id;
     	this.activity_name = name;
@@ -31,8 +36,8 @@ public class Activity {
     	this.duration = duration;
     	this.progress = progress;
     	this.finished = finished;
-    	
-    
+
+
     }
     /**
      * @return the activity_id
@@ -129,14 +134,28 @@ public class Activity {
 	public void setFinished(int finished) {
 		this.finished = finished;
 	}
-	
+
+    /**
+     * @return the predecessors
+     */
+    public ArrayList<Integer> getPredecessors() {
+        return this.predecessors;
+    }
+
+    /**
+     * @param predecessors the predecessors
+     */
+    public void setPredecessors(ArrayList<Integer> predecessors) {
+        this.predecessors = predecessors;
+    }
+
 	@Override
-	
+
 	public String toString(){
-		
+
 		String s = "Activity ID: " +
-		this.getActivity_id() 
-		+ " Project Name: " 
+		this.getActivity_id()
+		+ " Project Name: "
 		+ this.getActivity_name()
 		+ " Project Desc: "
 		+ this.getActivity_desc()
@@ -146,6 +165,8 @@ public class Activity {
 		+ this.getProgress()
 		+ " Is finished: "
 		+ this.getFinished()
+		+ " predecessors: "
+		+ Arrays.asList(predecessors)
 		+ "\n";
 		return s;
 	}

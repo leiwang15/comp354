@@ -1,11 +1,10 @@
 package comp354.gui;
 
-import comp354.Activity;
 import comp354.ActivityList;
+import pm.Model.Activity;
 
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Vector;
 
 /**
@@ -65,7 +64,7 @@ public class PMTableModel extends DefaultTableModel {
         ActivityList activityList = new ActivityList();
 
         for (int j = 0; j < getRowCount(); j++) {
-            Activity activity = new Activity();
+            Activity activity = new Activity(1,"","",0,new ArrayList<Integer>());
             activity.setActivity_id(Integer.parseInt((String) getValueAt(j, 0)));
             activity.setActivity_name((String) getValueAt(j, 1));
             activity.setDuration(Integer.parseInt((String) getValueAt(j, 2)));

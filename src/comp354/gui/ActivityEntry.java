@@ -1,7 +1,7 @@
 package comp354.gui;
 
-import comp354.Activity;
 import comp354.ActivityList;
+import pm.Model.Activity;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableColumnModel;

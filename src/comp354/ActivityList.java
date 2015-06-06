@@ -1,5 +1,7 @@
 package comp354;
 
+import pm.Model.Activity;
+
 import java.util.ArrayList;
 
 public class ActivityList {
