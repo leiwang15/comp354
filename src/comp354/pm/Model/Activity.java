@@ -1,6 +1,6 @@
-package pm.Model;
+package comp354.pm.Model;
 
-import pm.Controller.ActivityController;
+import comp354.pm.Controller.ActivityController;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -27,7 +27,7 @@ public class Activity {
     }
 
     //Local initialization without writing to DB
-    public Activity (int activity_id, int project_id, String name, String desc, int duration, int progress, int finished){
+    public Activity (int activity_id, int project_id, String name, String desc, int duration, int progress, int finished, ArrayList<Integer> predecessors){
 
     	this.activity_id = activity_id;
     	this.project_id = project_id;
@@ -36,7 +36,7 @@ public class Activity {
     	this.duration = duration;
     	this.progress = progress;
     	this.finished = finished;
-
+		this.predecessors = predecessors;
 
     }
     /**

@@ -1,9 +1,9 @@
-package pm.Controller;
+package comp354.pm.Controller;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import pm.Model.User;
+import comp354.pm.Model.User;
 
 public class UserController extends DB_Controller {
 
@@ -95,9 +95,9 @@ public class UserController extends DB_Controller {
 		}
 		return feedback;
 	}
-	
+
 	public User getUserByID(int uid){
-		
+
 		String sql = "SELECT * FROM User WHERE UserID = " + uid + ";";
 		ResultSet res;
 		User u = null;
@@ -107,7 +107,7 @@ public class UserController extends DB_Controller {
 			res.next();
 			u= new User(res.getInt(1), res.getString(2), res.getString(3), res.getString(4));
 		} catch (SQLException e) {
-			
+
 			e.printStackTrace();
 		}
 		return u;

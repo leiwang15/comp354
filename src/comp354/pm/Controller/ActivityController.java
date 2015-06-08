@@ -1,12 +1,12 @@
-package pm.Controller;
+package comp354.pm.Controller;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import pm.Model.Activity;
-import pm.Model.User;
+import comp354.pm.Model.Activity;
+import comp354.pm.Model.User;
 
 
 public class ActivityController extends DB_Controller {
@@ -110,7 +110,7 @@ public class ActivityController extends DB_Controller {
 				desc = res.getString("Desc");
 				duration = res.getInt("Duration");
 				finished = res.getInt("Finished");
-				a = new Activity(id, pID, name, desc, duration, progress, finished);
+				a = new Activity(id, pID, name, desc, duration, progress, finished,null);
 				la.add(a);
 			}
 			c.close();

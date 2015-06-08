@@ -1,29 +1,29 @@
-package pm.Model;
-import pm.Controller.UserController;
+package comp354.pm.Model;
+import comp354.pm.Controller.UserController;
 public class User {
 	private int user_id;
     private String first_name;
     private String last_name;
     private String role;
 
-    
+
     public User(String first_name, String last_name, String role) {
 		this.first_name = first_name;
 		this.last_name = last_name;
 		this.role = role;
-		
+
 		UserController uc = new UserController();
 		this.user_id = uc.addUser(this);
-		
+
 	}
-    
-    
+
+
     public User(int uId, String first_name, String last_name, String role) {
 		this.user_id = uId;
     	this.first_name = first_name;
 		this.last_name = last_name;
 		this.role = role;
-		
+
 	}
     /**
      * @return the role

@@ -1,7 +1,8 @@
-package comp354.gui;
+package comp354.pm.gui;
 
-import comp354.ActivityList;
-import pm.Model.Activity;
+import comp354.pm.Model.Activity;
+import comp354.pm.Model.ActivityList;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
@@ -41,11 +42,13 @@ public class PMTableModel extends DefaultTableModel {
     @Override
     public String toString() {
 
+        StringBuilder sb = new StringBuilder();
+
         for (int j = 0; j < getRowCount(); j++) {
             for (int i = 0; i < getColumnCount(); i++) {
-                System.out.print(getValueAt(j, i) + "\t");
+                sb.append(getValueAt(j, i)).append("\t");
             }
-            System.out.println();
+            sb.append("\n");
         }
         return "";
     }
@@ -64,16 +67,24 @@ public class PMTableModel extends DefaultTableModel {
         ActivityList activityList = new ActivityList();
 
         for (int j = 0; j < getRowCount(); j++) {
-            Activity activity = new Activity(1,"","",0,new ArrayList<Integer>());
-            activity.setActivity_id(Integer.parseInt((String) getValueAt(j, 0)));
-            activity.setActivity_name((String) getValueAt(j, 1));
-            activity.setDuration(Integer.parseInt((String) getValueAt(j, 2)));
+            if (StringUtils.isNotEmpty((String) getValueAt(j, 0))) {
+                Activity activity = new Activity(1, "", "", 0, new ArrayList<Integer>());
+                activity.setActivity_id(Integer.parseInt((String) getValueAt(j, 0)));
+                activity.setActivity_name((String) getValueAt(j, 1));
+                activity.setDuration(Integer.parseInt(StringUtils.defaultString((String) getValueAt(j, 2), "0")));
 
-            ArrayList<Integer> predecessors = new ArrayList<Integer>();
-            for (String p : ((String) getValueAt(j, 3)).split(",")) {
-                predecessors.add(Integer.parseInt(p.trim()));
+                ArrayList<Integer> predecessors = new ArrayList<Integer>();
+
+                String predStr = (String) getValueAt(j, 3);
+                if (StringUtils.isNotEmpty(predStr)) {
+                    for (String p : predStr.split(",")) {
+                        predecessors.add(Integer.parseInt(StringUtils.defaultString(p.trim(), "0")));
+                    }
+                    activity.setPredecessors(predecessors);
+                }
+
+                activityList.getActivities().add(activity);
             }
-            activity.setPredecessors(predecessors);
         }
 
         return activityList;

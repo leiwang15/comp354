@@ -1,11 +1,11 @@
-package pm.Model;
+package comp354.pm.Model;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import pm.Controller.ProjectController;
+import comp354.pm.Controller.ProjectController;
 public class Project {
     private int project_id;
     private String project_name;
@@ -23,9 +23,9 @@ public class Project {
     	this.end_date = end;
      	ProjectController pc = new ProjectController();
     	this.project_id = pc.addProject(this, u);
-    	
+
     }
-    
+
     //local initialization (usually read from DB)
     public Project(int projectID, String name, String desc, Date start, Date end, int finished, List<Activity> activities){
     	this.project_id = projectID;
@@ -134,15 +134,15 @@ public class Project {
 	public void setFinished(int finished) {
 		this.finished = finished;
 	}
-	
-	
+
+
 	@Override
 	public String toString(){
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		String s = "Project ID: " +
-		this.getProject_id() 
-		+ " Project Name: " 
-		+ this.getProject_name() 
+		this.getProject_id()
+		+ " Project Name: "
+		+ this.getProject_name()
 		+ " Project Desc: "
 		+ this.getProject_desc()
 		+ " Start Date: "
@@ -152,7 +152,7 @@ public class Project {
 		+ " Is finished: "
 		+ this.getFinished()
 		+ "\n";
-		
+
 		for (Activity activity : activities) {
 			s += activity.toString();
 		}

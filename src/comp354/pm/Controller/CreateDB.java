@@ -1,4 +1,4 @@
-package pm.Controller;
+package comp354.pm.Controller;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,21 +8,21 @@ import java.sql.*;
 
 
 public class CreateDB {
-	
+
 	static String databasePath = "project.db";
 
 	public static void main(String[] args) {
-	
+
 		Connection c = null;
 		Statement stmt = null;
 		try {
-			
+
 			try {
 				File f = new File(databasePath);
 				if(f.exists()){
 					Files.delete(Paths.get(databasePath));
 				}
-			    
+
 			} catch (NoSuchFileException x) {
 			    System.err.format("no such" + " file or directory%n");
 			} catch (DirectoryNotEmptyException x) {
@@ -37,7 +37,7 @@ public class CreateDB {
 
 			//Create table User
 			stmt = c.createStatement();
-			String sql = 
+			String sql =
 					"CREATE TABLE User "
 					+ "(UserID		INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
 					+ " FirstName	TEXT    NOT NULL, "
@@ -45,10 +45,10 @@ public class CreateDB {
 					+ " Role		TEXT	NOT NULL )";
 			stmt.executeUpdate(sql);
 			stmt.close();
-			
+
 			//Create table Project
 			stmt = c.createStatement();
-			sql = 
+			sql =
 					"CREATE TABLE Project "
 					+ "(ProjectID	INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
 					+ " Name		TEXT    NOT NULL, "
@@ -57,10 +57,10 @@ public class CreateDB {
 					+ " EndDate		DATE	NOT NULL, "
 					+ " Finished	INT		DEFAULT 0)";
 			stmt.executeUpdate(sql);
-			
+
 			//Create table Activity
 			stmt = c.createStatement();
-			sql = 
+			sql =
 					"CREATE TABLE Activity "
 					+ "(ActivityID	INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
 					+ " Project_ID	INTEGER	NOT NULL, "
@@ -70,64 +70,64 @@ public class CreateDB {
 					+ " Progress	INT		DEFAULT 0, 	"
 					+ " Finished	INT		DEFAULT 0,	"
 					+ " FOREIGN KEY(Project_ID) 		REFERENCES Project(ProjectID));";
-			
-			
+
+
 			stmt.executeUpdate(sql);
-			
+
 			//Create table Project_Assign
 			stmt = c.createStatement();
-			sql = 
+			sql =
 					"CREATE TABLE Project_Assign ("
 					+ "	PA_ID		INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
 					+ " Project_ID	INTEGER		NOT NULL, "
 					+ " User_ID		INTEGER		NOT NULL, "
 					+ " FOREIGN KEY(Project_ID) 		REFERENCES Project(ProjectID),"
 					+ " FOREIGN KEY(User_ID) 			REFERENCES User(UserID))";
-			
-			
+
+
 			stmt.executeUpdate(sql);
-			
-			
+
+
 			//Create table Activity_Assign
 			stmt = c.createStatement();
-			sql = 
+			sql =
 					"CREATE TABLE Activity_Assign ("
 					+ "	AA_ID		INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
 					+ " Activity_ID	INTEGER		NOT NULL, "
 					+ " User_ID		INTEGER		NOT NULL, "
 					+ " FOREIGN KEY(Activity_ID) 	REFERENCES Activity(ActivityID),"
 					+ " FOREIGN KEY(User_ID) 		REFERENCES User(UserID))";
-			
-	
+
+
 			stmt.executeUpdate(sql);
-			
-			
+
+
 //			//Create table Project_Activity
 //			stmt = c.createStatement();
-//			sql = 
+//			sql =
 //					"CREATE TABLE Project_Activity ("
 //					+ "	PA_ID			INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
 //					+ " Project_ID		INTEGER		NOT NULL, "
 //					+ " Activity_ID		INTEGER		NOT NULL, "
 //					+ " FOREIGN KEY(Project_ID) 	REFERENCES Project(ProjectID),"
 //					+ " FOREIGN KEY(Activity_ID) 	REFERENCES Activity(ActivityID))";
-//			
-//	
+//
+//
 //			stmt.executeUpdate(sql);
-			
+
 			//Create table Activity_Prereq
 			stmt = c.createStatement();
-			sql = 
+			sql =
 					"CREATE TABLE Activity_Pre ("
 					+ "	AP_ID				INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
 					+ " Activity_ID1		INTEGER		NOT NULL, "
 					+ " Activity_ID2		INTEGER		NOT NULL, "
 					+ " FOREIGN KEY(Activity_ID1) 	REFERENCES Activity(ActivityID),"
 					+ " FOREIGN KEY(Activity_ID2) 	REFERENCES Activity(ActivityID))";
-			
-	
+
+
 			stmt.executeUpdate(sql);
-			
+
 			c.close();
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());

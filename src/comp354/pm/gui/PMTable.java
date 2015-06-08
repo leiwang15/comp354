@@ -1,4 +1,4 @@
-package comp354.gui;
+package comp354.pm.gui;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -9,6 +9,10 @@ import javax.swing.table.DefaultTableColumnModel;
  * Created by joao on 15.06.06.
  */
 public class PMTable extends JTable {
+
+    public PMTable() {
+        super();
+    }
 
     public PMTable(PMTableModel dtm, DefaultTableColumnModel scm) {
         super(dtm, scm);

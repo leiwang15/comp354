@@ -1,4 +1,4 @@
-package pm.Controller;
+package comp354.pm.Controller;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -8,9 +8,9 @@ import java.util.Calendar;
 
 import java.util.List;
 
-import pm.Model.Activity;
-import pm.Model.Project;
-import pm.Model.User;
+import comp354.pm.Model.Activity;
+import comp354.pm.Model.Project;
+import comp354.pm.Model.User;
 
 public class test {
 

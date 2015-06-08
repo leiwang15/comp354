@@ -1,4 +1,4 @@
-package pm.Controller;
+package comp354.pm.Controller;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,14 +9,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import pm.Model.Activity;
-import pm.Model.Project;
-import pm.Model.User;
+import comp354.pm.Model.Activity;
+import comp354.pm.Model.Project;
+import comp354.pm.Model.User;
 
 public class ProjectController extends DB_Controller {
 
 	public ProjectController() {
 		super();
+	}
+
+	public ProjectController(String dbPath) {
+		super(dbPath);
 	}
 
 	public int addProject(Project p, User u) {
@@ -89,10 +93,10 @@ public class ProjectController extends DB_Controller {
 				desc = res.getString("Desc");
 				DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 				Date d =  df.parse(res.getString("StartDate"));
-				
+
 				//System.out.println(df.format(d));
 				startDate = d;
-				
+
 				d= df.parse(res.getString("EndDate"));
 				endDate = d;
 				finished = res.getInt("Finished");
