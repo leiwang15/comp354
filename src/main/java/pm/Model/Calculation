@@ -1,0 +1,135 @@
+
+public class Calculation {
+	private int earliestStartTime;
+	private int earliestFinishTime;
+	private int latestFinishTime;
+	private int latestStartTime;
+	private int duration;
+	private int floatTime;
+	private int maxPossibleDuration;
+	
+	public Calculation(){
+		earliestStartTime=0;
+		earliestFinishTime=0;
+		latestFinishTime=0;
+		latestStartTime=0;
+		duration=0;
+		floatTime=0;
+		maxPossibleDuration = 0;
+	}
+	//The calculation which needs the activity before and after to calculate the date
+	// need to check the previous activities and give the one which has the latest EF time
+	// need to check the next activities and give the one which has the earliest LS time
+	public Calculation(Activity before,Activity a, Activity after){
+		forwardPass(before, a , after);
+		backwardPass(before, a, after);
+		setFloat(getLF()-getDuration()-getES());
+		setMPD(getLF()-getES());
+	}
+	// the forward pass calculation
+	public void forwardPass(Activity before,Activity a, Activity after){
+		setDuration(a.getDuration());
+		
+		if(before == null)
+			setES(0);
+		else
+			setES(before.getEarliestFinishTime());
+	
+		setEF(getES()+getDuration());
+	}
+	// the backward pass calculation 
+	public void backwardPass(Activity before, Activity a, Activity after){
+		if(after == null)
+			setLF(getEF());
+		else
+			setLF(after.getLS);
+		
+		setLS(getLF()-getDuration());
+		
+	}
+	 /**
+     * @param setES  set earliest start time
+     */
+	public void setES(int a){
+		earliestStartTime = a;
+	}
+	 /**
+     * @param setEF  set earliest finish time
+     */
+	public void setEF(int a){
+		earliestFinishTime = a;
+	}
+	 /**
+     * @param setLS  set latest start time
+     */
+	public void setLS(int a){
+		latestStartTime = a;
+	}
+	 /**
+     * @param setLF  set latest finish time
+     */
+	public void setLF(int a){
+		latestFinishTime = a;
+	}
+	 /**
+     * @param setDuration  set duration
+     */
+	public void setDuration(int a){
+		duration = a;
+	}
+	 /**
+     * @param setFloat  set float
+     */
+	public void setFloat(int a){
+		floatTime = a;
+	}
+	 /**
+     * @param setMPD  set max possible duration
+     */
+	public void setMPD(int a){
+		maxPossibleDuration = a;
+	}
+	
+	 /**
+     * @return earliest start time
+     */
+	public int getES(){
+		return earliestStartTime;
+	}
+	/**
+     * @return earliest finish time
+     */
+	public int getEF(){
+		return earliestFinishTime;
+	}
+	/**
+     * @return latest start time
+     */
+	public int getLS(){
+		return latestStartTime;
+	}
+	/**
+     * @return latest finish time
+     */
+	public int getLF(){
+		return latestFinishTime;
+	}
+	/**
+     * @return duration time
+     */
+	public int getDuration(){
+		return duration;
+	}
+	/**
+     * @return float
+     */
+	public int getFloat(){
+		return floatTime;
+	}
+	/**
+     * @return max possible duration
+     */
+	public int getMPD(){
+		return maxPossibleDuration;
+	}
+}
