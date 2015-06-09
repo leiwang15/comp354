@@ -63,6 +63,8 @@ public class ActivityEntry extends JFrame implements ActionListener {
 
         setSize(640, 480);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        activityList = new ActivityList();
     }
 
     /*
@@ -153,7 +155,6 @@ public class ActivityEntry extends JFrame implements ActionListener {
     private void doOpenProject() {
         try {
             File file = getOpenFilename();
-//            File file = new File("/Users/joao/test.db");
 
             if (file != null) {
 
@@ -170,7 +171,6 @@ public class ActivityEntry extends JFrame implements ActionListener {
     private void doSaveProject() {
         try {
             File file = getSaveFilename();
-//            File file = new File("/Users/joao/test.db");
 
             if (file != null) {
 
