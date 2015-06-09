@@ -98,7 +98,6 @@ public class ActivityEntry extends JFrame implements ActionListener {
     }
 
     private void createUIComponents() {
-
         tableRows = new String[1024][];
         columnNames = new String[]{"ID", "Name", "Duration", "Predecessors"};
         dtm = new PMTableModel(tableRows, columnNames);

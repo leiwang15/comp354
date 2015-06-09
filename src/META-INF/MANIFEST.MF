@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Class-Path: looks-1.3.1.jar swingx-all-1.6.5.jar forms-1.0.4.jar forms
+ _rt.jar junit-4.12.jar sqlite-jdbc-3.8.10.1.jar commons-lang3-3.4.jar
+  jga-0.7.2-cddl.jar jgraphx.jar hamcrest-core-1.3.jar grph-1.5.29-big
+ .jar jdnc-jxcombobox.jar
+Main-Class: comp354.pm.gui.Application
+
