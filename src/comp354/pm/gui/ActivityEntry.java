@@ -1,5 +1,8 @@
 package comp354.pm.gui;
 
+import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxRectangle;
+import com.mxgraph.view.mxGraph;
 import comp354.pm.Controller.DB_Controller;
 import comp354.pm.Model.Activity;
 import comp354.pm.Model.ActivityList;
@@ -14,6 +17,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -63,6 +67,8 @@ public class ActivityEntry extends JFrame implements ActionListener {
 
         setSize(640, 480);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        activityList = new ActivityList();
     }
 
     /*
@@ -91,12 +97,6 @@ public class ActivityEntry extends JFrame implements ActionListener {
         }
     }
 
-    public static void main(String[] args) {
-        JFrame frame = new ActivityEntry("ActivityEntry");
-        frame.pack();
-        frame.setVisible(true);
-    }
-
     private void createUIComponents() {
         tableRows = new String[1024][];
         columnNames = new String[]{"ID", "Name", "Duration", "Predecessors"};
@@ -113,6 +113,64 @@ public class ActivityEntry extends JFrame implements ActionListener {
 
         tablePane = new JScrollPane(activitiesTable);
         getContentPane().add(tablePane, BorderLayout.CENTER);
+
+        charts = new JPanel();
+//        initGraph();
+    }
+
+    private void initGraph() {
+        mxGraph graph = new mxGraph();
+        Object parent = graph.getDefaultParent();
+
+        graph.getModel().beginUpdate();
+        try {
+            Object v1 = graph.insertVertex(parent, null, "Hello", 20, 20, 80,
+                    30);
+            Object v2 = graph.insertVertex(parent, null, "World!", 240, 150,
+                    80, 30);
+            graph.insertEdge(parent, null, "Edge", v1, v2);
+        } finally {
+            graph.getModel().endUpdate();
+        }
+
+        mxGraphComponent graphComponent = new mxGraphComponent(graph);
+
+        charts.add(graphComponent);
+    }
+
+    public void drawGraph(ActivityList activityList) {
+        mxGraph graph = new mxGraph();
+        Object parent = graph.getDefaultParent();
+
+        graph.getModel().beginUpdate();
+        try {
+            ArrayList<Activity> activities = activityList.getActivities();
+
+            HashMap<Integer, Object> map = new HashMap<Integer, Object>();
+            for (int i = 0; i < activities.size(); i++) {
+                Object v1 = graph.insertVertex(parent, null, activities.get(i).getActivity_name() + ": " + activities.get(i).getDuration(), i * 40 +20, i * 40 + 20, 80, 30);
+                map.put(activities.get(i).getActivity_id(), v1);
+            }
+
+            for (int i = 0; i < activities.size(); i++) {
+
+                Activity parentActivity = activities.get(i);
+                for (int j = 0; j < activities.size(); j++) {
+                    Activity childActivity = activities.get(j);
+
+                    if ((i != j) && childActivity.getPredecessors().contains(parentActivity.getActivity_id())) {
+                        Object v2 = map.get(childActivity.getActivity_id());
+                        graph.insertEdge(parent, null, "", map.get(parentActivity.getActivity_id()), v2);
+                    }
+                }
+            }
+        } finally {
+            graph.getModel().endUpdate();
+        }
+        graph.setMaximumGraphBounds(new mxRectangle(0,0,800,800));
+        mxGraphComponent graphComponent = new mxGraphComponent(graph);
+
+        charts.add(graphComponent);
     }
 
     private void clear() {
@@ -152,8 +210,8 @@ public class ActivityEntry extends JFrame implements ActionListener {
 
     private void doOpenProject() {
         try {
-            File file = getOpenFilename();
-//            File file = new File("/Users/joao/test.db");
+//            File file = getOpenFilename();
+            File file = new File("/Users/joao/Documents/Home/Education/Concordia/Courses/COMP 354/Project/comp354/slides_project.db");
 
             if (file != null) {
 
@@ -161,6 +219,8 @@ public class ActivityEntry extends JFrame implements ActionListener {
                 activityList.readFromFile(file);
 
                 setActivities(activityList, true);
+
+                drawGraph(activityList);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -170,7 +230,7 @@ public class ActivityEntry extends JFrame implements ActionListener {
     private void doSaveProject() {
         try {
             File file = getSaveFilename();
-//            File file = new File("/Users/joao/test.db");
+//            File file = new File("/Users/joao/Documents/Home/Education/Concordia/Courses/COMP 354/Project/comp354/slides_project.db");
 
             if (file != null) {
 
