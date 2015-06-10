@@ -1,9 +1,19 @@
-package comp354.pm.gui;
+package comp354.pm.GUI;
 
+<<<<<<< Updated upstream
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxGraph;
 import comp354.pm.Controller.DB_Controller;
+=======
+import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+import com.mxgraph.layout.mxParallelEdgeLayout;
+import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxRectangle;
+import com.mxgraph.view.mxGraph;
+
+        import comp354.pm.Controller.DB_Controller;
+>>>>>>> Stashed changes
 import comp354.pm.Model.Activity;
 import comp354.pm.Model.ActivityList;
 
@@ -133,9 +143,13 @@ public class ActivityEntry extends JFrame implements ActionListener {
             graph.getModel().endUpdate();
         }
 
+<<<<<<< Updated upstream
         mxGraphComponent graphComponent = new mxGraphComponent(graph);
 
         charts.add(graphComponent);
+=======
+        autoLayout(graph);
+>>>>>>> Stashed changes
     }
 
     public void drawGraph(ActivityList activityList) {
@@ -168,9 +182,23 @@ public class ActivityEntry extends JFrame implements ActionListener {
             graph.getModel().endUpdate();
         }
         graph.setMaximumGraphBounds(new mxRectangle(0,0,800,800));
+<<<<<<< Updated upstream
         mxGraphComponent graphComponent = new mxGraphComponent(graph);
 
         charts.add(graphComponent);
+=======
+        autoLayout(graph);
+    }
+
+    private void autoLayout(mxGraph graph) {
+        mxGraphComponent graphComponent = new mxGraphComponent(graph);
+
+        charts.add(graphComponent, BorderLayout.CENTER);
+        new mxHierarchicalLayout(graph,SwingConstants.WEST).execute(graph.getDefaultParent());
+        new mxParallelEdgeLayout(graph,SwingConstants.WEST).execute(graph.getDefaultParent());
+
+//        charts.add(graphComponent);
+>>>>>>> Stashed changes
     }
 
     private void clear() {
@@ -206,6 +234,9 @@ public class ActivityEntry extends JFrame implements ActionListener {
         ActivityList activities = getActivities();
 
         activities.getActivities();
+
+        drawGraph(new ActivityList());
+
     }
 
     private void doOpenProject() {
