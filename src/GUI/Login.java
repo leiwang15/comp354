@@ -93,12 +93,15 @@ public class Login {
 						//close login window
 						frmLogin.dispose();
 						
+						//store user to currentUser
+						main.currentUser = u;
+						
 						//open main window
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
 								try {
 									main mainWindow = new main();
-									mainWindow.frame.setVisible(true);
+									mainWindow.frmProjectManagementSystem.setVisible(true);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
