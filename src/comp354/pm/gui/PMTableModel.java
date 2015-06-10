@@ -1,4 +1,4 @@
-package comp354.pm.gui;
+package comp354.pm.GUI;
 
 import comp354.pm.Model.Activity;
 import comp354.pm.Model.ActivityList;
