@@ -1,4 +1,4 @@
-package comp354.pm.GUI;
+package comp354.pm.gui;
 
 import comp354.pm.Controller.DB_Controller;
 import comp354.pm.Model.Activity;
