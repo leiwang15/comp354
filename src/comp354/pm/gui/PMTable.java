@@ -1,4 +1,4 @@
-package comp354.pm.GUI;
+package comp354.pm.gui;
 
 import org.apache.commons.lang3.StringUtils;
 

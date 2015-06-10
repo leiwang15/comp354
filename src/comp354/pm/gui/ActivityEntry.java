@@ -1,19 +1,11 @@
-package comp354.pm.GUI;
+package comp354.pm.gui;
 
-<<<<<<< Updated upstream
-import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.util.mxRectangle;
-import com.mxgraph.view.mxGraph;
-import comp354.pm.Controller.DB_Controller;
-=======
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.layout.mxParallelEdgeLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxGraph;
-
-        import comp354.pm.Controller.DB_Controller;
->>>>>>> Stashed changes
+import comp354.pm.Controller.DB_Controller;
 import comp354.pm.Model.Activity;
 import comp354.pm.Model.ActivityList;
 
@@ -143,13 +135,7 @@ public class ActivityEntry extends JFrame implements ActionListener {
             graph.getModel().endUpdate();
         }
 
-<<<<<<< Updated upstream
-        mxGraphComponent graphComponent = new mxGraphComponent(graph);
-
-        charts.add(graphComponent);
-=======
         autoLayout(graph);
->>>>>>> Stashed changes
     }
 
     public void drawGraph(ActivityList activityList) {
@@ -162,7 +148,7 @@ public class ActivityEntry extends JFrame implements ActionListener {
 
             HashMap<Integer, Object> map = new HashMap<Integer, Object>();
             for (int i = 0; i < activities.size(); i++) {
-                Object v1 = graph.insertVertex(parent, null, activities.get(i).getActivity_name() + ": " + activities.get(i).getDuration(), i * 40 +20, i * 40 + 20, 80, 30);
+                Object v1 = graph.insertVertex(parent, null, activities.get(i).getActivity_name() + ": " + activities.get(i).getDuration(), i * 40 + 20, i * 40 + 20, 80, 30);
                 map.put(activities.get(i).getActivity_id(), v1);
             }
 
@@ -181,12 +167,7 @@ public class ActivityEntry extends JFrame implements ActionListener {
         } finally {
             graph.getModel().endUpdate();
         }
-        graph.setMaximumGraphBounds(new mxRectangle(0,0,800,800));
-<<<<<<< Updated upstream
-        mxGraphComponent graphComponent = new mxGraphComponent(graph);
-
-        charts.add(graphComponent);
-=======
+        graph.setMaximumGraphBounds(new mxRectangle(0, 0, 800, 800));
         autoLayout(graph);
     }
 
@@ -194,11 +175,10 @@ public class ActivityEntry extends JFrame implements ActionListener {
         mxGraphComponent graphComponent = new mxGraphComponent(graph);
 
         charts.add(graphComponent, BorderLayout.CENTER);
-        new mxHierarchicalLayout(graph,SwingConstants.WEST).execute(graph.getDefaultParent());
-        new mxParallelEdgeLayout(graph,SwingConstants.WEST).execute(graph.getDefaultParent());
+        new mxHierarchicalLayout(graph, SwingConstants.WEST).execute(graph.getDefaultParent());
+        new mxParallelEdgeLayout(graph, SwingConstants.WEST).execute(graph.getDefaultParent());
 
 //        charts.add(graphComponent);
->>>>>>> Stashed changes
     }
 
     private void clear() {

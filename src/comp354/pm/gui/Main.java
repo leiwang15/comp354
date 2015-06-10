@@ -1,4 +1,4 @@
-package comp354.pm.GUI;
+package comp354.pm.gui;
 
 import javax.swing.JFrame;
 import java.awt.BorderLayout;
