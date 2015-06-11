@@ -153,9 +153,11 @@ public class Project {
 		+ this.getFinished()
 		+ "\n";
 
-		for (Activity activity : activities) {
-			s += activity.toString();
-		}
+		if ( activities != null ) {
+            for (Activity activity : activities) {
+                s += activity.toString();
+            }
+        }
 		return s;
 	}
 }

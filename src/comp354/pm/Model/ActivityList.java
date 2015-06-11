@@ -25,7 +25,7 @@ public class ActivityList {
 
     public void readFromFile(File file) throws FileNotFoundException {
 
-        activities = new ArrayList<>();
+        activities = new ArrayList<Activity>();
 
         try {
             BufferedReader fis = new BufferedReader(new InputStreamReader(new FileInputStream(file.getAbsolutePath()), "UTF-8"));
