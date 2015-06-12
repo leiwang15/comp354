@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import java.awt.EventQueue;
 
@@ -9,11 +9,12 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 
-import dbControl.UserController;
+import Controller.UserController;
 import Model.User;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JPasswordField;
 
 public class Login {
@@ -82,11 +83,11 @@ public class Login {
 				
 				//retrieve user from database
 				UserController uc = new UserController();
-				User u = uc.getUserByID(inputUN);
+				User u = uc.getUserByName(inputUN);
 				
 				//check password if user exists
 				if(u != null){
-					if(u.getPassword().equals(inputPW)){
+					if(u.getPassWord().equals(inputPW)){
 						//pop up a message prompt user that login successfully
 						JOptionPane.showMessageDialog(null, "Login successfully!");
 						
@@ -94,13 +95,13 @@ public class Login {
 						frmLogin.dispose();
 						
 						//store user to currentUser
-						main.currentUser = u;
+						MainWindow.currentUser = u;
 						
 						//open main window
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
 								try {
-									main mainWindow = new main();
+									MainWindow mainWindow = new MainWindow();
 									mainWindow.frmProjectManagementSystem.setVisible(true);
 								} catch (Exception e) {
 									e.printStackTrace();

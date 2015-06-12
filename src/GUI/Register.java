@@ -1,19 +1,20 @@
-package GUI;
+package gui;
 
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
-
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+
 import java.awt.Choice;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 
-import dbControl.UserController;
+import Controller.UserController;
 import Model.User;
 
 public class Register {
@@ -112,28 +113,22 @@ public class Register {
 				String role = choice.getSelectedItem();
 				
 				if(password.equals(pwConfirm)){
-					User u = new User(userName, firstName, lastName, role, password);
-					UserController uc = new UserController();
-					int i = uc.addUser(u);
-					if(i == 1){
-						JOptionPane.showMessageDialog(null, "User created successfully!");
-						
-						frmRegister.dispose();
-						
-						EventQueue.invokeLater(new Runnable() {
-							public void run() {
-								try {
-									Login loginWindow = new Login();
-									loginWindow.frmLogin.setVisible(true);
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
+					User u = new User(firstName, lastName, role, userName, password);
+
+					JOptionPane.showMessageDialog(null, "User created successfully!");
+					
+					frmRegister.dispose();
+					
+					EventQueue.invokeLater(new Runnable() {
+						public void run() {
+							try {
+								Login loginWindow = new Login();
+								loginWindow.frmLogin.setVisible(true);
+							} catch (Exception e) {
+								e.printStackTrace();
 							}
-						});
-					}
-					else{
-						JOptionPane.showMessageDialog(null, "Failed to create user!");
-					}
+						}
+					});
 				}
 				else{
 					JOptionPane.showMessageDialog(null, "Passwords do not match!");

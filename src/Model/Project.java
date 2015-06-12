@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import dbControl.ProjectController;
+import Controller.ProjectController;
 public class Project {
     private int project_id;
     private String project_name;

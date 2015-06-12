@@ -1,6 +1,6 @@
 package Model;
 
-import dbControl.ActivityController;
+import Controller.ActivityController;
 import java.util.ArrayList;
 import java.util.Arrays;
 

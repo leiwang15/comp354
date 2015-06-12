@@ -1,38 +1,52 @@
 package Model;
+import Controller.UserController;
 public class User {
-	private String userName;
+	private int user_id;
     private String first_name;
     private String last_name;
     private String role;
-    private String password;
+    private String userName;
+    private String passWord;
 
 
-//    public User(String first_name, String last_name, String role, String password) {
-//		this.first_name = first_name;
-//		this.last_name = last_name;
-//		this.role = role;
-//		this.password = password;
-//		
-//		UserController uc = new UserController();
-//		this.userName = uc.addUser(this);
-//
-//	}
+    public User(String first_name, String last_name, String role, String userName, String passWord) {
+		this.first_name = first_name;
+		this.last_name = last_name;
+		this.role = role;
+		this.userName = userName;
+		this.passWord = passWord;
+
+		UserController uc = new UserController();
+		this.user_id = uc.addUser(this);
+
+	}
 
 
-    public User(String uId, String first_name, String last_name, String role, String password) {
-		this.userName = uId;
+    public User(int uId, String first_name, String last_name, String role, String userName, String passWord) {
+		this.user_id = uId;
     	this.first_name = first_name;
 		this.last_name = last_name;
 		this.role = role;
-		this.password = password;
+		this.userName = userName;
+		this.passWord = passWord;
 	}
-    public String getPassword() {
-		return password;
+    public String getUserName() {
+		return userName;
 	}
 
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+
+	public String getPassWord() {
+		return passWord;
+	}
+
+
+	public void setPassWord(String passWord) {
+		this.passWord = passWord;
 	}
 
 
@@ -81,15 +95,15 @@ public class User {
 	/**
 	 * @return the user_id
 	 */
-	public String getUserName() {
-		return userName;
+	public int getUser_id() {
+		return user_id;
 	}
 
 	/**
 	 * @param user_id the user_id to set
 	 */
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setUser_id(int user_id) {
+		this.user_id = user_id;
 	}
 
 }
