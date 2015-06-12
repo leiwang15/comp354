@@ -1,6 +1,6 @@
-package comp354.pm.Model;
+package comp354.Model;
 
-import comp354.pm.Controller.ActivityController;
+import comp354.Controller.ActivityController;
 import java.util.ArrayList;
 import java.util.Arrays;
 

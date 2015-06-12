@@ -1,4 +1,4 @@
-package comp354.pm.Model;
+package comp354.Model;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -25,7 +25,7 @@ public class ActivityList {
 
     public void readFromFile(File file) throws FileNotFoundException {
 
-        activities = new ArrayList<Activity>();
+        activities = new ArrayList<>();
 
         try {
             BufferedReader fis = new BufferedReader(new InputStreamReader(new FileInputStream(file.getAbsolutePath()), "UTF-8"));

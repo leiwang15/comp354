@@ -1,7 +1,7 @@
-package comp354.pm.gui;
+package comp354.gui;
 
-import comp354.pm.Model.Activity;
-import comp354.pm.Model.ActivityList;
+import comp354.Model.Activity;
+import comp354.Model.ActivityList;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.table.DefaultTableModel;

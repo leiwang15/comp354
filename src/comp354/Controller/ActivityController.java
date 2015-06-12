@@ -1,12 +1,12 @@
-package comp354.pm.Controller;
+package comp354.Controller;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import comp354.pm.Model.Activity;
-import comp354.pm.Model.User;
+import comp354.Model.Activity;
+import comp354.Model.User;
 
 
 public class ActivityController extends DB_Controller {

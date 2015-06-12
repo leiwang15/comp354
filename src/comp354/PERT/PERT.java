@@ -1,4 +1,4 @@
-package comp354.pm.PERT;
+package comp354.PERT;
 
 import java.util.ArrayList;
 

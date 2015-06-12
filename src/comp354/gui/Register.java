@@ -1,7 +1,7 @@
-package comp354.pm.gui;
+package comp354.gui;
 
-import comp354.pm.Controller.UserController;
-import comp354.pm.Model.User;
+import comp354.Controller.UserController;
+import comp354.Model.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -103,11 +103,9 @@ public class Register {
                 String pwConfirm = new String(newPWConfirm.getPassword());
                 String role = choice.getSelectedItem();
 
-                if (password.equals(pwConfirm)) {
-                    User u = new User(userName, firstName, lastName, role, password);
-                    UserController uc = new UserController();
-                    int i = uc.addUser(u);
-                    if (i == 1) {
+				if(password.equals(pwConfirm)){
+					User u = new User(firstName, lastName, role, userName, password);
+
                         JOptionPane.showMessageDialog(null, "User created successfully!");
 
                         frmRegister.dispose();
@@ -122,10 +120,8 @@ public class Register {
                                 }
                             }
                         });
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Failed to create user!");
                     }
-                } else {
+				else{
                     JOptionPane.showMessageDialog(null, "Passwords do not match!");
                 }
             }
@@ -136,8 +132,8 @@ public class Register {
         frmRegister.getContentPane().add(btnCancel);
 
         //actionListener for Cancel button
-        btnCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+		btnCancel.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
                 frmRegister.dispose();
 
                 EventQueue.invokeLater(new Runnable() {
@@ -154,6 +150,4 @@ public class Register {
             }
         });
     }
-
-
 }

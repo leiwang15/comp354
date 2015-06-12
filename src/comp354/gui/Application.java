@@ -1,4 +1,4 @@
-package comp354.pm.gui;
+package comp354.gui;
 
 /**
  * Created by joao on 15-06-02.

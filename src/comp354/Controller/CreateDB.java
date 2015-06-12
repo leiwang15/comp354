@@ -1,4 +1,4 @@
-package comp354.pm.Controller;
+package comp354.Controller;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,11 +44,11 @@ public class CreateDB {
             String sql =
                     "CREATE TABLE User "
                             + "(UserID		INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
-                            + " UserName	TEXT    NOT NULL, "
                             + " FirstName	TEXT    NOT NULL, "
                             + " LastName	TEXT	NOT NULL, "
                             + " Role	    TEXT	NOT NULL, "
-                            + " Password	TEXT	NOT NULL )";
+					+ " UserName	TEXT	NOT NULL, "
+					+ " Password	TEXT	NOT NULL )";
             stmt.executeUpdate(sql);
             stmt.close();
 

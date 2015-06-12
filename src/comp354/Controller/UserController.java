@@ -1,6 +1,6 @@
-package comp354.pm.Controller;
+package comp354.Controller;
 
-import comp354.pm.Model.User;
+import comp354.Model.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,9 +17,9 @@ public class UserController extends DB_Controller {
 
         int id = 0;
 
-        String sql = "INSERT INTO User (UserName,FirstName,LastName,Role,Password) " + "VALUES('"
-                + u.getUserName()+ "', '" + u.getFirst_name() + "', '" + u.getLast_name() + "', '"
-                + u.getRole()+ "', '"+ u.getPassword() + "');";
+		String sql = "INSERT INTO User (FirstName,LastName,Role,UserName,Password) " + "VALUES('"
+				+ u.getFirst_name() + "', '" + u.getLast_name() + "', '"
+				+ u.getRole() + "', '" + u.getUserName() + "', '" + u.getPassword() + "');";
 
         String sql2 = "SELECT last_insert_rowid() FROM User;";
 
@@ -96,7 +96,7 @@ public class UserController extends DB_Controller {
         return feedback;
     }
 
-    public User getUserByID(int uid) {
+	public User getUserByID(int uid){
 
         String sql = "SELECT * FROM User WHERE UserID = " + uid + ";";
         ResultSet res;
@@ -105,7 +105,8 @@ public class UserController extends DB_Controller {
             st = c.createStatement();
             res = st.executeQuery(sql);
             res.next();
-            u = new User(res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5), res.getString(6));
+			u= new User(res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5), res.getString(6));
+			c.close();
         } catch (SQLException e) {
 
             e.printStackTrace();
@@ -113,16 +114,17 @@ public class UserController extends DB_Controller {
         return u;
     }
 
-    public User getUserByUserName(String userName) {
+	public User getUserByUserName(String userName){
 
-        String sql = "SELECT * FROM User WHERE UserName = '" + userName + "';";
+		String sql = "SELECT * FROM User WHERE UserName = '" + userName + "';";
         ResultSet res;
         User u = null;
         try {
             st = c.createStatement();
             res = st.executeQuery(sql);
             res.next();
-            u = new User(res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5), res.getString(6));
+			u= new User(res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5), res.getString(6));
+			c.close();
         } catch (SQLException e) {
 
             e.printStackTrace();

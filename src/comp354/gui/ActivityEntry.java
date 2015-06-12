@@ -1,13 +1,13 @@
-package comp354.pm.gui;
+package comp354.gui;
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.layout.mxParallelEdgeLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxGraph;
-import comp354.pm.Controller.DB_Controller;
-import comp354.pm.Model.Activity;
-import comp354.pm.Model.ActivityList;
+import comp354.Controller.DB_Controller;
+import comp354.Model.Activity;
+import comp354.Model.ActivityList;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;

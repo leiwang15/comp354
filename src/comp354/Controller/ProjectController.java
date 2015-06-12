@@ -1,4 +1,4 @@
-package comp354.pm.Controller;
+package comp354.Controller;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import comp354.pm.Model.Activity;
-import comp354.pm.Model.Project;
-import comp354.pm.Model.User;
+import comp354.Model.Activity;
+import comp354.Model.Project;
+import comp354.Model.User;
 
 public class ProjectController extends DB_Controller {
 
@@ -32,7 +32,7 @@ public class ProjectController extends DB_Controller {
 				+ p.getProject_desc() + "', '" + df.format(p.getStart_date())
 				+ "', '" + df.format(p.getEnd_date()) + "');";
 
-		System.out.println(sql);
+		//System.out.println(sql);
 
 		try {
 			st = c.createStatement();

@@ -1,8 +1,8 @@
-package comp354.pm.Controller;
+package comp354.Controller;
 
-import comp354.pm.Model.Activity;
-import comp354.pm.Model.Project;
-import comp354.pm.Model.User;
+import comp354.Model.Activity;
+import comp354.Model.Project;
+import comp354.Model.User;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -14,7 +14,7 @@ public class test {
     public static void main(String[] args) {
         // TODO Auto-generated method stub
 
-        User u1 = new User(1,"admin", "admin", "admin", "PM", "admin");
+		User u1 = new User( "Lei", "Wang", "PM", "111", "111");
         System.out.println("User id: " + u1.getUser_id());
 
 
@@ -35,7 +35,7 @@ public class test {
         cal.set(Calendar.MONTH, 06);
         cal.set(Calendar.DAY_OF_MONTH, 15);
 
-        Project p1 = new Project(u1, "P1", "P1 desc", cal.getTime(), cal2.getTime());
+		Project p1 = new Project(u1, "P1", "P1 desc", cal.getTime() , cal2.getTime());
         System.out.println("Project id: " + p1.getProject_id());
 
         Activity a1 = new Activity(p1.getProject_id(), "A1", "A1 desc", 1, new ArrayList<Integer>());

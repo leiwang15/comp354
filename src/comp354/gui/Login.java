@@ -1,7 +1,7 @@
-package comp354.pm.gui;
+package comp354.gui;
 
-import comp354.pm.Controller.UserController;
-import comp354.pm.Model.User;
+import comp354.Controller.UserController;
+import comp354.Model.User;
 
 import java.awt.EventQueue;
 
@@ -93,12 +93,15 @@ public class Login {
 						//close login window
 						frmLogin.dispose();
 
+						//store user to currentUser
+						MainWindow.currentUser = u;
+						
 						//open main window
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
 								try {
-									Main mainWindow = new Main();
-									mainWindow.frame.setVisible(true);
+									MainWindow mainWindow = new MainWindow();
+									mainWindow.frmProjectManagementSystem.setVisible(true);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}

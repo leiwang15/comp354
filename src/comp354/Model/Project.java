@@ -1,11 +1,11 @@
-package comp354.pm.Model;
+package comp354.Model;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import comp354.pm.Controller.ProjectController;
+import comp354.Controller.ProjectController;
 public class Project {
     private int project_id;
     private String project_name;
