@@ -1,5 +1,7 @@
 package comp354.gui;
 
+import com.mxgraph.analysis.mxAnalysisGraph;
+import com.mxgraph.analysis.mxGraphStructure;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.layout.mxParallelEdgeLayout;
 import com.mxgraph.swing.mxGraphComponent;
@@ -8,17 +10,25 @@ import com.mxgraph.view.mxGraph;
 import comp354.Controller.DB_Controller;
 import comp354.Model.Activity;
 import comp354.Model.ActivityList;
+import comp354.gui.editors.IntegerEditor;
+import comp354.gui.editors.PredecessorEditor;
+import org.apache.commons.lang3.StringUtils;
+import org.jdesktop.swingx.table.DatePickerCellEditor;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 
@@ -26,6 +36,7 @@ import java.util.HashMap;
  * Created by joao on 15.06.05.
  */
 public class ActivityEntry extends JFrame implements ActionListener {
+    protected static final int MAX_TABLE_SIZE = 1024;
     private JPanel panel1;
     private JTable activitiesTable;
     private JPanel charts;
@@ -38,6 +49,10 @@ public class ActivityEntry extends JFrame implements ActionListener {
     private static JMenuBar menuBar;
     String[][] tableRows;
     private DB_Controller project;
+    mxGraph graph;
+    final Object parent;
+    mxGraphComponent graphComponent;
+    private boolean hasCycles;
 
 
     public ActivityEntry(String name) {
@@ -71,6 +86,9 @@ public class ActivityEntry extends JFrame implements ActionListener {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         activityList = new ActivityList();
+        graph = new mxGraph();
+        parent = graph.getDefaultParent();
+        graphComponent = new mxGraphComponent(graph);
     }
 
     /*
@@ -99,9 +117,13 @@ public class ActivityEntry extends JFrame implements ActionListener {
         }
     }
 
+    public PMTable getActivitiesTable() {
+        return (PMTable) activitiesTable;
+    }
+
     private void createUIComponents() {
-        tableRows = new String[1024][];
-        columnNames = new String[]{"ID", "Name", "Duration", "Predecessors"};
+        tableRows = new String[MAX_TABLE_SIZE][];
+        columnNames = new String[]{PMTable.ID, PMTable.NAME, PMTable.DURATION, PMTable.START, PMTable.FINISH, PMTable.PREDECESSORS};
         dtm = new PMTableModel(tableRows, columnNames);
 
         clear();
@@ -113,77 +135,172 @@ public class ActivityEntry extends JFrame implements ActionListener {
 
         activitiesTable.createDefaultColumnsFromModel();
 
+        activitiesTable.getColumn(PMTable.DURATION).setCellEditor(new IntegerEditor(1, MAX_TABLE_SIZE));
+        activitiesTable.getColumn(PMTable.START).setCellEditor(new DatePickerCellEditor(new SimpleDateFormat("yyyy.mm.dd")));
+        activitiesTable.getColumn(PMTable.FINISH).setCellEditor(new DatePickerCellEditor(new SimpleDateFormat("yyyy.mm.dd")));
+        activitiesTable.getColumn(PMTable.PREDECESSORS).setCellEditor(new PredecessorEditor(this));
+
+        TableCellRenderer tableCellRenderer = new DefaultTableCellRenderer() {
+
+            SimpleDateFormat f = new SimpleDateFormat("yyyy.mm.dd");
+
+            public Component getTableCellRendererComponent(JTable table,
+                                                           Object value, boolean isSelected, boolean hasFocus,
+                                                           int row, int column) {
+                if (value instanceof Date) {
+                    value = f.format(value);
+                }
+                return super.getTableCellRendererComponent(table, value, isSelected,
+                        hasFocus, row, column);
+            }
+        };
+
+        activitiesTable.getColumn(PMTable.START).setCellRenderer(tableCellRenderer);
+        activitiesTable.getColumn(PMTable.FINISH).setCellRenderer(tableCellRenderer);
+
         tablePane = new JScrollPane(activitiesTable);
         getContentPane().add(tablePane, BorderLayout.CENTER);
 
         charts = new JPanel();
-//        initGraph();
+
+
+        final InputVerifier iv = new InputVerifier() {
+
+            @Override
+            public boolean verify(JComponent input) {
+                JTextField field = (JTextField) input;
+                if (StringUtils.isNotEmpty(field.getText())) {
+                    String tmp = field.getText().replaceAll("[,;]", " ");
+                    if (StringUtils.isNumericSpace(tmp)) {
+                        for (String s : tmp.split(" ")) {
+                            int pred = Integer.parseInt(s);
+                            if (pred < 1 || pred > ((PMTable) activitiesTable).getMaxPredID()) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public boolean shouldYieldFocus(JComponent input) {
+                boolean valid = verify(input);
+                if (!valid) {
+                    String errorMsg = "Invalid entry: ID must be between 1 and " + ((PMTable) activitiesTable).getMaxPredID();
+                    JOptionPane.showMessageDialog(ActivityEntry.this, errorMsg);
+                }
+                return valid;
+            }
+
+        };
+        DefaultCellEditor editor = new DefaultCellEditor(new JTextField()) {
+            {
+                getComponent().setInputVerifier(iv);
+            }
+
+            @Override
+            public boolean stopCellEditing() {
+                if (!iv.shouldYieldFocus(getComponent())) return false;
+                return super.stopCellEditing();
+            }
+
+            @Override
+            public JTextField getComponent() {
+                return (JTextField) super.getComponent();
+            }
+
+        };
+
+
+//        DefaultCellEditor editor = new MyEditor();
+
+//        activitiesTable.getColumn(PMTable.PREDECESSORS).setCellEditor(editor);
+
+//        activitiesTable.setDefaultEditor(Object.class, editor);
     }
 
-    private void initGraph() {
-        mxGraph graph = new mxGraph();
-        Object parent = graph.getDefaultParent();
+    public mxGraph createGraph(ActivityList activityList) {
+        graph.removeCells(graph.getChildCells(parent, true, true));
+        graph.removeCells();
 
-        graph.getModel().beginUpdate();
-        try {
-            Object v1 = graph.insertVertex(parent, null, "Hello", 20, 20, 80,
-                    30);
-            Object v2 = graph.insertVertex(parent, null, "World!", 240, 150,
-                    80, 30);
-            graph.insertEdge(parent, null, "Edge", v1, v2);
-        } finally {
-            graph.getModel().endUpdate();
+        linkNodes(activityList);
+
+        graph.setMaximumGraphBounds(new mxRectangle(0, 0, 800, 800));
+        autoLayout(graph);
+
+        return graph;
+    }
+
+    private void linkNodes(ActivityList activityList) {
+        ArrayList<Activity> activities = activityList.getActivities();
+
+        HashMap<Integer, Object> map = new HashMap<Integer, Object>();
+        for (int i = 0; i < activities.size(); i++) {
+            Object v = graph.insertVertex(parent, null, activities.get(i).getActivity_name() + ": " + activities.get(i).getDuration(), i * 40 + 20, i * 40 + 20, 80, 30);
+            map.put(activities.get(i).getActivity_id(), v);
         }
 
-        autoLayout(graph);
+        for (int i = 0; i < activities.size(); i++) {
+
+            Activity parentActivity = activities.get(i);
+            for (int j = 0; j < activities.size(); j++) {
+                Activity childActivity = activities.get(j);
+
+                if (/*(i != j) &&*/ childActivity.getPredecessors().contains(parentActivity.getActivity_id())) {
+                    Object v2 = map.get(childActivity.getActivity_id());
+
+                    if ( !hasCycles ) {
+                        hasCycles = parentActivity.getActivity_id() == childActivity.getActivity_id();
+                    }
+                    graph.insertEdge(parent, null, "", map.get(parentActivity.getActivity_id()), v2);
+                }
+            }
+        }
+    }
+
+    public boolean hasCycles() {
+        hasCycles = false;
+        return hasCycles(createGraph(getActivities())) || hasCycles;
+    }
+
+    private boolean hasCycles(mxGraph graph) {
+        mxAnalysisGraph graphAnalysis = new mxAnalysisGraph();
+        graphAnalysis.setGraph(graph);
+
+        return mxGraphStructure.isCyclicDirected(graphAnalysis);
     }
 
     public void drawGraph(ActivityList activityList) {
-        mxGraph graph = new mxGraph();
-        Object parent = graph.getDefaultParent();
 
         graph.getModel().beginUpdate();
         try {
-            ArrayList<Activity> activities = activityList.getActivities();
-
-            HashMap<Integer, Object> map = new HashMap<Integer, Object>();
-            for (int i = 0; i < activities.size(); i++) {
-                Object v1 = graph.insertVertex(parent, null, activities.get(i).getActivity_name() + ": " + activities.get(i).getDuration(), i * 40 + 20, i * 40 + 20, 80, 30);
-                map.put(activities.get(i).getActivity_id(), v1);
-            }
-
-            for (int i = 0; i < activities.size(); i++) {
-
-                Activity parentActivity = activities.get(i);
-                for (int j = 0; j < activities.size(); j++) {
-                    Activity childActivity = activities.get(j);
-
-                    if ((i != j) && childActivity.getPredecessors().contains(parentActivity.getActivity_id())) {
-                        Object v2 = map.get(childActivity.getActivity_id());
-                        graph.insertEdge(parent, null, "", map.get(parentActivity.getActivity_id()), v2);
-                    }
-                }
-            }
+            linkNodes(activityList);
         } finally {
             graph.getModel().endUpdate();
         }
+
+
         graph.setMaximumGraphBounds(new mxRectangle(0, 0, 800, 800));
         autoLayout(graph);
     }
 
     private void autoLayout(mxGraph graph) {
-        mxGraphComponent graphComponent = new mxGraphComponent(graph);
+        charts.remove(graphComponent);
+
+        graphComponent = new mxGraphComponent(graph);
 
         charts.add(graphComponent, BorderLayout.CENTER);
+        charts.repaint();
+        charts.revalidate();
+
         new mxHierarchicalLayout(graph, SwingConstants.WEST).execute(graph.getDefaultParent());
         new mxParallelEdgeLayout(graph, SwingConstants.WEST).execute(graph.getDefaultParent());
-
-//        charts.add(graphComponent);
     }
 
     private void clear() {
         tableRows[0] = new String[]{"1"};
-        for (int i = 1; i < 1024; i++) {
+        for (int i = 1; i < MAX_TABLE_SIZE; i++) {
             tableRows[i] = new String[]{""};
         }
 
@@ -288,5 +405,26 @@ public class ActivityEntry extends JFrame implements ActionListener {
             return chooser.getSelectedFile();
         }
         return null;
+    }
+}
+
+class MyEditor extends DefaultCellEditor {
+    public MyEditor(JTextField textField) {
+        super(textField);
+    }
+
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected,
+                                                 int row, int column) {
+        JTextField editor = (JTextField) super.getTableCellEditorComponent(table, value, isSelected,
+                row, column);
+
+        if (value != null) {
+            editor.setText(value.toString());
+        }
+        if (column == 2) {
+            editor.setHorizontalAlignment(SwingConstants.LEFT);
+            editor.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        }
+        return editor;
     }
 }

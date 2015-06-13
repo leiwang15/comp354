@@ -13,6 +13,11 @@ import java.util.Vector;
  */
 public class PMTableModel extends DefaultTableModel {
 
+    protected static final int PRED_COL = 5;
+    protected static final int DURATION_COL = 2;
+    protected static final int ID_COL = 0;
+    protected static final int NAME_COL = 1;
+
     public PMTableModel(Object[][] data, Object[] columnNames) {
         super(data, columnNames);
     }
@@ -55,7 +60,7 @@ public class PMTableModel extends DefaultTableModel {
 
     public int getLastID(int currentRow) {
         for (int j = currentRow; j >= 0; j--) {
-            String s = (String) getValueAt(j, 0);
+            String s = (String) getValueAt(j, ID_COL);
             if (!s.equals("")) {
                 return Integer.parseInt(s);
             }
@@ -67,15 +72,15 @@ public class PMTableModel extends DefaultTableModel {
         ActivityList activityList = new ActivityList();
 
         for (int j = 0; j < getRowCount(); j++) {
-            if (StringUtils.isNotEmpty((String) getValueAt(j, 0))) {
+            if (StringUtils.isNotEmpty((String) getValueAt(j, ID_COL))) {
                 Activity activity = new Activity(1, "", "", 0, new ArrayList<Integer>());
-                activity.setActivity_id(Integer.parseInt((String) getValueAt(j, 0)));
-                activity.setActivity_name((String) getValueAt(j, 1));
-                activity.setDuration(Integer.parseInt(StringUtils.defaultString((String) getValueAt(j, 2), "0")));
+                activity.setActivity_id(Integer.parseInt((String) getValueAt(j, ID_COL)));
+                activity.setActivity_name((String) getValueAt(j, NAME_COL));
+                activity.setDuration(getValueAt(j, DURATION_COL) != null ? (Integer) getValueAt(j, DURATION_COL) :0);
 
                 ArrayList<Integer> predecessors = new ArrayList<Integer>();
 
-                String predStr = (String) getValueAt(j, 3);
+                String predStr = (String) getValueAt(j, PRED_COL);
                 if (StringUtils.isNotEmpty(predStr)) {
                     for (String p : predStr.split(",")) {
                         predecessors.add(Integer.parseInt(StringUtils.defaultString(p.trim(), "0")));

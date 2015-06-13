@@ -4,11 +4,20 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableColumnModel;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by joao on 15.06.06.
  */
 public class PMTable extends JTable {
+
+    public static final String START = "Start";
+    public static final String FINISH = "Finish";
+    protected static final String PREDECESSORS = "Predecessors";
+    protected static final String DURATION = "Duration";
+    protected static final String NAME = "Name";
+    protected static final String ID = "ID";
+    private int maxPredID;
 
     public PMTable() {
         super();
@@ -35,7 +44,12 @@ public class PMTable extends JTable {
             requestFocus();
         } else if (row != -1 && getValueAt(row, 0).equals("") &&
                 StringUtils.isNotEmpty((CharSequence) getValueAt(row, col))) {
-            dataModel.setValueAt(Integer.toString(((PMTableModel) dataModel).getLastID(row) + 1), row, 0);
+            maxPredID = ((PMTableModel) dataModel).getLastID(row) + 1;
+            dataModel.setValueAt(Integer.toString(maxPredID), row, 0);
         }
+    }
+
+    public int getMaxPredID() {
+        return maxPredID;
     }
 }
