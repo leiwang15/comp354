@@ -116,4 +116,8 @@ public class ProjectController extends DB_Controller {
 		return lp;
 
 	}
+	
+	public void deleteProject(Project p){
+		
+	}
 }

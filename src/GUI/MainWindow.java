@@ -11,6 +11,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 import java.awt.EventQueue;
 
@@ -39,7 +40,7 @@ public class MainWindow {
 	protected static Project currentProject;
 	
 	protected JMenuItem mntmNewProject;
-	protected JMenuItem mntmLoad;
+	protected JMenuItem mntmDelete;
 	protected JMenuItem mntmSave;
 	protected JMenuItem mntmLogOut;
 	protected JMenuItem mntmExit;
@@ -57,13 +58,14 @@ public class MainWindow {
 	
 	public MainWindow() {
 		initialize();
-		updateList();
+		updateProjectList();
 	}
 
-	protected static void updateList() {		
+	protected static void updateProjectList() {		
 		ProjectController pc = new ProjectController();
 		pjList = pc.getProjectsByUser(MainWindow.currentUser);
 		
+		lm.removeAllElements();
 		for(Project p : pjList){
 			lm.addElement(p.getProject_name());
 		}
@@ -75,18 +77,6 @@ public class MainWindow {
 		frmProjectManagementSystem.setBounds(100, 100, 800, 600);
 		frmProjectManagementSystem.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-//		frmProjectManagementSystem.addFocusListener(new FocusAdapter() {
-//
-//	        @Override
-//	        public void focusGained(FocusEvent aE) {
-//	        	ProjectController pc = new ProjectController();
-//	    		pjList = pc.getProjectsByUser(MainWindow.currentUser);
-//	    		
-//	    		for(Project p : pjList){
-//	    			lm.addElement(p.getProject_name());
-//	    		}
-//	        }
-//	    });
 		
 		JMenuBar menuBar = new JMenuBar();
 		frmProjectManagementSystem.setJMenuBar(menuBar);
@@ -114,31 +104,36 @@ public class MainWindow {
 		});
 		
 		
-		//Load		
-//		mntmLoad = new JMenuItem("Load");
-//		mnFile.add(mntmLoad);
-//		
-//		mntmLoad.addActionListener(new ActionListener(){
-//			public void actionPerformed(ActionEvent e){
-//				JFileChooser fc = new JFileChooser("D:\\my projects\\COMP354-Yixuan\\");
-//				fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-//				
-//				int returnVal = fc.showOpenDialog(frmProjectManagementSystem);
-//
-//	            if (returnVal == JFileChooser.APPROVE_OPTION) {
-//	                File file = fc.getSelectedFile();
-//	                String path = file.getPath();
-//	                ProjectController pc = new ProjectController(path);
-//	                Project p = pc.getProjectFromFile(file);
-//	                
-//	                currentProject = p;
-//	                lblPJName.setText(p.getProject_name());
-//	                lblPJOwner.setText(p.getOwner());
-//	                lblStartDate.setText(p.getStart_date());
-//	                lblDescription.setText(p.getProject_desc());
-//	            }
-//			}
-//		});
+		//Delete		
+		mntmDelete = new JMenuItem("Delete");
+		mnFile.add(mntmDelete);
+		
+		mntmDelete.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				
+				if(list.getSelectedValue() != null){
+            		String s = list.getSelectedValue().toString();
+                	
+                	for(Project p : pjList){
+            			if (p.getProject_name().equals(s)){
+            				
+            				int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure to delete the project " + p.getProject_name()
+            																	+ "?","Warning",JOptionPane.YES_NO_OPTION);
+            				if(dialogResult == JOptionPane.YES_OPTION){
+            				
+	            				ProjectController pc = new ProjectController();
+	            				pc.deleteProject(p);
+	            				JOptionPane.showMessageDialog(null, "Delete successfully!");
+	            				updateProjectList();
+            				}
+            			}
+            		}
+            	}
+				else{
+					JOptionPane.showMessageDialog(null, "Please select a project to delete!");
+				}
+			}
+		});
 		
 		
 		
@@ -242,19 +237,21 @@ public class MainWindow {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                	String s = list.getSelectedValue().toString();
-
-                	for(Project p : pjList){
-            			if (p.getProject_name().equals(s)){
-            				currentProject = p;
-            				DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-            				
-        	                lblPJName.setText("Project Name: " + p.getProject_name());
-        	                lblStartDate.setText("Start Date  : " + df.format(p.getStart_date()));
-        	                lblEndDate.setText("End Date    : " + df.format(p.getEnd_date()));
-        	                lblDescription.setText("Description : " + p.getProject_desc());
-            			}
-            		}
+                	if(list.getSelectedValue() != null){
+                		String s = list.getSelectedValue().toString();
+                    	
+                    	for(Project p : pjList){
+                			if (p.getProject_name().equals(s)){
+                				currentProject = p;
+                				DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                				
+            	                lblPJName.setText("Project Name: " + p.getProject_name());
+            	                lblStartDate.setText("Start Date  : " + df.format(p.getStart_date()));
+            	                lblEndDate.setText("End Date    : " + df.format(p.getEnd_date()));
+            	                lblDescription.setText("Description : " + p.getProject_desc());
+                			}
+                		}
+                	}   	
                 }
             }
         });
