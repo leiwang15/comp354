@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import comp354.Model.Activity;
+import comp354.Model.ActivityList;
 import comp354.Model.Project;
 import comp354.Model.User;
 
@@ -102,7 +103,7 @@ public class ProjectController extends DB_Controller {
 				finished = res.getInt("Finished");
 				// get activities for this project
 				ActivityController ac = new ActivityController();
-				List<Activity> la = ac.getActByProjectId(id);
+				ActivityList la = ac.getActByProjectId(id);
 				// save project to arraylist
 				temp = new Project(id, name, desc, startDate, endDate, finished, la);
 				lp.add(temp);
