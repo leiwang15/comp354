@@ -58,6 +58,7 @@ public class ActivityEntry extends JFrame implements ActionListener {
     public ActivityEntry(String name) {
         super(name);
 
+        createUIComponents();
         menuBar = new JMenuBar();
         JMenu menu = new JMenu("File");
         JMenuItem item = new JMenuItem("New");
@@ -111,7 +112,7 @@ public class ActivityEntry extends JFrame implements ActionListener {
             ArrayList<Activity> activities = activityList.getActivities();
             for (int i = 0; i < activityList.getActivities().size(); i++) {
                 Activity activity = activities.get(i);
-                tableRows[i] = new String[]{Integer.toString(activity.getActivity_id()), activity.getActivity_name(), Integer.toString(activity.getDuration()), activity.getPredecessors().toString().replaceAll("\\[|\\]", "")};
+                tableRows[i] = new String[]{Integer.toString(activity.getActivity_id()), activity.getActivity_name(), Integer.toString(activity.getDuration()),"","", activity.getPredecessors().toString().replaceAll("\\[|\\]", "")};
             }
             dtm.setDataVector(tableRows, columnNames);
         }
@@ -122,6 +123,7 @@ public class ActivityEntry extends JFrame implements ActionListener {
     }
 
     private void createUIComponents() {
+
         tableRows = new String[MAX_TABLE_SIZE][];
         columnNames = new String[]{PMTable.ID, PMTable.NAME, PMTable.DURATION, PMTable.START, PMTable.FINISH, PMTable.PREDECESSORS};
         dtm = new PMTableModel(tableRows, columnNames);
@@ -158,10 +160,43 @@ public class ActivityEntry extends JFrame implements ActionListener {
         activitiesTable.getColumn(PMTable.START).setCellRenderer(tableCellRenderer);
         activitiesTable.getColumn(PMTable.FINISH).setCellRenderer(tableCellRenderer);
 
-        tablePane = new JScrollPane(activitiesTable);
-        getContentPane().add(tablePane, BorderLayout.CENTER);
+        activitiesTable.setGridColor(new Color(211, 211, 211));
+        activitiesTable.setPreferredScrollableViewportSize(new Dimension(450, 400));
+        activitiesTable.setEnabled(true);
+        activitiesTable.setDropMode(DropMode.USE_SELECTION);
+        activitiesTable.setForeground(new Color(0, 0, 0));
+        activitiesTable.setBackground(new Color(255, 255, 255));
+        activitiesTable.setIntercellSpacing(new Dimension(1, 1));
+        activitiesTable.setSelectionBackground(new Color(202, 202, 202));
+        activitiesTable.setSelectionForeground(new Color(0, 0, 0));
+        activitiesTable.setShowHorizontalLines(true);
+        activitiesTable.setShowVerticalLines(true);
+        activitiesTable.setUpdateSelectionOnSort(true);
 
-        charts = new JPanel();
+        tablePane = new JScrollPane(activitiesTable);
+
+        charts = new JPanel(new BorderLayout());
+
+        charts.setForeground(new Color(0, 0, 0));
+        charts.setBackground(new Color(238, 238, 238));
+        charts.setEnabled(true);
+
+        chartPane = new JScrollPane(charts);
+        chartPane.setEnabled(true);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePane, chartPane);
+        splitPane.setOneTouchExpandable(true);
+        splitPane.setDividerLocation(350);
+
+//Provide minimum sizes for the two components in the split pane
+        Dimension minimumSize = new Dimension(100, 50);
+        splitPane.setMinimumSize(minimumSize);
+        splitPane.setMaximumSize(new Dimension(-1, -1));
+
+        panel1 = new JPanel(new BorderLayout(), false);
+        panel1.setSize(new Dimension(640, 480));
+        add(panel1, BorderLayout.CENTER);
+
+        panel1.add(splitPane);
 
 
         final InputVerifier iv = new InputVerifier() {
@@ -250,7 +285,7 @@ public class ActivityEntry extends JFrame implements ActionListener {
                 if (/*(i != j) &&*/ childActivity.getPredecessors().contains(parentActivity.getActivity_id())) {
                     Object v2 = map.get(childActivity.getActivity_id());
 
-                    if ( !hasCycles ) {
+                    if (!hasCycles) {
                         hasCycles = parentActivity.getActivity_id() == childActivity.getActivity_id();
                     }
                     graph.insertEdge(parent, null, "", map.get(parentActivity.getActivity_id()), v2);
