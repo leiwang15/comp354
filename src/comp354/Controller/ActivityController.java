@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import comp354.Model.Activity;
+import comp354.Model.ActivityList;
 import comp354.Model.User;
 
 
@@ -85,13 +86,13 @@ public class ActivityController extends DB_Controller {
 	}
 
 
-	public List<Activity> getActByProjectId (int pID){
+	public ActivityList getActByProjectId(int pID){
 
 		String sql = "SELECT * FROM Activity "
 				+ "WHERE Project_ID = "	+ pID + ";";
 
 		ResultSet res;
-		List<Activity> la = new ArrayList<Activity>();
+		ActivityList la = new ActivityList();
 		Activity a;
 		int id =0;
 		String name = "";
@@ -111,7 +112,7 @@ public class ActivityController extends DB_Controller {
 				duration = res.getInt("Duration");
 				finished = res.getInt("Finished");
 				a = new Activity(id, pID, name, desc, duration, progress, finished,null);
-				la.add(a);
+				la.getActivities().add(a);
 			}
 			c.close();
 		} catch (SQLException e) {

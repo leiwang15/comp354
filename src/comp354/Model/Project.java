@@ -13,7 +13,7 @@ public class Project {
     private Date start_date;
     private Date end_date;
     private int finished;
-    private List<Activity> activities;
+    private ActivityList activities;
 
     //initialization with writing to DB
     public Project(User u, String name, String desc, Date start, Date end){
@@ -27,7 +27,7 @@ public class Project {
     }
 
     //local initialization (usually read from DB)
-    public Project(int projectID, String name, String desc, Date start, Date end, int finished, List<Activity> activities){
+    public Project(int projectID, String name, String desc, Date start, Date end, int finished, ActivityList activities){
     	this.project_id = projectID;
     	this.project_name = name;
     	this.project_desc = desc;
@@ -110,14 +110,14 @@ public class Project {
     /**
      * @return the activities
      */
-    public List<Activity> getActivities() {
+    public ActivityList getActivities() {
         return activities;
     }
 
     /**
      * @param activities the activities to set
      */
-    public void setActivities(List<Activity> activities) {
+    public void setActivities(ActivityList activities) {
         this.activities = activities;
     }
 
@@ -154,7 +154,7 @@ public class Project {
 		+ "\n";
 
 		if ( activities != null ) {
-            for (Activity activity : activities) {
+            for (Activity activity : activities.getActivities()) {
                 s += activity.toString();
             }
         }
