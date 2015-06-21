@@ -35,9 +35,9 @@ import java.util.HashMap;
 /**
  * Created by joao on 15.06.05.
  */
-public class ActivityEntry extends JFrame implements ActionListener {
+public class ActivityEntry extends JPanel implements ActionListener {
     protected static final int MAX_TABLE_SIZE = 1024;
-    private JPanel panel1;
+    protected JPanel panel1;
     private JTable activitiesTable;
     private JPanel charts;
     private JScrollPane tablePane;
@@ -46,7 +46,6 @@ public class ActivityEntry extends JFrame implements ActionListener {
     private ActivityList activityList;
     String[] columnNames;
 
-    private static JMenuBar menuBar;
     String[][] tableRows;
     private DB_Controller project;
     mxGraph graph;
@@ -55,36 +54,9 @@ public class ActivityEntry extends JFrame implements ActionListener {
     private boolean hasCycles;
 
 
-    public ActivityEntry(String name) {
-        super(name);
+    public ActivityEntry(JFrame frame) {
 
         createUIComponents();
-        menuBar = new JMenuBar();
-        JMenu menu = new JMenu("File");
-        JMenuItem item = new JMenuItem("New");
-        item.addActionListener(this);
-        menu.add(item);
-        item = new JMenuItem("Open...");
-        item.addActionListener(this);
-        menu.add(item);
-        item = new JMenuItem("Save");
-        item.addActionListener(this);
-        menu.add(item);
-        item = new JMenuItem("Save As...");
-        item.addActionListener(this);
-        menu.add(item);
-        item = new JMenuItem("Close");
-        item.addActionListener(this);
-        menu.add(item);
-
-        menuBar.add(menu);
-
-        setJMenuBar(menuBar);
-
-        setContentPane(panel1);
-
-        setSize(640, 480);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         activityList = new ActivityList();
         graph = new mxGraph();
@@ -184,6 +156,7 @@ public class ActivityEntry extends JFrame implements ActionListener {
         chartPane = new JScrollPane(charts);
         chartPane.setEnabled(true);
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePane, chartPane);
+        splitPane.setResizeWeight(0.5);
         splitPane.setOneTouchExpandable(true);
         splitPane.setDividerLocation(350);
 
@@ -194,7 +167,6 @@ public class ActivityEntry extends JFrame implements ActionListener {
 
         panel1 = new JPanel(new BorderLayout(), false);
         panel1.setSize(new Dimension(640, 480));
-        add(panel1, BorderLayout.CENTER);
 
         panel1.add(splitPane);
 
@@ -246,13 +218,6 @@ public class ActivityEntry extends JFrame implements ActionListener {
             }
 
         };
-
-
-//        DefaultCellEditor editor = new MyEditor();
-
-//        activitiesTable.getColumn(PMTable.PREDECESSORS).setCellEditor(editor);
-
-//        activitiesTable.setDefaultEditor(Object.class, editor);
     }
 
     public mxGraph createGraph(ActivityList activityList) {
@@ -279,10 +244,8 @@ public class ActivityEntry extends JFrame implements ActionListener {
         for (int i = 0; i < activities.size(); i++) {
 
             Activity parentActivity = activities.get(i);
-            for (int j = 0; j < activities.size(); j++) {
-                Activity childActivity = activities.get(j);
-
-                if (/*(i != j) &&*/ childActivity.getPredecessors().contains(parentActivity.getActivity_id())) {
+            for (Activity childActivity : activities) {
+                if (childActivity.getPredecessors().contains(parentActivity.getActivity_id())) {
                     Object v2 = map.get(childActivity.getActivity_id());
 
                     if (!hasCycles) {
@@ -440,26 +403,5 @@ public class ActivityEntry extends JFrame implements ActionListener {
             return chooser.getSelectedFile();
         }
         return null;
-    }
-}
-
-class MyEditor extends DefaultCellEditor {
-    public MyEditor(JTextField textField) {
-        super(textField);
-    }
-
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected,
-                                                 int row, int column) {
-        JTextField editor = (JTextField) super.getTableCellEditorComponent(table, value, isSelected,
-                row, column);
-
-        if (value != null) {
-            editor.setText(value.toString());
-        }
-        if (column == 2) {
-            editor.setHorizontalAlignment(SwingConstants.LEFT);
-            editor.setFont(new Font("SansSerif", Font.PLAIN, 12));
-        }
-        return editor;
     }
 }

@@ -12,7 +12,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JLabel;
 
-import java.awt.EventQueue;
+import java.awt.*;
 
 import javax.swing.SwingConstants;
 
@@ -26,7 +26,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import java.awt.Color;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -54,6 +53,7 @@ public class MainWindow {
 	protected static DefaultListModel lm;
 	protected static List<Project> pjList;
 	private JLabel lblProjectList;
+	private ActivityEntry activityEntry;
 
 	public MainWindow() {
 		initialize();
@@ -72,7 +72,7 @@ public class MainWindow {
 	private void initialize() {
 		frmProjectManagementSystem = new JFrame();
 		frmProjectManagementSystem.setTitle("Project Management System");
-		frmProjectManagementSystem.setBounds(100, 100, 800, 600);
+		frmProjectManagementSystem.setBounds(0, 0, 1024, 800);
 		frmProjectManagementSystem.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 //		frmProjectManagementSystem.addFocusListener(new FocusAdapter() {
@@ -189,19 +189,17 @@ public class MainWindow {
 
 
 
-		frmProjectManagementSystem.getContentPane().setLayout(null);
+		JPanel panel = new JPanel();
+		panel.setLayout(null);
 
 		JLabel lblWelcomeBack = new JLabel("Welcome back " + currentUser.getUserName() + "    User type: " + currentUser.getRole());
 		lblWelcomeBack.setBounds(0, 0, 784, 541);
 		lblWelcomeBack.setVerticalAlignment(SwingConstants.BOTTOM);
-		frmProjectManagementSystem.getContentPane().add(lblWelcomeBack);
+		panel.add(lblWelcomeBack);
 
-		JPanel panel = new JPanel();
 		panel.setBackground(Color.WHITE);
 		panel.setBorder(new LineBorder(Color.LIGHT_GRAY));
 		panel.setBounds(0, 0, 200, 525);
-		frmProjectManagementSystem.getContentPane().add(panel);
-		panel.setLayout(null);
 
 		JLabel lblPJInfo = new JLabel("Project Info");
 		lblPJInfo.setBounds(59, 0, 78, 23);
@@ -259,5 +257,24 @@ public class MainWindow {
             }
         });
 
+
+
+		frmProjectManagementSystem.setLayout(new GridBagLayout());
+
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.weightx = 0.3;
+		gbc.weighty = 1.0;
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+
+		frmProjectManagementSystem.getContentPane().add(panel, gbc);
+		gbc.weightx = 0.7;
+		gbc.gridx = 1;
+
+		activityEntry = new ActivityEntry(frmProjectManagementSystem);
+
+		frmProjectManagementSystem.add(activityEntry.panel1, gbc);
 	}
 }
