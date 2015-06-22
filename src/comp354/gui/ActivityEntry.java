@@ -4,6 +4,8 @@ import com.mxgraph.analysis.mxAnalysisGraph;
 import com.mxgraph.analysis.mxGraphStructure;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.layout.mxParallelEdgeLayout;
+import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxGraph;
@@ -242,9 +244,11 @@ public class ActivityEntry extends JPanel implements ActionListener {
     private void linkNodes(ActivityList activityList) {
         ArrayList<Activity> activities = activityList.getActivities();
 
-        HashMap<Integer, Object> map = new HashMap<Integer, Object>();
+        HashMap<Integer, mxCell> map = new HashMap<Integer, mxCell>();
         for (int i = 0; i < activities.size(); i++) {
-            Object v = graph.insertVertex(parent, null, activities.get(i).getActivity_name() + ": " + activities.get(i).getDuration(), i * 40 + 20, i * 40 + 20, activities.get(i).getDuration() * 20, 30);
+            mxCell v = (mxCell)graph.insertVertex(parent, null, activities.get(i).getActivity_name() + ": " + activities.get(i).getDuration(), i * 40 + 20, i * 40 + 20, activities.get(i).getDuration() * 20, 30);
+
+//            v.setGeometry(new mxGeometry(0,0,10,10));
             map.put(activities.get(i).getActivity_id(), v);
         }
 
@@ -253,7 +257,7 @@ public class ActivityEntry extends JPanel implements ActionListener {
             Activity parentActivity = activities.get(i);
             for (Activity childActivity : activities) {
                 if (childActivity.getPredecessors().contains(parentActivity.getActivity_id())) {
-                    Object v2 = map.get(childActivity.getActivity_id());
+                    mxCell v2 = map.get(childActivity.getActivity_id());
 
                     if (!hasCycles) {
                         hasCycles = parentActivity.getActivity_id() == childActivity.getActivity_id();
@@ -296,11 +300,10 @@ public class ActivityEntry extends JPanel implements ActionListener {
         graphComponent = new mxGraphComponent(graph);
 
         charts.add(graphComponent, BorderLayout.CENTER);
-        charts.repaint();
-        charts.revalidate();
 
         new mxHierarchicalLayout(graph, SwingConstants.WEST).execute(graph.getDefaultParent());
         new mxParallelEdgeLayout(graph, SwingConstants.WEST).execute(graph.getDefaultParent());
+        charts.revalidate();
     }
 
     private void clear() {
