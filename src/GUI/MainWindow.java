@@ -2,7 +2,9 @@ package gui;
 
 import javax.swing.JFrame;
 
+import Controller.ActivityController;
 import Controller.ProjectController;
+import Model.Activity;
 import Model.Project;
 import Model.User;
 
@@ -12,6 +14,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 
 import java.awt.EventQueue;
 
@@ -19,13 +22,12 @@ import javax.swing.SwingConstants;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 
 import java.awt.Color;
 import java.text.DateFormat;
@@ -33,6 +35,9 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.swing.JList;
+import javax.swing.JTable;
+
+import java.awt.Font;
 
 public class MainWindow {
 	
@@ -44,6 +49,7 @@ public class MainWindow {
 	protected JMenuItem mntmSave;
 	protected JMenuItem mntmLogOut;
 	protected JMenuItem mntmExit;
+	protected JMenuItem mntmNewAct;
 	
 	protected JLabel lblPJName;
 	protected JLabel lblStartDate;
@@ -55,6 +61,13 @@ public class MainWindow {
 	protected static DefaultListModel lm;
 	protected static List<Project> pjList;
 	private JLabel lblProjectList;
+	private static JTable activityTable;
+	private JLabel lblActivitieList;
+	private static String[] columnNames = {"Activity Name",
+            "Duration",
+            "Predecessors",
+            "Progress",
+            "Description"};
 	
 	public MainWindow() {
 		initialize();
@@ -69,6 +82,46 @@ public class MainWindow {
 		for(Project p : pjList){
 			lm.addElement(p.getProject_name());
 		}
+	}
+	
+	protected static void updateActivityList(){
+		DefaultTableModel tableModel = (DefaultTableModel) activityTable.getModel();
+		tableModel.setRowCount(0);
+				
+		activityTable.repaint();
+		ActivityController ac = new ActivityController();
+		List<Activity> actList = ac.getActByProjectId(currentProject.getProject_id());
+		
+		for(Activity a : actList){
+			String[] s = new String[5];
+			s[0] = a.getActivity_name();
+			s[1] = a.getDuration() + "";
+			
+			//getPredecessors
+			ActivityController ac1 = new ActivityController();
+			List<Integer> list = ac1.getActPrecedence(a.getActivity_id());
+			String pre = "";
+			if(!list.isEmpty()){
+				for(Integer i : list){
+					ActivityController ac2 = new ActivityController();
+					List<Activity> l = ac2.getActByActId(i);
+					for(Activity act : l){
+						if(pre == ""){
+							pre = pre + act.getActivity_name();
+						}
+						else{
+							pre = pre + ", " + act.getActivity_name();
+						}
+					}
+				}
+			}
+			s[2] = pre;
+			s[3] = a.getProgress() + "";
+			s[4] = a.getActivity_desc();
+			tableModel.addRow(s);
+		}
+		activityTable.setModel(tableModel);
+		tableModel.fireTableDataChanged();
 	}
 
 	private void initialize() {
@@ -182,6 +235,36 @@ public class MainWindow {
 			}
 		});
 
+		JMenu mnEdit = new JMenu("Edit");
+		menuBar.add(mnEdit);
+		
+		//New Activity
+		mntmNewAct = new JMenuItem("New Activity");
+		mnEdit.add(mntmNewAct);
+		
+		mntmNewAct.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				
+				if(currentProject != null){
+					EventQueue.invokeLater(new Runnable() {
+						public void run() {
+							try {
+								CreateAct window = new CreateAct();
+								window.frmNewActivity.setVisible(true);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					});
+				}
+				else{
+					JOptionPane.showMessageDialog(null, "Please select a project before add an activity!");
+				}
+			}
+		});
+		
+		
+		
 		
 		
 		frmProjectManagementSystem.getContentPane().setLayout(null);
@@ -194,7 +277,7 @@ public class MainWindow {
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.WHITE);
 		panel.setBorder(new LineBorder(Color.LIGHT_GRAY));
-		panel.setBounds(0, 0, 200, 525);
+		panel.setBounds(0, 0, 784, 525);
 		frmProjectManagementSystem.getContentPane().add(panel);
 		panel.setLayout(null);
 		
@@ -251,10 +334,28 @@ public class MainWindow {
             	                lblDescription.setText("Description : " + p.getProject_desc());
                 			}
                 		}
+                    	
+                    	updateActivityList();
                 	}   	
                 }
             }
         });
 		
+		lblActivitieList = new JLabel("Activity List");
+		lblActivitieList.setHorizontalAlignment(SwingConstants.CENTER);
+		lblActivitieList.setFont(new Font("Arial", Font.PLAIN, 15));
+		lblActivitieList.setBounds(307, 0, 350, 32);
+		panel.add(lblActivitieList);
+		
+		String[][] data = null;
+		DefaultTableModel model = new DefaultTableModel(data, columnNames);
+		
+		activityTable = new JTable(model);
+		activityTable.setBackground(Color.LIGHT_GRAY);
+		activityTable.setBounds(196, 35, 409, 480);
+		JScrollPane scrollPane = new JScrollPane(activityTable);
+		scrollPane.setBounds(196, 35, 578, 480);
+		panel.add(scrollPane);
+
 	}
 }

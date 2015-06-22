@@ -68,10 +68,10 @@ public class ActivityController extends DB_Controller {
 	 * @param a, Activity pre
 	 * @return status 1 for successful
 	 */
-	public int setActPrecedence(Activity a, Activity pre){
+	public int setActPrecedence(int aID, int preID){
 		int status = 0;
 		String sql = "INSERT INTO Activity_Pre (Activity_ID1, Activity_ID2)"
-				+ "VALUES(" + a.getActivity_id() + ", " + pre.getActivity_id() + ")";
+				+ "VALUES(" + aID + ", " + preID + ")";
 		try {
 			st = c.createStatement();
 			status = st.executeUpdate(sql);
@@ -83,7 +83,26 @@ public class ActivityController extends DB_Controller {
 
 
 	}
-
+	
+	public List<Integer> getActPrecedence(int id){
+		String sql = "SELECT * FROM Activity_Pre " + "WHERE Activity_ID1 = " + id + ";";
+		ResultSet res;
+		List<Integer> list = new ArrayList<Integer>();
+		
+		try {
+			st = c.createStatement();
+			res = st.executeQuery(sql);
+			if(res != null){
+				while (res.next()) {
+					list.add(res.getInt("Activity_ID2"));
+				}
+			}
+			c.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 
 	public List<Activity> getActByProjectId (int pID){
 
@@ -117,11 +136,78 @@ public class ActivityController extends DB_Controller {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
-
 		return la;
-
-
 	}
+	
+	public List<Activity> getActByActId (int aID){
 
+		String sql = "SELECT * FROM Activity "
+				+ "WHERE ActivityID = "	+ aID + ";";
+
+		ResultSet res;
+		List<Activity> la = new ArrayList<Activity>();
+		Activity a;
+		int id =0;
+		String name = "";
+		String desc = "";
+		int duration = 0;
+		int progress =0;
+		int finished =0;
+
+		try {
+			st = c.createStatement();
+			res = st.executeQuery(sql);
+
+			while (res.next()) {
+				id = res.getInt("Project_ID");
+				name = res.getString("Name");
+				desc = res.getString("Desc");
+				duration = res.getInt("Duration");
+				finished = res.getInt("Finished");
+				a = new Activity(aID, id, name, desc, duration, progress, finished,null);
+				la.add(a);
+			}
+			c.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return la;
+	}
+	
+	public Activity getActByActName (String name){
+
+		String sql = "SELECT * FROM Activity "
+				+ "WHERE Name = "	+ name + ";";
+
+		ResultSet res;
+		List<Activity> la = new ArrayList<Activity>();
+		
+		int id =0;
+		int aID = 0;
+		String desc = "";
+		int duration = 0;
+		int progress =0;
+		int finished =0;
+
+		try {
+			st = c.createStatement();
+			res = st.executeQuery(sql);
+
+			while (res.next()) {
+				id = res.getInt("Project_ID");
+				aID = res.getInt("ActivityID");
+				desc = res.getString("Desc");
+				duration = res.getInt("Duration");
+				finished = res.getInt("Finished");
+				Activity a = new Activity(aID, id, name, desc, duration, progress, finished,null);
+				c.close();
+				return a;
+			}
+			c.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
 }

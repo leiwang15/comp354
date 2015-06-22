@@ -70,13 +70,13 @@ public class test {
 		ac.assignUserToActivity(u1, a1);
 
 		ActivityController ac2 = new ActivityController();
-		ac2.setActPrecedence(a2, a1);
+		//ac2.setActPrecedence(a2, a1);
 
 		ActivityController ac3 = new ActivityController();
-		ac3.setActPrecedence(a3, a1);
+		//ac3.setActPrecedence(a3, a1);
 
 		ActivityController ac4 = new ActivityController();
-		ac4.setActPrecedence(a4, a2);
+		//ac4.setActPrecedence(a4, a2);
 
 		ProjectController pc = new ProjectController();
 		UserController uc = new UserController();

@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import Controller.ActivityController;
 import Controller.ProjectController;
 public class Project {
     private int project_id;
@@ -157,5 +158,24 @@ public class Project {
 			s += activity.toString();
 		}
 		return s;
+	}
+
+	public Object[][] getActivitityList() {
+		Object[][] data = null;
+		int i = 0;
+		
+		ActivityController ac = new ActivityController();
+		List<Activity> list = ac.getActByProjectId(this.getProject_id());
+		
+		for(Activity a : list){		
+			data[i][0] = a.getActivity_name();
+			data[i][1] = a.getDuration();
+			data[i][2] = a.getPredecessors();
+			data[i][3] = a.getProgress();
+			data[i][4] = a.getFinished();
+			i++;
+		}
+		
+		return null;
 	}
 }

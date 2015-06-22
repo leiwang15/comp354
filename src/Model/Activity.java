@@ -1,6 +1,7 @@
 package Model;
 
 import Controller.ActivityController;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -24,6 +25,11 @@ public class Activity {
 
     	ActivityController ac = new ActivityController();
     	this.setActivity_id(ac.addActivity(this));
+    	
+    	for(Integer i : predecessors){
+    		ActivityController ac1 = new ActivityController();
+    		ac1.setActPrecedence(this.getActivity_id(), i);
+    	}
     }
 
     //Local initialization without writing to DB
@@ -170,4 +176,5 @@ public class Activity {
 		+ "\n";
 		return s;
 	}
+
 }
