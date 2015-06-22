@@ -35,14 +35,16 @@ package comp354.gui.editors;
  * IntegerEditor is used by TableFTFEditDemo.java.
  */
 
+import comp354.gui.ActivityEntry;
+
 import javax.swing.*;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.NumberFormatter;
 
 /**
  * Implements a cell editor that uses a formatted text field
@@ -53,12 +55,14 @@ public class IntegerEditor extends DefaultCellEditor {
     NumberFormat integerFormat;
     private Integer minimum, maximum;
     private boolean DEBUG = false;
+    private final ActivityEntry activityEntry;
 
-    public IntegerEditor(int min, int max) {
+    public IntegerEditor(int min, int max, ActivityEntry activityEntry) {
         super(new JFormattedTextField());
-        ftf = (JFormattedTextField)getComponent();
+        ftf = (JFormattedTextField) getComponent();
         minimum = new Integer(min);
         maximum = new Integer(max);
+        this.activityEntry = activityEntry;
 
         //Set up the editor for the integer cells.
         integerFormat = NumberFormat.getIntegerInstance();
@@ -88,7 +92,8 @@ public class IntegerEditor extends DefaultCellEditor {
                 } else try {              //The text is valid,
                     ftf.commitEdit();     //so use it.
                     ftf.postActionEvent(); //stop editing
-                } catch (java.text.ParseException exc) { }
+                } catch (java.text.ParseException exc) {
+                }
             }
         });
     }
@@ -98,7 +103,7 @@ public class IntegerEditor extends DefaultCellEditor {
                                                  Object value, boolean isSelected,
                                                  int row, int column) {
         JFormattedTextField ftf =
-                (JFormattedTextField)super.getTableCellEditorComponent(
+                (JFormattedTextField) super.getTableCellEditorComponent(
                         table, value, isSelected, row, column);
         ftf.setValue(value);
         ftf.setHorizontalAlignment(SwingConstants.LEFT);
@@ -108,12 +113,12 @@ public class IntegerEditor extends DefaultCellEditor {
 
     //Override to ensure that the value remains an Integer.
     public Object getCellEditorValue() {
-        JFormattedTextField ftf = (JFormattedTextField)getComponent();
+        JFormattedTextField ftf = (JFormattedTextField) getComponent();
         Object o = ftf.getValue();
         if (o instanceof Integer) {
             return o;
         } else if (o instanceof Number) {
-            return new Integer(((Number)o).intValue());
+            return new Integer(((Number) o).intValue());
         } else {
             if (DEBUG) {
                 System.out.println("getCellEditorValue: o isn't a Number");
@@ -133,18 +138,21 @@ public class IntegerEditor extends DefaultCellEditor {
     //away, we need to invoke the superclass's version
     //of this method so that everything gets cleaned up.
     public boolean stopCellEditing() {
-        JFormattedTextField ftf = (JFormattedTextField)getComponent();
+        JFormattedTextField ftf = (JFormattedTextField) getComponent();
         if (ftf.isEditValid()) {
             try {
                 ftf.commitEdit();
-            } catch (java.text.ParseException exc) { }
+            } catch (java.text.ParseException exc) {
+            }
 
         } else { //text is invalid
             if (!userSaysRevert()) { //user wants to edit
                 return false; //don't let the editor go away
             }
         }
-        return super.stopCellEditing();
+        boolean value = super.stopCellEditing();
+        activityEntry.createGraph();
+        return value;
     }
 
     /**
