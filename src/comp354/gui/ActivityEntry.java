@@ -37,6 +37,7 @@ import java.util.HashMap;
  */
 public class ActivityEntry extends JPanel implements ActionListener {
     protected static final int MAX_TABLE_SIZE = 1024;
+    protected static final String DATE_FORMAT = "yyyy/MM/dd";
     protected JPanel panel1;
     private JTable activitiesTable;
     private JPanel charts;
@@ -84,7 +85,7 @@ public class ActivityEntry extends JPanel implements ActionListener {
             ArrayList<Activity> activities = activityList.getActivities();
             for (int i = 0; i < activityList.getActivities().size(); i++) {
                 Activity activity = activities.get(i);
-                tableRows[i] = new String[]{Integer.toString(activity.getActivity_id()), activity.getActivity_name(), Integer.toString(activity.getDuration()),"","", activity.getPredecessors().toString().replaceAll("\\[|\\]", "")};
+                tableRows[i] = new String[]{Integer.toString(activity.getActivity_id()), activity.getActivity_name(), Integer.toString(activity.getDuration()), "", "", activity.getPredecessors().toString().replaceAll("\\[|\\]", "")};
             }
             dtm.setDataVector(tableRows, columnNames);
         }
@@ -109,14 +110,14 @@ public class ActivityEntry extends JPanel implements ActionListener {
 
         activitiesTable.createDefaultColumnsFromModel();
 
-        activitiesTable.getColumn(PMTable.DURATION).setCellEditor(new IntegerEditor(1, MAX_TABLE_SIZE));
-        activitiesTable.getColumn(PMTable.START).setCellEditor(new DatePickerCellEditor(new SimpleDateFormat("yyyy.mm.dd")));
-        activitiesTable.getColumn(PMTable.FINISH).setCellEditor(new DatePickerCellEditor(new SimpleDateFormat("yyyy.mm.dd")));
+        activitiesTable.getColumn(PMTable.DURATION).setCellEditor(new IntegerEditor(1, MAX_TABLE_SIZE, this));
+        activitiesTable.getColumn(PMTable.START).setCellEditor(new DatePickerCellEditor(new SimpleDateFormat(DATE_FORMAT)));
+        activitiesTable.getColumn(PMTable.FINISH).setCellEditor(new DatePickerCellEditor(new SimpleDateFormat(DATE_FORMAT)));
         activitiesTable.getColumn(PMTable.PREDECESSORS).setCellEditor(new PredecessorEditor(this));
 
         TableCellRenderer tableCellRenderer = new DefaultTableCellRenderer() {
 
-            SimpleDateFormat f = new SimpleDateFormat("yyyy.mm.dd");
+            SimpleDateFormat f = new SimpleDateFormat(DATE_FORMAT);
 
             public Component getTableCellRendererComponent(JTable table,
                                                            Object value, boolean isSelected, boolean hasFocus,
@@ -220,9 +221,15 @@ public class ActivityEntry extends JPanel implements ActionListener {
         };
     }
 
+    public mxGraph createGraph() {
+        return createGraph(getActivities());
+    }
+
     public mxGraph createGraph(ActivityList activityList) {
+
         graph.removeCells(graph.getChildCells(parent, true, true));
         graph.removeCells();
+//        graph.setCellsMovable(false);
 
         linkNodes(activityList);
 
@@ -237,7 +244,7 @@ public class ActivityEntry extends JPanel implements ActionListener {
 
         HashMap<Integer, Object> map = new HashMap<Integer, Object>();
         for (int i = 0; i < activities.size(); i++) {
-            Object v = graph.insertVertex(parent, null, activities.get(i).getActivity_name() + ": " + activities.get(i).getDuration(), i * 40 + 20, i * 40 + 20, 80, 30);
+            Object v = graph.insertVertex(parent, null, activities.get(i).getActivity_name() + ": " + activities.get(i).getDuration(), i * 40 + 20, i * 40 + 20, activities.get(i).getDuration() * 20, 30);
             map.put(activities.get(i).getActivity_id(), v);
         }
 
