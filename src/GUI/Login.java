@@ -46,6 +46,7 @@ public class Login {
 		frmLogin.setTitle("Login");
 		frmLogin.setBounds(100, 100, 202, 212);
 		frmLogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmLogin.setResizable(false);
 		
 		JLabel lblProjectManagementSystem = new JLabel("Project Management System");
 		lblProjectManagementSystem.setBounds(10, 10, 155, 15);

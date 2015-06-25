@@ -43,7 +43,8 @@ public class CreateAct {
 		frmNewActivity = new JFrame();
 		frmNewActivity.setTitle("New Activity");
 		frmNewActivity.setBounds(200, 300, 505, 269);
-		frmNewActivity.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmNewActivity.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frmNewActivity.setResizable(false);
 		frmNewActivity.getContentPane().setLayout(null);
 		
 		JLabel lblProject = new JLabel("New activity for project ");
@@ -110,7 +111,7 @@ public class CreateAct {
 				Activity act = new Activity(projectID, newName, newDes, newDuration, newPredecessors);
 				
 				JOptionPane.showMessageDialog(null, "Activity created successfully!");
-				MainWindow.updateActivityList();
+//				MainWindow.updateActivityList();
 				frmNewActivity.dispose();
 			}
 		});

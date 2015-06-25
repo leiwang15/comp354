@@ -36,7 +36,8 @@ public class Register {
 		frmRegister = new JFrame();
 		frmRegister.setTitle("Register");
 		frmRegister.setBounds(100, 100, 230, 284);
-		frmRegister.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmRegister.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frmRegister.setResizable(false);
 		frmRegister.getContentPane().setLayout(null);
 		
 		JLabel lblUserRegistration = new JLabel("User Registration");

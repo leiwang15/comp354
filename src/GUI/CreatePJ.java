@@ -35,6 +35,8 @@ public class CreatePJ {
 		frame = new JFrame();
 		frame.setTitle("New Project");
 		frame.setBounds(100, 100, 351, 328);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setResizable(false);
 		frame.getContentPane().setLayout(null);
 		
 		JLabel lblCreateNewProject = new JLabel("Create New Project");
