@@ -2,8 +2,6 @@ package gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +16,6 @@ import javax.swing.ListModel;
 
 import Controller.ActivityController;
 import Model.Activity;
-import Model.Project;
-
 import javax.swing.JList;
 
 import java.awt.Color;
@@ -32,17 +28,19 @@ public class CreateAct {
 	private JTextField newActName;
 	private JTextField newActDuration;
 	private JList listPre;
-
+	private JList listAct;
+	private JTextField newPessi;
+	private JTextField newOpt;
+	private JTextField newActValue;
 
 	public CreateAct() {
 		initialize();
 	}
 
-
 	private void initialize() {
 		frmNewActivity = new JFrame();
 		frmNewActivity.setTitle("New Activity");
-		frmNewActivity.setBounds(200, 300, 505, 269);
+		frmNewActivity.setBounds(200, 300, 509, 359);
 		frmNewActivity.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frmNewActivity.setResizable(false);
 		frmNewActivity.getContentPane().setLayout(null);
@@ -60,8 +58,20 @@ public class CreateAct {
 		lblActivityDuration.setBounds(10, 78, 114, 22);
 		frmNewActivity.getContentPane().add(lblActivityDuration);
 		
+		JLabel lblPessi = new JLabel("Pessimistic       :");
+		lblPessi.setBounds(10, 110, 114, 22);
+		frmNewActivity.getContentPane().add(lblPessi);
+		
+		JLabel lblOpt = new JLabel("Optimistic        :");
+		lblOpt.setBounds(10, 142, 114, 22);
+		frmNewActivity.getContentPane().add(lblOpt);
+		
+		JLabel lblAvtivityValue = new JLabel("Avtivity value    :");
+		lblAvtivityValue.setBounds(10, 174, 114, 22);
+		frmNewActivity.getContentPane().add(lblAvtivityValue);
+		
 		JLabel lblActivityDescription = new JLabel("Activity description:");
-		lblActivityDescription.setBounds(10, 110, 126, 22);
+		lblActivityDescription.setBounds(10, 206, 126, 22);
 		frmNewActivity.getContentPane().add(lblActivityDescription);
 		
 		newActName = new JTextField();
@@ -74,12 +84,27 @@ public class CreateAct {
 		frmNewActivity.getContentPane().add(newActDuration);
 		newActDuration.setColumns(10);
 		
+		newPessi = new JTextField();
+		newPessi.setBounds(134, 110, 82, 22);
+		frmNewActivity.getContentPane().add(newPessi);
+		newPessi.setColumns(10);
+		
+		newOpt = new JTextField();
+		newOpt.setBounds(134, 143, 82, 22);
+		frmNewActivity.getContentPane().add(newOpt);
+		newOpt.setColumns(10);
+		
+		newActValue = new JTextField();
+		newActValue.setBounds(134, 175, 82, 21);
+		frmNewActivity.getContentPane().add(newActValue);
+		newActValue.setColumns(10);
+		
 		final JTextArea newActDes = new JTextArea();
-		newActDes.setBounds(10, 138, 206, 50);
+		newActDes.setBounds(10, 238, 206, 50);
 		frmNewActivity.getContentPane().add(newActDes);
 		
 		JButton btnCreate = new JButton("Create");
-		btnCreate.setBounds(10, 198, 93, 23);
+		btnCreate.setBounds(10, 298, 93, 23);
 		frmNewActivity.getContentPane().add(btnCreate);
 		
 		btnCreate.addActionListener(new ActionListener(){
@@ -111,14 +136,14 @@ public class CreateAct {
 				Activity act = new Activity(projectID, newName, newDes, newDuration, newPredecessors);
 				
 				JOptionPane.showMessageDialog(null, "Activity created successfully!");
-//				MainWindow.updateActivityList();
+				MainWindow.updateActivityList();
 				frmNewActivity.dispose();
 			}
 		});
 		
 		
 		JButton btnCancel = new JButton("Cancel");
-		btnCancel.setBounds(123, 198, 93, 23);
+		btnCancel.setBounds(123, 298, 93, 23);
 		frmNewActivity.getContentPane().add(btnCancel);
 		
 		btnCancel.addActionListener(new ActionListener(){
@@ -129,24 +154,24 @@ public class CreateAct {
 		
 		JLabel lblNewLabel = new JLabel("Activity List");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(222, 10, 93, 30);
+		lblNewLabel.setBounds(232, 10, 93, 30);
 		frmNewActivity.getContentPane().add(lblNewLabel);
 		
-		JLabel lblNewLabel_1 = new JLabel("Predecessors");
-		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1.setBounds(389, 10, 93, 30);
-		frmNewActivity.getContentPane().add(lblNewLabel_1);
+		JLabel lblPredecessor = new JLabel("Predecessors");
+		lblPredecessor.setHorizontalAlignment(SwingConstants.CENTER);
+		lblPredecessor.setBounds(399, 10, 93, 30);
+		frmNewActivity.getContentPane().add(lblPredecessor);
 		
 		final DefaultListModel lm1 = new DefaultListModel<>();
-		final JList listAct = new JList(lm1);
+		listAct = new JList(lm1);
 		listAct.setBackground(Color.LIGHT_GRAY);
-		listAct.setBounds(222, 50, 93, 171);
+		listAct.setBounds(232, 49, 93, 257);
 		frmNewActivity.getContentPane().add(listAct);
 		
 		final DefaultListModel lm2 = new DefaultListModel<>();
 		listPre = new JList(lm2);
 		listPre.setBackground(Color.LIGHT_GRAY);
-		listPre.setBounds(389, 49, 93, 171);
+		listPre.setBounds(399, 49, 93, 257);
 		frmNewActivity.getContentPane().add(listPre);
 		
 		ActivityController ac = new ActivityController();
@@ -157,7 +182,7 @@ public class CreateAct {
 		
 		
 		JButton btnAdd = new JButton("=>");
-		btnAdd.setBounds(325, 78, 54, 22);
+		btnAdd.setBounds(335, 110, 54, 22);
 		frmNewActivity.getContentPane().add(btnAdd);
 		
 		btnAdd.addActionListener(new ActionListener(){
@@ -171,7 +196,7 @@ public class CreateAct {
 		});
 		
 		JButton btnDelete = new JButton("<=");
-		btnDelete.setBounds(325, 165, 54, 23);
+		btnDelete.setBounds(335, 238, 54, 23);
 		frmNewActivity.getContentPane().add(btnDelete);
 		
 		btnDelete.addActionListener(new ActionListener(){

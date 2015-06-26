@@ -7,7 +7,6 @@ import Controller.ProjectController;
 import Model.Activity;
 import Model.Project;
 import Model.User;
-import gui.ActivityEntry;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JMenuBar;
@@ -72,15 +71,14 @@ public class MainWindow {
 	protected static List<Project> pjList;
 	private JLabel lblProjectList;
 	
-//	private static JTable activityTable;
-//	private JLabel lblActivitieList;
-//	private static String[] columnNames = {"Activity Name",
-//            "Duration",
-//            "Predecessors",
-//            "Progress",
-//            "Description"};
+	private static JTable activityTable;
+	private JLabel lblActivitieList;
+	private static String[] columnNames = {"Activity Name",
+            "Duration",
+            "Predecessors",
+            "Progress",
+            "Description"};
 	
-	private ActivityEntry activityEntry;
 	
 	public MainWindow() {
 		initialize();
@@ -97,45 +95,45 @@ public class MainWindow {
 		}
 	}
 	
-//	protected static void updateActivityList(){
-//		NonEditableModel tableModel = (NonEditableModel) activityTable.getModel();
-//		tableModel.setRowCount(0);
-//				
-////		activityTable.repaint();
-//		ActivityController ac = new ActivityController();
-//		List<Activity> actList = ac.getActByProjectId(currentProject.getProject_id());
-//		
-//		for(Activity a : actList){
-//			String[] s = new String[5];
-//			s[0] = a.getActivity_name();
-//			s[1] = a.getDuration() + "";
-//			
-//			//getPredecessors
-//			ActivityController ac1 = new ActivityController();
-//			List<Integer> list = ac1.getActPrecedence(a.getActivity_id());
-//			String pre = "";
-//			if(!list.isEmpty()){
-//				for(Integer i : list){
-//					ActivityController ac2 = new ActivityController();
-//					List<Activity> l = ac2.getActByActId(i);
-//					for(Activity act : l){
-//						if(pre == ""){
-//							pre = pre + act.getActivity_name();
-//						}
-//						else{
-//							pre = pre + ", " + act.getActivity_name();
-//						}
-//					}
-//				}
-//			}
-//			s[2] = pre;
-//			s[3] = a.getProgress() + "";
-//			s[4] = a.getActivity_desc();
-//			tableModel.addRow(s);
-//		}
-//		activityTable.setModel(tableModel);
-//		tableModel.fireTableDataChanged();
-//	}
+	protected static void updateActivityList(){
+		NonEditableModel tableModel = (NonEditableModel) activityTable.getModel();
+		tableModel.setRowCount(0);
+				
+		activityTable.repaint();
+		ActivityController ac = new ActivityController();
+		List<Activity> actList = ac.getActByProjectId(currentProject.getProject_id());
+		
+		for(Activity a : actList){
+			String[] s = new String[5];
+			s[0] = a.getActivity_name();
+			s[1] = a.getDuration() + "";
+			
+			//getPredecessors
+			ActivityController ac1 = new ActivityController();
+			List<Integer> list = ac1.getActPrecedence(a.getActivity_id());
+			String pre = "";
+			if(!list.isEmpty()){
+				for(Integer i : list){
+					ActivityController ac2 = new ActivityController();
+					List<Activity> l = ac2.getActByActId(i);
+					for(Activity act : l){
+						if(pre == ""){
+							pre = pre + act.getActivity_name();
+						}
+						else{
+							pre = pre + ", " + act.getActivity_name();
+						}
+					}
+				}
+			}
+			s[2] = pre;
+			s[3] = a.getProgress() + "";
+			s[4] = a.getActivity_desc();
+			tableModel.addRow(s);
+		}
+		activityTable.setModel(tableModel);
+		tableModel.fireTableDataChanged();
+	}
 
 	private void initialize() {
 		frmProjectManagementSystem = new JFrame();
@@ -367,50 +365,33 @@ public class MainWindow {
                 			}
                 		}
                     	
-//                    	updateActivityList();
+                    	updateActivityList();
                 	}   	
                 }
             }
         });
 		
-//		lblActivitieList = new JLabel("Activity List");
-//		lblActivitieList.setHorizontalAlignment(SwingConstants.CENTER);
-//		lblActivitieList.setFont(new Font("Arial", Font.PLAIN, 15));
-//		lblActivitieList.setBounds(307, 0, 350, 32);
-//		panel.add(lblActivitieList);
-//		
-//		String[][] data = null;
-//		NonEditableModel model = new NonEditableModel(data, columnNames);
-//		
-//		activityTable = new JTable(model);
-//		activityTable.setBackground(Color.LIGHT_GRAY);
-//		activityTable.setBounds(196, 35, 409, 480);
-//		JScrollPane scrollPane = new JScrollPane(activityTable);
-//		scrollPane.setBounds(196, 35, 578, 480);
-//		panel.add(scrollPane);
-//		
-//		JLabel lblNewLabel = new JLabel("Activity Details");
-//		lblNewLabel.setFont(new Font("Arial", Font.PLAIN, 15));
-//		lblNewLabel.setBounds(838, 9, 94, 23);
-//		panel.add(lblNewLabel);
+		lblActivitieList = new JLabel("Activity List");
+		lblActivitieList.setHorizontalAlignment(SwingConstants.CENTER);
+		lblActivitieList.setFont(new Font("Arial", Font.PLAIN, 15));
+		lblActivitieList.setBounds(307, 0, 350, 32);
+		panel.add(lblActivitieList);
+		
+		String[][] data = null;
+		NonEditableModel model = new NonEditableModel(data, columnNames);
+		
+		activityTable = new JTable(model);
+		activityTable.setBackground(Color.LIGHT_GRAY);
+		activityTable.setBounds(196, 35, 409, 480);
+		JScrollPane scrollPane = new JScrollPane(activityTable);
+		scrollPane.setBounds(196, 35, 578, 480);
+		panel.add(scrollPane);
+		
+		JLabel lblNewLabel = new JLabel("Activity Details");
+		lblNewLabel.setFont(new Font("Arial", Font.PLAIN, 15));
+		lblNewLabel.setBounds(838, 9, 94, 23);
+		panel.add(lblNewLabel);
 		
 		
-		frmProjectManagementSystem.setLayout(new GridBagLayout());
-
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.weightx = 0.3;
-		gbc.weighty = 1.0;
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-
-		frmProjectManagementSystem.getContentPane().add(panel, gbc);
-		gbc.weightx = 0.7;
-		gbc.gridx = 1;
-
-		activityEntry = new ActivityEntry(frmProjectManagementSystem);
-
-		frmProjectManagementSystem.add(activityEntry.panel1, gbc);
 	}
 }
