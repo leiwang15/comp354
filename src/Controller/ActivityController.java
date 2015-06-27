@@ -85,6 +85,26 @@ public class ActivityController extends DB_Controller {
 		return list;
 	}
 	
+	public List<Integer> getActByUser(int uId){
+		String sql = "Select * FROM Activity_Assign WHERE User_ID = '" + uId + "';";
+		ResultSet res;
+		List<Integer> list = new ArrayList<Integer>();
+		
+		try {
+			st = c.createStatement();
+			res = st.executeQuery(sql);
+			if(res != null){
+				while (res.next()) {
+					list.add(res.getInt("Activity_ID"));
+				}
+			}
+			c.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
 	public void removeAssignment(Activity a, int uid){
 		String sql = "DELETE FROM Activity_Assign WHERE User_ID = '" + uid +"' AND Activity_Id = '" + a.getActivity_id() +"';";
 		
@@ -223,7 +243,7 @@ public class ActivityController extends DB_Controller {
 	public Activity getActByActName (String name){
 
 		String sql = "SELECT * FROM Activity "
-				+ "WHERE Name = "	+ name + ";";
+				+ "WHERE Name = '"	+ name + "';";
 
 		ResultSet res;
 		List<Activity> la = new ArrayList<Activity>();

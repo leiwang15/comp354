@@ -35,6 +35,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.Color;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JList;
@@ -96,7 +97,13 @@ public class MainWindow {
 	
 	public MainWindow() {
 		initialize();
-		updateProjectList();
+		
+		if(currentUser.getRole().equals("Project Manager")){
+			updateProjectList();
+		}
+		else{
+			updateActivityList();
+		}
 	}
 
 	protected static void updateProjectList() {		
@@ -112,39 +119,87 @@ public class MainWindow {
 	protected static void updateActivityList(){
 		NonEditableModel tableModel = (NonEditableModel) activityTable.getModel();
 		tableModel.setRowCount(0);
-				
 		activityTable.repaint();
-		ActivityController ac = new ActivityController();
-		List<Activity> actList = ac.getActByProjectId(selectedProject.getProject_id());
+		List<Activity> actList = new ArrayList<Activity>();
 		
-		for(Activity a : actList){
-			String[] s = new String[5];
-			s[0] = a.getActivity_name();
-			s[1] = a.getDuration() + "";
-			
-			//getPredecessors
-			ActivityController ac1 = new ActivityController();
-			List<Integer> list = ac1.getActPrecedence(a.getActivity_id());
-			String pre = "";
-			if(!list.isEmpty()){
-				for(Integer i : list){
-					ActivityController ac2 = new ActivityController();
-					List<Activity> l = ac2.getActByActId(i);
-					for(Activity act : l){
-						if(pre == ""){
-							pre = pre + act.getActivity_name();
-						}
-						else{
-							pre = pre + ", " + act.getActivity_name();
+		if(currentUser.getRole().equals("Project Manager")){
+			ActivityController ac = new ActivityController();
+			actList = ac.getActByProjectId(selectedProject.getProject_id());
+			for(Activity a : actList){
+				String[] s = new String[5];
+				s[0] = a.getActivity_name();
+				s[1] = a.getDuration() + "";
+				
+				//getPredecessors
+				ActivityController ac1 = new ActivityController();
+				List<Integer> list = ac1.getActPrecedence(a.getActivity_id());
+				String pre = "";
+				if(!list.isEmpty()){
+					for(Integer i : list){
+						ActivityController ac2 = new ActivityController();
+						List<Activity> l = ac2.getActByActId(i);
+						for(Activity act : l){
+							if(pre == ""){
+								pre = pre + act.getActivity_name();
+							}
+							else{
+								pre = pre + ", " + act.getActivity_name();
+							}
 						}
 					}
 				}
-			}
-			s[2] = pre;
-			s[3] = a.getProgress() + "";
-			s[4] = a.getActivity_desc();
-			tableModel.addRow(s);
+				s[2] = pre;
+				s[3] = a.getProgress() + "";
+				s[4] = a.getActivity_desc();
+				tableModel.addRow(s);
+			}	
 		}
+		else{
+			//get act list
+			ActivityController ac = new ActivityController();
+			List<Integer> li = ac.getActByUser(currentUser.getUser_id());
+			for(Integer i : li){
+				ActivityController ac1 = new ActivityController();
+				actList.addAll(ac1.getActByActId(i));
+			}
+			
+			//set data for table
+			for(Activity a : actList){
+				String[] s = new String[6];
+				ProjectController pc1 = new ProjectController();
+				Project p = pc1.getProjectByID(a.getProject_id());
+				
+				s[0] = p.getProject_name();
+				s[1] = a.getActivity_name();
+				s[2] = a.getDuration() + "";
+				
+				//getPredecessors
+				ActivityController ac1 = new ActivityController();
+				List<Integer> list = ac1.getActPrecedence(a.getActivity_id());
+				String pre = "";
+				if(!list.isEmpty()){
+					for(Integer i : list){
+						ActivityController ac2 = new ActivityController();
+						List<Activity> l = ac2.getActByActId(i);
+						for(Activity act : l){
+							if(pre == ""){
+								pre = pre + act.getActivity_name();
+							}
+							else{
+								pre = pre + ", " + act.getActivity_name();
+							}
+						}
+					}
+				}
+				s[3] = pre;
+				s[4] = a.getProgress() + "";
+				s[5] = a.getActivity_desc();
+				tableModel.addRow(s);
+			}
+		}
+		
+		
+		
 		activityTable.setModel(tableModel);
 		tableModel.fireTableDataChanged();
 	}
@@ -165,9 +220,10 @@ public class MainWindow {
 	private void initialize() {
 		frmProjectManagementSystem = new JFrame();
 		frmProjectManagementSystem.setTitle("Project Management System");
-		frmProjectManagementSystem.setBounds(100, 100, 1000, 600);
+		frmProjectManagementSystem.setBounds(100, 100, 988, 591);
 		frmProjectManagementSystem.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		frmProjectManagementSystem.setResizable(false);
+		frmProjectManagementSystem.setResizable(false);
+		frmProjectManagementSystem.getContentPane().setLayout(null);
 		
 		JMenuBar menuBar = new JMenuBar();
 		frmProjectManagementSystem.setJMenuBar(menuBar);
@@ -175,67 +231,57 @@ public class MainWindow {
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
 		
-		//New project
-		mntmNewProject = new JMenuItem("New Project");
-		mnFile.add(mntmNewProject);
-		
-		mntmNewProject.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						try {
-							CreatePJ window = new CreatePJ();
-							window.frame.setVisible(true);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				});
-			}
-		});
-		
-		//Save
-		mntmSave = new JMenuItem("Save");
-		mnFile.add(mntmSave);
-		
-		mntmSave.addActionListener(new ActionListener(){
-		public void actionPerformed(ActionEvent e){
+		if(currentUser.getRole().equals("Project Manager")){
+			//New project
+			mntmNewProject = new JMenuItem("New Project");
+			mnFile.add(mntmNewProject);
 			
-			}
-		});
-		
-		
-		//Delete		
-		mntmDeleteProject = new JMenuItem("Delete Project");
-		mnFile.add(mntmDeleteProject);
-		
-		mntmDeleteProject.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				
-				if(list.getSelectedValue() != null){
-            		String s = list.getSelectedValue().toString();
-                	
-                	for(Project p : pjList){
-            			if (p.getProject_name().equals(s)){
-            				
-            				int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure to delete the project " + p.getProject_name()
-            																	+ "?","Warning",JOptionPane.YES_NO_OPTION);
-            				if(dialogResult == JOptionPane.YES_OPTION){
-            				
-	            				ProjectController pc = new ProjectController();
-	            				pc.deleteProject(p);
-	            				JOptionPane.showMessageDialog(null, "Delete successfully!");
-	            				updateProjectList();
-            				}
-            			}
-            		}
-            	}
-				else{
-					JOptionPane.showMessageDialog(null, "Please select a project to delete!");
+			mntmNewProject.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					EventQueue.invokeLater(new Runnable() {
+						public void run() {
+							try {
+								CreatePJ window = new CreatePJ();
+								window.frame.setVisible(true);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					});
 				}
-			}
-		});
-		
+			});		
+			
+			//Delete		
+			mntmDeleteProject = new JMenuItem("Delete Project");
+			mnFile.add(mntmDeleteProject);
+			
+			mntmDeleteProject.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					
+					if(list.getSelectedValue() != null){
+	            		String s = list.getSelectedValue().toString();
+	                	
+	                	for(Project p : pjList){
+	            			if (p.getProject_name().equals(s)){
+	            				
+	            				int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure to delete the project " + p.getProject_name()
+	            																	+ "?","Warning",JOptionPane.YES_NO_OPTION);
+	            				if(dialogResult == JOptionPane.YES_OPTION){
+	            				
+		            				ProjectController pc = new ProjectController();
+		            				pc.deleteProject(p);
+		            				JOptionPane.showMessageDialog(null, "Delete successfully!");
+		            				updateProjectList();
+	            				}
+	            			}
+	            		}
+	            	}
+					else{
+						JOptionPane.showMessageDialog(null, "Please select a project to delete!");
+					}
+				}
+			});
+		}
 		
 		//Log out
 		mntmLogOut = new JMenuItem("Log Out");
@@ -270,84 +316,91 @@ public class MainWindow {
 				frmProjectManagementSystem.dispose();
 			}
 		});
-
+		
+		//Menu Edit
 		JMenu mnEdit = new JMenu("Edit");
 		menuBar.add(mnEdit);
 		
-		//New Activity
-		mntmNewAct = new JMenuItem("New Activity");
-		mnEdit.add(mntmNewAct);
-		
-		mntmNewAct.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				
-				if(selectedProject != null){
-					EventQueue.invokeLater(new Runnable() {
-						public void run() {
-							try {
-								CreateAct window = new CreateAct();
-								window.frmNewActivity.setVisible(true);
-							} catch (Exception e) {
-								e.printStackTrace();
+		if(currentUser.getRole().equals("Project Manager")){
+			//New Activity
+			mntmNewAct = new JMenuItem("New Activity");
+			mnEdit.add(mntmNewAct);
+			
+			mntmNewAct.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					
+					if(selectedProject != null){
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								try {
+									CreateAct window = new CreateAct();
+									window.frmNewActivity.setVisible(true);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
 							}
-						}
-					});
+						});
+					}
+					else{
+						JOptionPane.showMessageDialog(null, "Please select a project before add an activity!");
+					}
 				}
-				else{
-					JOptionPane.showMessageDialog(null, "Please select a project before add an activity!");
-				}
-			}
-		});
+			});
+			
+	
+			mntmDeleteAct = new JMenuItem("Delete Activity");
+			mnEdit.add(mntmDeleteAct);
 		
-
-		mntmDeleteAct = new JMenuItem("Delete Activity");
-		mnEdit.add(mntmDeleteAct);
-		
-		mntmEditAct = new JMenuItem("Edit Activity");
-		mnEdit.add(mntmEditAct);
-		
-		mntmAssignUser = new JMenuItem("Assign User");
-		mnEdit.add(mntmAssignUser);
-		
-		mntmAssignUser.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				
-				if(!lsm.isSelectionEmpty()){
-				
-					EventQueue.invokeLater(new Runnable() {
-						public void run() {
-							try {
-								UserAssign window = new UserAssign();
-								window.frmAssignUser.setVisible(true);
-							} catch (Exception e) {
-								e.printStackTrace();
+			mntmEditAct = new JMenuItem("Edit Activity");
+			mnEdit.add(mntmEditAct);
+			
+			//assign user to activity
+			mntmAssignUser = new JMenuItem("Assign User");
+			mnEdit.add(mntmAssignUser);
+			
+			mntmAssignUser.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					
+					if(!lsm.isSelectionEmpty()){
+					
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								try {
+									UserAssign window = new UserAssign();
+									window.frmAssignUser.setVisible(true);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
 							}
-						}
-					});
+						});
+					}
+					else{
+						JOptionPane.showMessageDialog(null, "Please select an activity to assign user!");
+					}
 				}
-				else{
-					JOptionPane.showMessageDialog(null, "Please select an activity to assign user!");
-				}
-			}
-		});
+			});
 			
 		
-		JMenu mnAnalysis = new JMenu("Analysis");
-		menuBar.add(mnAnalysis);
+			JMenu mnAnalysis = new JMenu("Analysis");
+			menuBar.add(mnAnalysis);
+			
+			mntmGANTTChart = new JMenuItem("GANTT Chart");
+			mnAnalysis.add(mntmGANTTChart);
+			
+			mntmPERT = new JMenuItem("PERT Chart");
+			mnAnalysis.add(mntmPERT);
+			
+			mntmCriticalPath = new JMenuItem("Critical Path Analysis");
+			mnAnalysis.add(mntmCriticalPath);
+			
+			mntmEarnedValue = new JMenuItem("Earned Value Analysis");
+			mnAnalysis.add(mntmEarnedValue);
 		
-		mntmGANTTChart = new JMenuItem("GANTT Chart");
-		mnAnalysis.add(mntmGANTTChart);
-		
-		mntmPERT = new JMenuItem("PERT Chart");
-		mnAnalysis.add(mntmPERT);
-		
-		mntmCriticalPath = new JMenuItem("Critical Path Analysis");
-		mnAnalysis.add(mntmCriticalPath);
-		
-		mntmEarnedValue = new JMenuItem("Earned Value Analysis");
-		mnAnalysis.add(mntmEarnedValue);
-		
-		frmProjectManagementSystem.getContentPane().setLayout(null);
+		}
+		else{
+			mntmEditAct = new JMenuItem("Edit Activity");
+			mnEdit.add(mntmEditAct);
+		}
 		
 		JLabel lblWelcomeBack = new JLabel("Welcome back " + currentUser.getUserName() + "    User type: " + currentUser.getRole());
 		lblWelcomeBack.setBounds(0, 0, 984, 541);
@@ -431,8 +484,18 @@ public class MainWindow {
 		panel.add(lblActivitieList);
 		
 		String[][] data = null;
-		NonEditableModel model = new NonEditableModel(data, columnNames);
-		
+		NonEditableModel model;
+		if(currentUser.getRole().equals("Project Manager")){
+			model = new NonEditableModel(data, columnNames);
+		}
+		else{
+			String[] columnNames = {"Project Name","Activity Name",
+		            "Duration",
+		            "Predecessors",
+		            "Progress",
+		            "Description"};
+			model = new NonEditableModel(data, columnNames);
+		}
 		activityTable = new JTable(model);
 		activityTable.setBackground(Color.LIGHT_GRAY);
 		activityTable.setBounds(196, 35, 409, 480);

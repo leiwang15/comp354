@@ -118,7 +118,7 @@ public class UserController extends DB_Controller {
 	
 	public User getUserByName(String userName){
 
-		String sql = "SELECT * FROM User WHERE UserName = " + userName + ";";
+		String sql = "SELECT * FROM User WHERE UserName = '" + userName + "';";
 		ResultSet res;
 		User u = null;
 		try {
