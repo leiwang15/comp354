@@ -1,27 +1,18 @@
 package comp354.gui;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 
 import comp354.Controller.ProjectController;
 import comp354.Model.Project;
 import comp354.Model.User;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JLabel;
-
 import java.awt.*;
-
-import javax.swing.SwingConstants;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
-import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -29,8 +20,6 @@ import javax.swing.event.ListSelectionListener;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
-
-import javax.swing.JList;
 
 public class MainWindow {
 
@@ -181,8 +170,8 @@ public class MainWindow {
 		mntmExit = new JMenuItem("Exit");
 		mnFile.add(mntmExit);
 
-		mntmExit.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
+		mntmExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				frmProjectManagementSystem.dispose();
 			}
 		});
@@ -237,44 +226,40 @@ public class MainWindow {
 
 		list.addListSelectionListener(new ListSelectionListener() {
 
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                	String s = list.getSelectedValue().toString();
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (!e.getValueIsAdjusting()) {
+					String s = list.getSelectedValue().toString();
 
-                	for(Project p : pjList){
-            			if (p.getProject_name().equals(s)){
-            				currentProject = p;
-            				DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+					for (Project p : pjList) {
+						if (p.getProject_name().equals(s)) {
+							currentProject = p;
+							DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
-        	                lblPJName.setText("Project Name: " + p.getProject_name());
-        	                lblStartDate.setText("Start Date  : " + df.format(p.getStart_date()));
-        	                lblEndDate.setText("End Date    : " + df.format(p.getEnd_date()));
-        	                lblDescription.setText("Description : " + p.getProject_desc());
-            			}
-            		}
-                }
-            }
-        });
+							lblPJName.setText("Project Name: " + p.getProject_name());
+							lblStartDate.setText("Start Date  : " + df.format(p.getStart_date()));
+							lblEndDate.setText("End Date    : " + df.format(p.getEnd_date()));
+							lblDescription.setText("Description : " + p.getProject_desc());
+						}
+					}
+				}
+			}
+		});
+
+		frmProjectManagementSystem.getContentPane().setLayout(new BorderLayout());
 
 
+		Dimension dimension = new Dimension(200, 600);
+		panel.setMaximumSize(dimension);
+		panel.setMinimumSize(dimension);
+		panel.setPreferredSize(dimension);
+//		panel.setBackground(Color.YELLOW);
 
-		frmProjectManagementSystem.setLayout(new GridBagLayout());
 
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.weightx = 0.3;
-		gbc.weighty = 1.0;
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-
-		frmProjectManagementSystem.getContentPane().add(panel, gbc);
-		gbc.weightx = 0.7;
-		gbc.gridx = 1;
+		frmProjectManagementSystem.getContentPane().add(panel, BorderLayout.WEST);
 
 		activityEntry = new ActivityEntry(frmProjectManagementSystem);
 
-		frmProjectManagementSystem.add(activityEntry.panel1, gbc);
+		frmProjectManagementSystem.add(activityEntry.panel1, BorderLayout.CENTER);
 	}
 }
