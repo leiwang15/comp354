@@ -18,6 +18,7 @@ import comp354.gui.editors.IntegerEditor;
 import comp354.gui.editors.PredecessorEditor;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
+import sun.swing.table.DefaultTableCellHeaderRenderer;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -117,6 +118,18 @@ public class ActivityEntry extends JPanel implements ActionListener {
         activitiesTable.getColumn(PMTable.FINISH).setCellEditor(new DatePickerCellEditor(new SimpleDateFormat(DATE_FORMAT)));
         activitiesTable.getColumn(PMTable.PREDECESSORS).setCellEditor(new PredecessorEditor(this));
 
+        activitiesTable.getColumn(PMTable.ID).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
+        activitiesTable.getColumn(PMTable.DURATION).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
+        activitiesTable.getColumn(PMTable.START).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
+        activitiesTable.getColumn(PMTable.FINISH).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
+        activitiesTable.getColumn(PMTable.PREDECESSORS).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
+
+        activitiesTable.getColumn(PMTable.ID).sizeWidthToFit();
+        activitiesTable.getColumn(PMTable.DURATION).sizeWidthToFit();
+        activitiesTable.getColumn(PMTable.START).sizeWidthToFit();
+        activitiesTable.getColumn(PMTable.FINISH).sizeWidthToFit();
+        activitiesTable.getColumn(PMTable.PREDECESSORS).sizeWidthToFit();
+
         TableCellRenderer tableCellRenderer = new DefaultTableCellRenderer() {
 
             SimpleDateFormat f = new SimpleDateFormat(DATE_FORMAT);
@@ -159,9 +172,9 @@ public class ActivityEntry extends JPanel implements ActionListener {
         chartPane = new JScrollPane(charts);
         chartPane.setEnabled(true);
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePane, chartPane);
-        splitPane.setResizeWeight(0.5);
+        splitPane.setResizeWeight(0);
         splitPane.setOneTouchExpandable(true);
-        splitPane.setDividerLocation(350);
+        splitPane.setDividerLocation(330);
 
 //Provide minimum sizes for the two components in the split pane
         Dimension minimumSize = new Dimension(100, 50);
