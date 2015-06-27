@@ -3,6 +3,8 @@ package comp354.gui;
 import com.mxgraph.analysis.mxAnalysisGraph;
 import com.mxgraph.analysis.mxGraphStructure;
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGeometry;
+import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxRectangle;
@@ -259,7 +261,7 @@ public class ActivityEntry extends JPanel implements ActionListener {
             mxCell v = (mxCell) graph.insertVertex(parent,
                     null,
                     null,
-                    11 * startPos(activities, i, i) + 5,        //	x
+                    0,  //11 * startPos(activities, i, i) + 5,        //	x
                     i * activitiesTable.getRowHeight() + 12,    //	y
                     activities.get(i).getDuration() * 11,       //	width
                     activitiesTable.getRowHeight(),             //	height
@@ -290,8 +292,21 @@ public class ActivityEntry extends JPanel implements ActionListener {
 
         TreeSet<mxCell> criticalNodes = calculateCPM(graph);
 
+        positionGANTTNodes(activityID2mxCell);
+
         graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "lightblue", activityID2mxCell.values().toArray());
-        graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "red", criticalNodes.toArray());
+        graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "orange", criticalNodes.toArray());
+    }
+
+    private void positionGANTTNodes(HashMap<Integer, mxCell> activityID2mxCell) {
+
+        for (mxICell cell : activityID2mxCell.values()) {
+            mxGeometry geometry = cell.getGeometry();
+
+            geometry.setX(((ActivityOnNode) cell.getValue()).getES() * 11 + 5);
+
+            cell.setGeometry(geometry);
+        }
     }
 
     private TreeSet<mxCell> calculateCPM(mxGraph graph) {
@@ -299,7 +314,7 @@ public class ActivityEntry extends JPanel implements ActionListener {
         TreeSet<mxCell> criticalNodes = new TreeSet<>(new Comparator() {
             @Override
             public int compare(Object o1, Object o2) {
-                return ((ActivityOnNode)((mxCell) o1).getValue()).getLabel().compareTo(((ActivityOnNode)((mxCell) o2).getValue()).getLabel());
+                return ((ActivityOnNode) ((mxCell) o1).getValue()).getLabel().compareTo(((ActivityOnNode) ((mxCell) o2).getValue()).getLabel());
             }
         });
 
@@ -318,26 +333,33 @@ public class ActivityEntry extends JPanel implements ActionListener {
             lastActivity.setLF(lastActivity.getEF());
             lastActivity.backwardPass(graph);
 
-            criticalNodes.add(activityOnNode.getCell());
+            criticalNodes.add(activityOnNode.getCell());    //  critical path starts at root
             activityOnNode.findCriticalPathCells(graph, criticalNodes);
         }
 
         return criticalNodes;
     }
 
-    private int startPos(ArrayList<Activity> list, int i, int j) {
+    private int startPos(ArrayList<Activity> list, int i, int currentActivity) {
 
-        if (list.get(i).getPredecessors().size() == 0) {
-            return (i != j) ? list.get(i).getDuration() : 0;
+        final Activity activity = list.get(i);
+
+        if (activity.getPredecessors().size() == 0) {
+            return (i != currentActivity) ? activity.getDuration() : 0;
         }
 
         int pos = 0;
-        for (int pred : list.get(i).getPredecessors()) {
-            pos = Math.max(pos, startPos(list, pred - 1, j));
+        for (int pred : activity.getPredecessors()) {
+
+            if (pred - 1 != currentActivity) {  //  loop, skip self-reference
+
+                //  pred is base-1 reference to list items
+                pos = Math.max(pos, startPos(list, pred - 1, currentActivity));
+            }
         }
 
-        if (i != j) {
-            pos += list.get(i).getDuration();
+        if (i != currentActivity) {
+            pos += activity.getDuration();
         }
 
         return pos;
@@ -346,8 +368,8 @@ public class ActivityEntry extends JPanel implements ActionListener {
     public boolean hasCycles() {
         hasCycles = false;
         createGraph(getActivities());
-        return false;
-//        return hasCycles(createGraph(getActivities())) || hasCycles;
+//        return false;
+        return hasCycles(createGraph(getActivities())) || hasCycles;
     }
 
     private boolean hasCycles(mxGraph graph) {
