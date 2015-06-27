@@ -5,151 +5,178 @@ import com.mxgraph.view.mxGraph;
 import comp354.Model.Activity;
 
 import javax.swing.tree.TreeNode;
+import java.util.TreeSet;
 
 /**
  * Created by joao on 15.06.23.
  */
 public class ActivityOnNode {
 
-	Activity activity;
-	private final mxCell mxCell;
+    Activity activity;
+    private final mxCell mxCell;
 
-	float ES;
-	float LS;
-	float EF;
-	float LF = Float.MAX_VALUE;
-	float maxDuration;
-	float aFloat;
-	private TreeNode cell;
+    float ES;
+    float LS;
+    float EF;
+    float LF = Float.MAX_VALUE;
+    float maxDuration;
+    float aFloat;
+    private TreeNode cell;
 
 
-	public ActivityOnNode(Activity activity, mxCell v) {
-		this.activity = activity;
-		mxCell = v;
-	}
+    public ActivityOnNode(Activity activity, mxCell v) {
+        this.activity = activity;
+        mxCell = v;
+    }
 
-	public String getLabel() {
-		return activity.getActivity_name();
-	}
+    public String getLabel() {
+        return activity.getActivity_name();
+    }
 
-	public String getDescription() {
-		return activity.getActivity_desc();
-	}
+    public String getDescription() {
+        return activity.getActivity_desc();
+    }
 
-	@Override
-	public String toString() {
-		return activity.getActivity_name() + ": " + activity.getDuration() + "(" + aFloat + ")";
-	}
+    @Override
+    public String toString() {
+        return activity.getActivity_name() + ": " + activity.getDuration() + "(" + aFloat + ")";
+    }
 
-	public void considerES(float ES) {
+    public void considerES(float ES) {
 
-		if (ES > this.ES) {
-			setES(ES);
-		}
-	}
+        if (ES > this.ES) {
+            setES(ES);
+        }
+    }
 
-	public void setES(float ES) {
-		this.ES = ES;
+    public void setES(float ES) {
+        this.ES = ES;
 
-		EF = ES + activity.getDuration();
+        EF = ES + activity.getDuration();
 
-		aFloat = LS - ES;
-	}
+        aFloat = LS - ES;
+    }
 
-	public float getES() {
-		return ES;
-	}
+    public float getES() {
+        return ES;
+    }
 
-	public float getLS() {
-		return LS;
-	}
+    public float getLS() {
+        return LS;
+    }
 
-	public void setLF(float LF) {
-		this.LF = LF;
+    public void setLF(float LF) {
+        this.LF = LF;
 
-		LS = LF - activity.getDuration();
+        LS = LF - activity.getDuration();
 
-		aFloat = LS - ES;
-	}
+        aFloat = LS - ES;
+    }
 
-	public float getEF() {
-		return EF;
-	}
+    public float getEF() {
+        return EF;
+    }
 
-	public void setLS(float LS) {
-		this.LS = LS;
-		aFloat = LS - ES;
-	}
+    public void setLS(float LS) {
+        this.LS = LS;
+        aFloat = LS - ES;
+    }
 
-	public float getLF() {
-		return LF;
-	}
+    public float getLF() {
+        return LF;
+    }
 
-	public mxCell getCell() {
-		return mxCell;
-	}
+    public mxCell getCell() {
+        return mxCell;
+    }
 
-	public void forwardPass(mxGraph graph) {
+    public void forwardPass(mxGraph graph) {
 
-		Object[] outEdges = graph.getOutgoingEdges(mxCell);
-		for (Object cell : outEdges) {
+        Object[] outEdges = graph.getOutgoingEdges(mxCell);
+        for (Object cell : outEdges) {
 
-			if (cell instanceof mxCell) {
-				Object obj = ((mxCell) cell).getTarget().getValue();
+            if (cell instanceof mxCell) {
+                Object obj = ((mxCell) cell).getTarget().getValue();
 
-				if (obj instanceof ActivityOnNode) {
-					ActivityOnNode activityOnNode = (ActivityOnNode) obj;
+                if (obj instanceof ActivityOnNode) {
+                    ActivityOnNode activityOnNode = (ActivityOnNode) obj;
 
-					if (EF > activityOnNode.getES()) {
+                    if (EF > activityOnNode.getES()) {
 
-						activityOnNode.setES(EF);
-						activityOnNode.forwardPass(graph);
-					}
-				}
-			}
-		}
-	}
+                        activityOnNode.setES(EF);
+                        activityOnNode.forwardPass(graph);
+                    }
+                }
+            }
+        }
+    }
 
-	public ActivityOnNode findLastActivity(mxGraph graph) {
+    public ActivityOnNode findLastActivity(mxGraph graph) {
 
-		Object[] outEdges = graph.getOutgoingEdges(mxCell);
-		for (Object cell : outEdges) {
+        Object[] outEdges = graph.getOutgoingEdges(mxCell);
+        for (Object cell : outEdges) {
 
-			if (cell instanceof mxCell) {
-				Object obj = ((mxCell) cell).getTarget().getValue();
+            if (cell instanceof mxCell) {
+                Object obj = ((mxCell) cell).getTarget().getValue();
 
-				if (obj instanceof ActivityOnNode) {
-					ActivityOnNode activityOnNode = (ActivityOnNode) obj;
+                if (obj instanceof ActivityOnNode) {
+                    ActivityOnNode activityOnNode = (ActivityOnNode) obj;
 
-					if (activityOnNode.getEF() > EF) {
+                    if (activityOnNode.getEF() > EF) {
 
-						return activityOnNode.findLastActivity(graph);
-					}
-				}
-			}
-		}
+                        return activityOnNode.findLastActivity(graph);
+                    }
+                }
+            }
+        }
 
-		return this;
-	}
+        return this;
+    }
 
-	public void backwardPass(mxGraph graph) {
+    public void backwardPass(mxGraph graph) {
 
-		Object[] inEdges = graph.getIncomingEdges(mxCell);
-		for (Object cell : inEdges) {
-			if (cell instanceof mxCell) {
-				Object obj = ((mxCell) cell).getSource().getValue();
+        Object[] inEdges = graph.getIncomingEdges(mxCell);
+        for (Object cell : inEdges) {
+            if (cell instanceof mxCell) {
+                Object obj = ((mxCell) cell).getSource().getValue();
 
-				if (obj instanceof ActivityOnNode) {
-					ActivityOnNode parent = (ActivityOnNode) obj;
+                if (obj instanceof ActivityOnNode) {
+                    ActivityOnNode parent = (ActivityOnNode) obj;
 
-					if (LS < parent.getLF()) {
+                    if (LS < parent.getLF()) {
 
-						parent.setLF(LS);
+                        parent.setLF(LS);
 
-						parent.backwardPass(graph);
-					}
-				}
-			}
-		}
-	}
+                        parent.backwardPass(graph);
+                    }
+                }
+            }
+        }
+    }
+
+    public void findCriticalPathCells(mxGraph graph, TreeSet<mxCell> critical) {
+
+        Object[] outEdges = graph.getOutgoingEdges(mxCell);
+        for (Object cell : outEdges) {
+
+            if (cell instanceof mxCell) {
+                Object obj = ((mxCell) cell).getTarget().getValue();
+
+                if (obj instanceof ActivityOnNode) {
+                    ActivityOnNode activityOnNode = (ActivityOnNode) obj;
+
+                    if (activityOnNode.getFloat() == 0) {
+
+                        critical.add(activityOnNode.getCell());
+                    }
+
+                    activityOnNode.findCriticalPathCells(graph, critical);
+                }
+            }
+        }
+    }
+
+    public float getFloat() {
+        return aFloat;
+    }
 }
