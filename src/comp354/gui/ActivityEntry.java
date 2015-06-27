@@ -310,7 +310,7 @@ public class ActivityEntry extends JPanel implements ActionListener {
 		mxCell root = (mxCell) graph.getDefaultParent();
 
 		if (root != null) {
-			System.out.println("root.getChildCount()=" + root.getChildCount());
+//			System.out.println("root.getChildCount()=" + root.getChildCount());
 			ActivityOnNode activityOnNode = (ActivityOnNode) root.getChildAt(0).getValue();
 
 			activityOnNode.setES(0);
