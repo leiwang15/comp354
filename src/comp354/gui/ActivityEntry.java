@@ -340,30 +340,30 @@ public class ActivityEntry extends JPanel implements ActionListener {
         return criticalNodes;
     }
 
-    private int startPos(ArrayList<Activity> list, int i, int currentActivity) {
-
-        final Activity activity = list.get(i);
-
-        if (activity.getPredecessors().size() == 0) {
-            return (i != currentActivity) ? activity.getDuration() : 0;
-        }
-
-        int pos = 0;
-        for (int pred : activity.getPredecessors()) {
-
-            if (pred - 1 != currentActivity) {  //  loop, skip self-reference
-
-                //  pred is base-1 reference to list items
-                pos = Math.max(pos, startPos(list, pred - 1, currentActivity));
-            }
-        }
-
-        if (i != currentActivity) {
-            pos += activity.getDuration();
-        }
-
-        return pos;
-    }
+//    private int startPos(ArrayList<Activity> list, int i, int currentActivity) {
+//
+//        final Activity activity = list.get(i);
+//
+//        if (activity.getPredecessors().size() == 0) {
+//            return (i != currentActivity) ? activity.getDuration() : 0;
+//        }
+//
+//        int pos = 0;
+//        for (int pred : activity.getPredecessors()) {
+//
+//            if (pred - 1 != currentActivity) {  //  loop, skip self-reference
+//
+//                //  pred is base-1 reference to list items
+//                pos = Math.max(pos, startPos(list, pred - 1, currentActivity));
+//            }
+//        }
+//
+//        if (i != currentActivity) {
+//            pos += activity.getDuration();
+//        }
+//
+//        return pos;
+//    }
 
     public boolean hasCycles() {
         hasCycles = false;
