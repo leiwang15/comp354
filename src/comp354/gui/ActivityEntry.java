@@ -290,7 +290,7 @@ public class ActivityEntry extends JPanel implements ActionListener {
 
         TreeSet<mxCell> criticalNodes = calculateCPM(graph);
 
-//        graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "lightblue", criticalNodes.toArray());
+        graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "lightblue", activityID2mxCell.values().toArray());
         graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "red", criticalNodes.toArray());
     }
 
