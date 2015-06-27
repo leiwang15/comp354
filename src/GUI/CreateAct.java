@@ -48,7 +48,7 @@ public class CreateAct {
 		JLabel lblProject = new JLabel("New activity for project ");
 		lblProject.setBounds(10, 10, 206, 15);
 		frmNewActivity.getContentPane().add(lblProject);
-		lblProject.setText("New activity for project " + MainWindow.currentProject.getProject_name());
+		lblProject.setText("New activity for project " + MainWindow.selectedProject.getProject_name());
 		
 		JLabel lblActivityName = new JLabel("Activity name     :");
 		lblActivityName.setBounds(10, 46, 114, 22);
@@ -103,6 +103,7 @@ public class CreateAct {
 		newActDes.setBounds(10, 238, 206, 50);
 		frmNewActivity.getContentPane().add(newActDes);
 		
+		//create activity
 		JButton btnCreate = new JButton("Create");
 		btnCreate.setBounds(10, 298, 93, 23);
 		frmNewActivity.getContentPane().add(btnCreate);
@@ -112,9 +113,13 @@ public class CreateAct {
 				String newName = newActName.getText();
 				int newDuration = Integer.parseInt(newActDuration.getText());
 				String newDes = newActDes.getText();
-				int projectID = MainWindow.currentProject.getProject_id();
-				ArrayList<Integer> newPredecessors = new ArrayList<Integer>();;
+				int projectID = MainWindow.selectedProject.getProject_id();
+				ArrayList<Integer> newPredecessors = new ArrayList<Integer>();
+				int pessimistic = Integer.parseInt(newPessi.getText());
+				int optimistic = Integer.parseInt(newOpt.getText());
+				int value = Integer.parseInt(newActValue.getText());
 				
+				//get all selected acitivities
 				ListModel m = listPre.getModel();
 				List<String> s = new ArrayList<String>();
 				for(int i = 0; i < m.getSize(); i++){
@@ -133,7 +138,7 @@ public class CreateAct {
 						newPredecessors.add(act.getActivity_id());
 					}
 				}
-				Activity act = new Activity(projectID, newName, newDes, newDuration, newPredecessors);
+				Activity act = new Activity(projectID, newName, newDes, newDuration, newPredecessors, pessimistic, optimistic, value);
 				
 				JOptionPane.showMessageDialog(null, "Activity created successfully!");
 				MainWindow.updateActivityList();
@@ -175,7 +180,7 @@ public class CreateAct {
 		frmNewActivity.getContentPane().add(listPre);
 		
 		ActivityController ac = new ActivityController();
-		List<Activity> l = ac.getActByProjectId(MainWindow.currentProject.getProject_id());
+		List<Activity> l = ac.getActByProjectId(MainWindow.selectedProject.getProject_id());
 		for(Activity a : l){
 			lm1.addElement(a.getActivity_name());
 		}

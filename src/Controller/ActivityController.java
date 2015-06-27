@@ -23,11 +23,12 @@ public class ActivityController extends DB_Controller {
 
 		int id = 0;
 
-		String sql = "INSERT INTO Activity (Project_ID,Name,Desc,Duration) "
-				+ "VALUES(" + activity.getProject_id() + ", '"
+		String sql = "INSERT INTO Activity (Project_ID,Name,Desc,Duration,Pessimistic,Optimistic,Value) "
+				+ "VALUES('" + activity.getProject_id() + "', '"
 				+ activity.getActivity_name() + "', '"
-				+ activity.getActivity_desc() + "', " + activity.getDuration()
-				+ ");";
+				+ activity.getActivity_desc() + "', '" + activity.getDuration() + "', '" + activity.getPessimistic() +"', '"
+				+ activity.getOptimistic() +"', '"  + activity.getValue()
+				+ "');";
 
 		String sql2 = "SELECT last_insert_rowid() FROM Activity;";
 
@@ -63,7 +64,40 @@ public class ActivityController extends DB_Controller {
 		}
 		return status;
 	}
+	
+	public List<Integer> getUserByAssignment(Activity a){
+		String sql = "Select * FROM Activity_Assign WHERE Activity_ID = '" + a.getActivity_id() + "';";
+		ResultSet res;
+		List<Integer> list = new ArrayList<Integer>();
+		
+		try {
+			st = c.createStatement();
+			res = st.executeQuery(sql);
+			if(res != null){
+				while (res.next()) {
+					list.add(res.getInt("User_ID"));
+				}
+			}
+			c.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	public void removeAssignment(Activity a, int uid){
+		String sql = "DELETE FROM Activity_Assign WHERE User_ID = '" + uid +"' AND Activity_Id = '" + a.getActivity_id() +"';";
+		
+		try {
+			st = c.createStatement();
+			st.executeUpdate(sql);
+			c.close();
 
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * @param a, Activity pre
 	 * @return status 1 for successful
@@ -118,6 +152,9 @@ public class ActivityController extends DB_Controller {
 		int duration = 0;
 		int progress =0;
 		int finished =0;
+		int pess = 0;
+		int opt = 0;
+		int value = 0;
 
 		try {
 			st = c.createStatement();
@@ -129,7 +166,10 @@ public class ActivityController extends DB_Controller {
 				desc = res.getString("Desc");
 				duration = res.getInt("Duration");
 				finished = res.getInt("Finished");
-				a = new Activity(id, pID, name, desc, duration, progress, finished,null);
+				pess = res.getInt("Pessimistic");
+				opt = res.getInt("Optimistic");
+				value = res.getInt("Value");
+				a = new Activity(id, pID, name, desc, duration, progress, finished,null,pess,opt,value);
 				la.add(a);
 			}
 			c.close();
@@ -153,6 +193,9 @@ public class ActivityController extends DB_Controller {
 		int duration = 0;
 		int progress =0;
 		int finished =0;
+		int pess = 0;
+		int opt = 0;
+		int value = 0;
 
 		try {
 			st = c.createStatement();
@@ -164,7 +207,10 @@ public class ActivityController extends DB_Controller {
 				desc = res.getString("Desc");
 				duration = res.getInt("Duration");
 				finished = res.getInt("Finished");
-				a = new Activity(aID, id, name, desc, duration, progress, finished,null);
+				pess = res.getInt("Pessimistic");
+				opt = res.getInt("Optimistic");
+				value = res.getInt("Value");
+				a = new Activity(aID, id, name, desc, duration, progress, finished,null,pess,opt,value);
 				la.add(a);
 			}
 			c.close();
@@ -188,6 +234,9 @@ public class ActivityController extends DB_Controller {
 		int duration = 0;
 		int progress =0;
 		int finished =0;
+		int pess = 0;
+		int opt = 0;
+		int value = 0;
 
 		try {
 			st = c.createStatement();
@@ -199,7 +248,10 @@ public class ActivityController extends DB_Controller {
 				desc = res.getString("Desc");
 				duration = res.getInt("Duration");
 				finished = res.getInt("Finished");
-				Activity a = new Activity(aID, id, name, desc, duration, progress, finished,null);
+				pess = res.getInt("Pessimistic");
+				opt = res.getInt("Optimistic");
+				value = res.getInt("Value");
+				Activity a = new Activity(aID, id, name, desc, duration, progress, finished,null,pess,opt,value);
 				c.close();
 				return a;
 			}

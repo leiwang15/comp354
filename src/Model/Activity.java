@@ -12,16 +12,22 @@ public class Activity {
     private String activity_desc;
     private int progress;
     private int duration; //in hours
+    private int pessimistic;
+    private int optimistic;
+    private int value;
     private int finished;
     private ArrayList<Integer> predecessors;
 
   //initialization with writing to DB
-    public Activity (int project_id, String name, String desc, int duration, ArrayList<Integer> predecessors){
+    public Activity (int project_id, String name, String desc, int duration, ArrayList<Integer> predecessors, int pessimistic, int optimistic, int value){
     	this.project_id = project_id;
     	this.activity_name = name;
     	this.activity_desc = desc;
     	this.duration = duration;
         this.predecessors = predecessors;
+        this.pessimistic = pessimistic;
+        this.optimistic = optimistic;
+        this.value = value;
 
     	ActivityController ac = new ActivityController();
     	this.setActivity_id(ac.addActivity(this));
@@ -33,7 +39,7 @@ public class Activity {
     }
 
     //Local initialization without writing to DB
-    public Activity (int activity_id, int project_id, String name, String desc, int duration, int progress, int finished, ArrayList<Integer> predecessors){
+    public Activity (int activity_id, int project_id, String name, String desc, int duration, int progress, int finished, ArrayList<Integer> predecessors, int pessimistic, int optimistic, int value){
 
     	this.activity_id = activity_id;
     	this.project_id = project_id;
@@ -43,9 +49,36 @@ public class Activity {
     	this.progress = progress;
     	this.finished = finished;
 		this.predecessors = predecessors;
+		this.pessimistic = pessimistic;
+        this.optimistic = optimistic;
+        this.value = value;
 
     }
-    /**
+    public int getPessimistic() {
+		return pessimistic;
+	}
+
+	public void setPessimistic(int pessimistic) {
+		this.pessimistic = pessimistic;
+	}
+
+	public int getOptimistic() {
+		return optimistic;
+	}
+
+	public void setOptimistic(int optimistic) {
+		this.optimistic = optimistic;
+	}
+
+	public int getValue() {
+		return value;
+	}
+
+	public void setValue(int value) {
+		this.value = value;
+	}
+
+	/**
      * @return the activity_id
      */
     public int getActivity_id() {

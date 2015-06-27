@@ -113,6 +113,7 @@ public class Register {
 				String pwConfirm = new String(newPWConfirm.getPassword());
 				String role = choice.getSelectedItem();
 				
+				
 				if(password.equals(pwConfirm)){
 					User u = new User(firstName, lastName, role, userName, password);
 

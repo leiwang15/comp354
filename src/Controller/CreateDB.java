@@ -69,6 +69,9 @@ public class CreateDB {
 					+ " Name		TEXT    NOT NULL, "
 					+ " Desc		TEXT	NOT NULL, "
 					+ " Duration	INT		NOT NULL, "
+					+ " Pessimistic	INT		NOT NULL, "
+					+ " Optimistic	INT		NOT NULL, "
+					+ " Value		INT		NOT NULL, "
 					+ " Progress	INT		DEFAULT 0, 	"
 					+ " Finished	INT		DEFAULT 0,	"
 					+ " FOREIGN KEY(Project_ID) 		REFERENCES Project(ProjectID));";
