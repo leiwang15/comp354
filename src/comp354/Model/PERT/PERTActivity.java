@@ -1,4 +1,4 @@
-package comp354.PERT;
+package comp354.Model.PERT;
 
 /**
  * Created by joao on 15-05-26.
