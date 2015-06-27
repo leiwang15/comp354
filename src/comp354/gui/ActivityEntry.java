@@ -4,9 +4,12 @@ import com.mxgraph.analysis.mxAnalysisGraph;
 import com.mxgraph.analysis.mxGraphStructure;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxRectangle;
+import com.mxgraph.view.mxEdgeStyle;
 import com.mxgraph.view.mxGraph;
 import comp354.Controller.DB_Controller;
+import comp354.Model.AON.ActivityOnNode;
 import comp354.Model.Activity;
 import comp354.Model.ActivityList;
 import comp354.gui.editors.IntegerEditor;
@@ -29,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -226,9 +230,18 @@ public class ActivityEntry extends JPanel implements ActionListener {
 
 	public mxGraph createGraph(ActivityList activityList) {
 
+		Map<String, Object> style = graph.getStylesheet().getDefaultEdgeStyle();
+		style.put(mxConstants.STYLE_EDGE, mxEdgeStyle.SideToSide);
+		style.put(mxConstants.STYLE_FILLCOLOR, "default");
+		style.put(mxConstants.STYLE_STROKECOLOR, "default");
+
 		graph.removeCells(graph.getChildCells(parent, true, true));
 		graph.removeCells();
-//        graph.setCellsMovable(false);
+
+		graph.setCellsSelectable(false);
+		graph.setCellsMovable(false);
+		graph.setCellsEditable(false);
+		graph.setCellsLocked(true);
 
 		linkNodes(activityList);
 
@@ -241,18 +254,29 @@ public class ActivityEntry extends JPanel implements ActionListener {
 	private void linkNodes(ActivityList activityList) {
 		ArrayList<Activity> activities = activityList.getActivities();
 
-		HashMap<Integer, mxCell> map = new HashMap<Integer, mxCell>();
+		HashMap<Integer, mxCell> activityID2mxCell = new HashMap<Integer, mxCell>();
+		HashMap<mxCell, Activity> mxCell2Activity = new HashMap<mxCell, Activity>();
+
+		ArrayList<mxCell> critical = new ArrayList<>();
+
 		for (int i = 0; i < activities.size(); i++) {
+
 			mxCell v = (mxCell) graph.insertVertex(parent,
 					null,
-					activities.get(i).getActivity_name() + ": " + activities.get(i).getDuration(),
-					11 * startPos(activities, i, i) + 5,                            //	x
-					i * activitiesTable.getRowHeight() + 11,//	y
-					activities.get(i).getDuration() * 11,    //	width
-					activitiesTable.getRowHeight());        //	height
+					null,
+					11 * startPos(activities, i, i) + 5,        //	x
+					i * activitiesTable.getRowHeight() + 12,    //	y
+					activities.get(i).getDuration() * 11,       //	width
+					activitiesTable.getRowHeight(),             //	height
+					"rounded=0");
+			v.setValue(new ActivityOnNode(activities.get(i), v));
 
-//            v.setGeometry(new mxGeometry(0,0,10,10));
-			map.put(activities.get(i).getActivity_id(), v);
+//            if (i % 2 == 1) {
+			critical.add(v);
+//            }
+
+			activityID2mxCell.put(activities.get(i).getActivity_id(), v);
+			mxCell2Activity.put(v, activities.get(i));
 		}
 
 		for (int i = 0; i < activities.size(); i++) {
@@ -260,14 +284,45 @@ public class ActivityEntry extends JPanel implements ActionListener {
 			Activity parentActivity = activities.get(i);
 			for (Activity childActivity : activities) {
 				if (childActivity.getPredecessors().contains(parentActivity.getActivity_id())) {
-					mxCell v2 = map.get(childActivity.getActivity_id());
+					mxCell v2 = activityID2mxCell.get(childActivity.getActivity_id());
 
 					if (!hasCycles) {
 						hasCycles = parentActivity.getActivity_id() == childActivity.getActivity_id();
 					}
-					graph.insertEdge(parent, null, "", map.get(parentActivity.getActivity_id()), v2);
+					mxCell parentCell = activityID2mxCell.get(parentActivity.getActivity_id());
+					if (parentCell != v2) {
+						graph.insertEdge(parentCell, null, "", parentCell, v2);
+//                        parentCell.insert(v2);
+					}
+//                    v2.setParent(parentCell);
+//                    parentCell.setTarget(v2);
 				}
 			}
+		}
+
+		calculateCPM(graph);
+
+		graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "lightblue", critical.toArray());
+	}
+
+	private void calculateCPM(mxGraph graph) {
+
+		mxCell root = (mxCell) graph.getDefaultParent();
+
+		if (root != null) {
+			System.out.println("root.getChildCount()=" + root.getChildCount());
+			ActivityOnNode activityOnNode = (ActivityOnNode) root.getChildAt(0).getValue();
+
+			activityOnNode.setES(0);
+
+			activityOnNode.forwardPass(graph);
+
+			ActivityOnNode lastActivity = activityOnNode.findLastActivity(graph);
+
+			lastActivity.setLF(lastActivity.getEF());
+			lastActivity.backwardPass(graph);
+
+			System.out.println(activityOnNode);
 		}
 	}
 
@@ -279,7 +334,7 @@ public class ActivityEntry extends JPanel implements ActionListener {
 
 		int pos = 0;
 		for (int pred : list.get(i).getPredecessors()) {
-			pos = Math.max(pos, startPos(list, pred-1, j));
+			pos = Math.max(pos, startPos(list, pred - 1, j));
 		}
 
 		if (i != j) {
@@ -291,7 +346,9 @@ public class ActivityEntry extends JPanel implements ActionListener {
 
 	public boolean hasCycles() {
 		hasCycles = false;
-		return hasCycles(createGraph(getActivities())) || hasCycles;
+		createGraph(getActivities());
+		return false;
+//        return hasCycles(createGraph(getActivities())) || hasCycles;
 	}
 
 	private boolean hasCycles(mxGraph graph) {
