@@ -32,6 +32,8 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
+import org.jfree.ui.RefineryUtilities;
+
 import java.awt.Color;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -55,7 +57,7 @@ public class MainWindow {
 	
 	private JMenuItem mntmNewProject;
 	private JMenuItem mntmDeleteProject;
-	private JMenuItem mntmSave;
+	private JMenuItem mntmEditProject;
 	private JMenuItem mntmLogOut;
 	private JMenuItem mntmExit;
 	private JMenuItem mntmNewAct;
@@ -228,6 +230,7 @@ public class MainWindow {
 		JMenuBar menuBar = new JMenuBar();
 		frmProjectManagementSystem.setJMenuBar(menuBar);
 		
+		//menu file
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
 		
@@ -250,6 +253,9 @@ public class MainWindow {
 					});
 				}
 			});		
+			
+			mntmEditProject = new JMenuItem("Edit Project");
+			mnFile.add(mntmEditProject);
 			
 			//Delete		
 			mntmDeleteProject = new JMenuItem("Delete Project");
@@ -386,6 +392,27 @@ public class MainWindow {
 			
 			mntmGANTTChart = new JMenuItem("GANTT Chart");
 			mnAnalysis.add(mntmGANTTChart);
+			
+			mntmGANTTChart.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					if(selectedProject != null){
+					
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								try {
+									final Gantt gantt = new Gantt();
+							        gantt.frmGantt.setVisible(true);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						});
+					}
+					else{
+						JOptionPane.showMessageDialog(null, "Please select a project!");
+					}
+				}
+			});
 			
 			mntmPERT = new JMenuItem("PERT Chart");
 			mnAnalysis.add(mntmPERT);
