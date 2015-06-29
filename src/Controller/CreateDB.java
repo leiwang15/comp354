@@ -74,7 +74,7 @@ public class CreateDB {
 					+ " Value		INT		NOT NULL, "
 					+ " Progress	INT		DEFAULT 0, 	"
 					+ " Finished	INT		DEFAULT 0,	"
-					+ " FOREIGN KEY(Project_ID) 		REFERENCES Project(ProjectID));";
+					+ " FOREIGN KEY(Project_ID) 		REFERENCES Project(ProjectID) ON DELETE CASCADE);";
 
 
 			stmt.executeUpdate(sql);
@@ -86,8 +86,8 @@ public class CreateDB {
 					+ "	PA_ID		INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
 					+ " Project_ID	INTEGER		NOT NULL, "
 					+ " User_ID		INTEGER		NOT NULL, "
-					+ " FOREIGN KEY(Project_ID) 		REFERENCES Project(ProjectID),"
-					+ " FOREIGN KEY(User_ID) 			REFERENCES User(UserID))";
+					+ " FOREIGN KEY(Project_ID) 		REFERENCES Project(ProjectID) ON DELETE CASCADE,"
+					+ " FOREIGN KEY(User_ID) 			REFERENCES User(UserID) ON DELETE CASCADE)";
 
 
 			stmt.executeUpdate(sql);
@@ -100,8 +100,8 @@ public class CreateDB {
 					+ "	AA_ID		INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
 					+ " Activity_ID	INTEGER		NOT NULL, "
 					+ " User_ID		INTEGER		NOT NULL, "
-					+ " FOREIGN KEY(Activity_ID) 	REFERENCES Activity(ActivityID),"
-					+ " FOREIGN KEY(User_ID) 		REFERENCES User(UserID))";
+					+ " FOREIGN KEY(Activity_ID) 	REFERENCES Activity(ActivityID) ON DELETE CASCADE,"
+					+ " FOREIGN KEY(User_ID) 		REFERENCES User(UserID) ON DELETE CASCADE)";
 
 
 			stmt.executeUpdate(sql);
@@ -127,8 +127,8 @@ public class CreateDB {
 					+ "	AP_ID				INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
 					+ " Activity_ID1		INTEGER		NOT NULL, "
 					+ " Activity_ID2		INTEGER		NOT NULL, "
-					+ " FOREIGN KEY(Activity_ID1) 	REFERENCES Activity(ActivityID),"
-					+ " FOREIGN KEY(Activity_ID2) 	REFERENCES Activity(ActivityID))";
+					+ " FOREIGN KEY(Activity_ID1) 	REFERENCES Activity(ActivityID) ON DELETE CASCADE,"
+					+ " FOREIGN KEY(Activity_ID2) 	REFERENCES Activity(ActivityID) ON DELETE CASCADE)";
 
 
 			stmt.executeUpdate(sql);
