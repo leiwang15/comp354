@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -27,24 +28,26 @@ import Model.Activity;
 
 public class Gantt {
 	
-	protected JFrame frmGantt;
+	protected JDialog gantt;
 	private static TaskSeries s1 = new TaskSeries("Scheduled Activities");
 	private static Map<Integer,Calendar> map = new LinkedHashMap<Integer,Calendar>();
 	
 	public Gantt() {
-		frmGantt = new JFrame();
-		frmGantt.setTitle("Gantt Chart");
-		frmGantt.setBounds(100, 100, 800, 412);
-		frmGantt.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frmGantt.setResizable(false);
 		
+		gantt = new JDialog();
+		gantt.setTitle("Gantt Chart");
+		gantt.setBounds(100, 100, 800, 412);
+		gantt.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		gantt.setResizable(false);
+		
+		s1.removeAll();
 		final IntervalCategoryDataset dataset = createDataset();
         final JFreeChart chart = createChart(dataset);
 
         // add the chart to a panel
         final ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(800, 400));
-        frmGantt.setContentPane(chartPanel);
+        gantt.setContentPane(chartPanel);
         
 	}
 	

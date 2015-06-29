@@ -3,6 +3,7 @@ package gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -22,9 +23,9 @@ import java.awt.Color;
 
 import javax.swing.SwingConstants;
 
-public class CreateAct {
+public class EditAct {
 
-	protected JDialog createAct;
+	protected JDialog editAct;
 	private JTextField newActName;
 	private JTextField newActDuration;
 	private JList listPre;
@@ -32,84 +33,160 @@ public class CreateAct {
 	private JTextField newPessi;
 	private JTextField newOpt;
 	private JTextField newActValue;
+	private JTextArea newActDes;
+	private final DefaultListModel lm1 = new DefaultListModel<>();
+	private final DefaultListModel lm2 = new DefaultListModel<>();
+	private static boolean cycleExist = false;
 
-	public CreateAct() {
+	public EditAct() {
 		initialize();
+		loadAct();
 	}
-
-	private void initialize() {
-		createAct = new JDialog();
-		createAct.setTitle("New Activity");
-		createAct.setBounds(200, 300, 509, 359);
-		createAct.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		createAct.setResizable(false);
-		createAct.getContentPane().setLayout(null);
+	public void loadAct(){
+		Activity a = MainWindow.selectedAct;
+		ActivityController ac = new ActivityController();
+		List<Integer> li = ac.getActPrecedence(a.getActivity_id());
+		ArrayList<Integer> ai = new ArrayList<Integer>();
+		ai.addAll(li);
+		a.setPredecessors(ai);
 		
-		JLabel lblProject = new JLabel("New activity for project ");
+		newActName.setText(a.getActivity_name());
+		newActDuration.setText(a.getDuration() + "");
+		newPessi.setText(a.getPessimistic() + "");
+		newOpt.setText(a.getOptimistic() + "");
+		newActValue.setText(a.getValue() + "");
+		newActDes.setText(a.getActivity_desc());
+		
+		//add predecessors to listPre
+		ActivityController ac3 = new ActivityController();
+		List<Integer> list3 = ac3.getActPrecedence(MainWindow.selectedAct.getActivity_id());
+		for(Integer i : list3){
+			ActivityController ac4 = new ActivityController();
+			Activity act = ac4.getActByActId(i).get(0);
+			lm2.addElement(act.getActivity_name());
+		}
+		
+		
+		//add available acts to listAct
+		ActivityController ac1 = new ActivityController();
+		List<Activity> l = ac1.getActByProjectId(MainWindow.selectedProject.getProject_id());
+		
+		Iterator<Activity> it = l.iterator();
+		while(it.hasNext()){
+			Activity act = it.next();
+
+			if(!lm2.contains(act.getActivity_name())){
+				cycleExist = false;
+				//activity which will cause cycle will not be added to the list
+				cycleDetection(act);
+				if(!cycleExist){
+					
+					lm1.addElement(act.getActivity_name());
+										
+				}
+			}
+		}
+		lm1.removeElement(MainWindow.selectedAct.getActivity_name());
+	}
+	
+	//cycle detection
+	private static void cycleDetection(Activity a){
+		
+		ActivityController ac2 = new ActivityController();
+		List<Integer> pre = ac2.getActPrecedence(a.getActivity_id());
+		
+		if(!pre.isEmpty() && !cycleExist){		
+			Iterator<Integer> it = pre.iterator();
+			while(it.hasNext()){
+				Integer i = it.next();
+				
+				if(i.intValue() == MainWindow.selectedAct.getActivity_id()){
+					cycleExist = true;
+					return;
+				}
+				else{
+					ActivityController ac = new ActivityController();
+					Activity b = ac.getActByActId(i).get(0);
+					cycleDetection(b);
+				}
+			}		
+		}	
+	}
+	
+	private void initialize() {
+		editAct = new JDialog();
+		editAct.setTitle("Edit Activity");
+		editAct.setBounds(200, 300, 509, 359);
+		editAct.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		editAct.setResizable(false);
+		editAct.getContentPane().setLayout(null);
+		
+		JLabel lblProject = new JLabel("Edit activity for project ");
 		lblProject.setBounds(10, 10, 206, 15);
-		createAct.getContentPane().add(lblProject);
-		lblProject.setText("New activity for project " + MainWindow.selectedProject.getProject_name());
+		editAct.getContentPane().add(lblProject);
+		lblProject.setText("Edit activity for project " + MainWindow.selectedProject.getProject_name());
 		
 		JLabel lblActivityName = new JLabel("Activity name     :");
 		lblActivityName.setBounds(10, 46, 114, 22);
-		createAct.getContentPane().add(lblActivityName);
+		editAct.getContentPane().add(lblActivityName);
 		
 		JLabel lblActivityDuration = new JLabel("Activity duration :");
 		lblActivityDuration.setBounds(10, 78, 114, 22);
-		createAct.getContentPane().add(lblActivityDuration);
+		editAct.getContentPane().add(lblActivityDuration);
 		
 		JLabel lblPessi = new JLabel("Pessimistic       :");
 		lblPessi.setBounds(10, 110, 114, 22);
-		createAct.getContentPane().add(lblPessi);
+		editAct.getContentPane().add(lblPessi);
 		
 		JLabel lblOpt = new JLabel("Optimistic        :");
 		lblOpt.setBounds(10, 142, 114, 22);
-		createAct.getContentPane().add(lblOpt);
+		editAct.getContentPane().add(lblOpt);
 		
 		JLabel lblAvtivityValue = new JLabel("Avtivity value    :");
 		lblAvtivityValue.setBounds(10, 174, 114, 22);
-		createAct.getContentPane().add(lblAvtivityValue);
+		editAct.getContentPane().add(lblAvtivityValue);
 		
 		JLabel lblActivityDescription = new JLabel("Activity description:");
 		lblActivityDescription.setBounds(10, 206, 126, 22);
-		createAct.getContentPane().add(lblActivityDescription);
+		editAct.getContentPane().add(lblActivityDescription);
 		
 		newActName = new JTextField();
 		newActName.setBounds(134, 46, 82, 22);
-		createAct.getContentPane().add(newActName);
+		editAct.getContentPane().add(newActName);
 		newActName.setColumns(10);
 		
 		newActDuration = new JTextField();
 		newActDuration.setBounds(134, 78, 82, 22);
-		createAct.getContentPane().add(newActDuration);
+		editAct.getContentPane().add(newActDuration);
 		newActDuration.setColumns(10);
 		
 		newPessi = new JTextField();
 		newPessi.setBounds(134, 110, 82, 22);
-		createAct.getContentPane().add(newPessi);
+		editAct.getContentPane().add(newPessi);
 		newPessi.setColumns(10);
 		
 		newOpt = new JTextField();
 		newOpt.setBounds(134, 143, 82, 22);
-		createAct.getContentPane().add(newOpt);
+		editAct.getContentPane().add(newOpt);
 		newOpt.setColumns(10);
 		
 		newActValue = new JTextField();
 		newActValue.setBounds(134, 175, 82, 21);
-		createAct.getContentPane().add(newActValue);
+		editAct.getContentPane().add(newActValue);
 		newActValue.setColumns(10);
 		
-		final JTextArea newActDes = new JTextArea();
+		newActDes = new JTextArea();
 		newActDes.setBounds(10, 238, 206, 50);
-		createAct.getContentPane().add(newActDes);
+		editAct.getContentPane().add(newActDes);
 		
 		//create activity
-		JButton btnCreate = new JButton("Create");
+		JButton btnCreate = new JButton("Confirm");
 		btnCreate.setBounds(10, 298, 93, 23);
-		createAct.getContentPane().add(btnCreate);
+		editAct.getContentPane().add(btnCreate);
 		
 		btnCreate.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
+				int actID = MainWindow.selectedAct.getActivity_id();
 				String newName = newActName.getText();
 				int newDuration = Integer.parseInt(newActDuration.getText());
 				String newDes = newActDes.getText();
@@ -118,6 +195,8 @@ public class CreateAct {
 				int pessimistic = Integer.parseInt(newPessi.getText());
 				int optimistic = Integer.parseInt(newOpt.getText());
 				int value = Integer.parseInt(newActValue.getText());
+				int progress = MainWindow.selectedAct.getProgress();
+				int finished = MainWindow.selectedAct.getFinished();
 				
 				//get all selected acitivities
 				ListModel m = listPre.getModel();
@@ -138,58 +217,61 @@ public class CreateAct {
 						newPredecessors.add(act.getActivity_id());
 					}
 				}
-				Activity act = new Activity(projectID, newName, newDes, newDuration, newPredecessors, pessimistic, optimistic, value);
+				Activity act = new Activity(actID, projectID, newName, newDes, newDuration,progress,finished, newPredecessors, pessimistic, optimistic, value);
+				ActivityController ac = new ActivityController();
+				ac.updateActivity(act);
+				ActivityController ac1 = new ActivityController();
+				ac1.removePrecedence(actID);
+				if(!newPredecessors.isEmpty()){
+					for(Integer i : newPredecessors){
+						ActivityController ac2 = new ActivityController();
+			    		ac2.setActPrecedence(actID, i);
+					}
+				}
 				
-				JOptionPane.showMessageDialog(null, "Activity created successfully!");
+				JOptionPane.showMessageDialog(null, "Activity saved successfully!");
 				MainWindow.updateActivityList();
-				createAct.dispose();
+				editAct.dispose();
 			}
 		});
 		
 		
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.setBounds(123, 298, 93, 23);
-		createAct.getContentPane().add(btnCancel);
+		editAct.getContentPane().add(btnCancel);
 		
 		btnCancel.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				createAct.dispose();
+				editAct.dispose();
 			}
 		});
 		
 		JLabel lblNewLabel = new JLabel("Activity List");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setBounds(232, 10, 93, 30);
-		createAct.getContentPane().add(lblNewLabel);
+		editAct.getContentPane().add(lblNewLabel);
 		
 		JLabel lblPredecessor = new JLabel("Predecessors");
 		lblPredecessor.setHorizontalAlignment(SwingConstants.CENTER);
 		lblPredecessor.setBounds(399, 10, 93, 30);
-		createAct.getContentPane().add(lblPredecessor);
+		editAct.getContentPane().add(lblPredecessor);
 		
-		final DefaultListModel lm1 = new DefaultListModel<>();
+		
 		listAct = new JList(lm1);
 		listAct.setBackground(Color.LIGHT_GRAY);
 		listAct.setBounds(232, 49, 93, 257);
-		createAct.getContentPane().add(listAct);
+		editAct.getContentPane().add(listAct);
 		
-		final DefaultListModel lm2 = new DefaultListModel<>();
 		listPre = new JList(lm2);
 		listPre.setBackground(Color.LIGHT_GRAY);
 		listPre.setBounds(399, 49, 93, 257);
-		createAct.getContentPane().add(listPre);
+		editAct.getContentPane().add(listPre);
 		
-		//add available acts to list
-		ActivityController ac = new ActivityController();
-		List<Activity> l = ac.getActByProjectId(MainWindow.selectedProject.getProject_id());
-		
-		for(Activity a : l){
-			lm1.addElement(a.getActivity_name());
-		}
+
 		
 		JButton btnAdd = new JButton("=>");
 		btnAdd.setBounds(335, 110, 54, 22);
-		createAct.getContentPane().add(btnAdd);
+		editAct.getContentPane().add(btnAdd);
 		
 		btnAdd.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -203,7 +285,7 @@ public class CreateAct {
 		
 		JButton btnDelete = new JButton("<=");
 		btnDelete.setBounds(335, 238, 54, 23);
-		createAct.getContentPane().add(btnDelete);
+		editAct.getContentPane().add(btnDelete);
 		
 		btnDelete.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){

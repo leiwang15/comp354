@@ -45,6 +45,24 @@ public class ActivityController extends DB_Controller {
 		}
 		return id;
 	}
+	
+	public void updateActivity(Activity a){
+		
+		String sql = "REPLACE INTO Activity (ActivityID,Project_ID,Name,Desc,Duration,Pessimistic,Optimistic,Value) "
+				+ "VALUES('" + a.getProject_id() + "', '" + a.getActivity_id() + "', '"
+				+ a.getActivity_name() + "', '"
+				+ a.getActivity_desc() + "', '" + a.getDuration() + "', '" + a.getPessimistic() +"', '"
+				+ a.getOptimistic() +"', '"  + a.getValue()
+				+ "');";
+		
+		try {
+			st = c.createStatement();
+			st.executeUpdate(sql);
+			c.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * @param u, Activity a
@@ -156,6 +174,17 @@ public class ActivityController extends DB_Controller {
 			e.printStackTrace();
 		}
 		return list;
+	}
+	
+	public void removePrecedence(int id){
+		String sql = "DELETE FROM Activity_Pre WHERE Activity_ID1 = " + id + ";";
+		try {
+			st = c.createStatement();
+			st.executeUpdate(sql);
+			c.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public List<Activity> getActByProjectId (int pID){
@@ -282,4 +311,57 @@ public class ActivityController extends DB_Controller {
 		return null;
 		
 	}
+	
+	public void deleteAct(int id){
+		String sql = "DELETE FROM Activity WHERE ActivityID = " + id + ";";
+		try {
+			st = c.createStatement();
+			st.executeUpdate(sql);
+			c.close();
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+	}
+	
+	public void deletePre(int id){
+		String sql = "DELETE FROM Activity_Pre WHERE Activity_ID1 = " + id + " OR Activity_ID2 = " + id + ";";
+		try {
+			st = c.createStatement();
+			st.executeUpdate(sql);
+			c.close();
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+	}
+	
+	public void deleteAssign(int id){
+		String sql = "DELETE FROM Activity_Assign WHERE Activity_ID = " + id + ";";
+		try {
+			st = c.createStatement();
+			st.executeUpdate(sql);
+			c.close();
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+	}
+	
+	public void deleteActByProject(int id){
+		String sql = "DELETE FROM Activity_Assign WHERE Project_ID = " + id + ";";
+		try {
+			st = c.createStatement();
+			st.executeUpdate(sql);
+			c.close();
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+	}
+	
 }

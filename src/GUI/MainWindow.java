@@ -38,6 +38,7 @@ import java.awt.Color;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JList;
@@ -245,7 +246,7 @@ public class MainWindow {
 						public void run() {
 							try {
 								CreatePJ window = new CreatePJ();
-								window.frame.setVisible(true);
+								window.createPJ.setVisible(true);
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -264,23 +265,36 @@ public class MainWindow {
 			mntmDeleteProject.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent e){
 					
-					if(list.getSelectedValue() != null){
-	            		String s = list.getSelectedValue().toString();
-	                	
-	                	for(Project p : pjList){
-	            			if (p.getProject_name().equals(s)){
+					if(list.getSelectedValue() != null){            		            				
+	            		int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure to delete the project " + selectedProject.getProject_name()          																	+ "?","Warning",JOptionPane.YES_NO_OPTION);
+	            		if(dialogResult == JOptionPane.YES_OPTION){
+	            			
+	            			List<Activity> la = new ArrayList<Activity>();
+	            			ActivityController ac = new ActivityController();
+	            			la = ac.getActByProjectId(selectedProject.getProject_id());
+	            			
+	            			Iterator<Activity> it = la.iterator();
+	            			while(it.hasNext()){
+	            				Activity act = it.next();
 	            				
-	            				int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure to delete the project " + p.getProject_name()
-	            																	+ "?","Warning",JOptionPane.YES_NO_OPTION);
-	            				if(dialogResult == JOptionPane.YES_OPTION){
-	            				
-		            				ProjectController pc = new ProjectController();
-		            				pc.deleteProject(p);
-		            				JOptionPane.showMessageDialog(null, "Delete successfully!");
-		            				updateProjectList();
-	            				}
+	            				ActivityController ac1 = new ActivityController();
+								ac.deleteAct(act.getActivity_id());
+								
+								ActivityController ac2 = new ActivityController();
+								ac2.deletePre(act.getActivity_id());
+								
+								ActivityController ac3 = new ActivityController();
+								ac3.deleteAssign(act.getActivity_id());
 	            			}
-	            		}
+	            			
+	            			ProjectController pc = new ProjectController();
+		           			pc.deleteProject(selectedProject.getProject_id());
+		           			
+		            		JOptionPane.showMessageDialog(null, "Delete successfully!");
+		            		selectedProject = null;
+		            		updateProjectList();
+		            		updateActivityList();
+	            		}            			
 	            	}
 					else{
 						JOptionPane.showMessageDialog(null, "Please select a project to delete!");
@@ -303,7 +317,7 @@ public class MainWindow {
 					public void run() {
 						try {
 							Login loginWindow = new Login();
-							loginWindow.frmLogin.setVisible(true);
+							loginWindow.login.setVisible(true);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -340,7 +354,7 @@ public class MainWindow {
 							public void run() {
 								try {
 									CreateAct window = new CreateAct();
-									window.frmNewActivity.setVisible(true);
+									window.createAct.setVisible(true);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
@@ -356,9 +370,67 @@ public class MainWindow {
 	
 			mntmDeleteAct = new JMenuItem("Delete Activity");
 			mnEdit.add(mntmDeleteAct);
-		
+			
+			mntmDeleteAct.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					
+					if(selectedProject != null){
+						if(selectedAct != null){
+							int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure to delete the activity " + selectedAct.getActivity_name()
+							+ "?","Warning",JOptionPane.YES_NO_OPTION);
+							if(dialogResult == JOptionPane.YES_OPTION){
+								ActivityController ac = new ActivityController();
+								ac.deleteAct(selectedAct.getActivity_id());
+								
+								ActivityController ac2 = new ActivityController();
+								ac2.deletePre(selectedAct.getActivity_id());
+								
+								ActivityController ac3 = new ActivityController();
+								ac3.deleteAssign(selectedAct.getActivity_id());
+								
+								selectedAct = null;
+								JOptionPane.showMessageDialog(null, "Delete successfully!");
+								updateActivityList();
+							}
+						}
+						else{
+							JOptionPane.showMessageDialog(null, "Please select an activity to delete!");
+						}
+					}
+					else{
+						JOptionPane.showMessageDialog(null, "Please select a project to delete an activity!");
+					}
+				}
+			});
+			
 			mntmEditAct = new JMenuItem("Edit Activity");
 			mnEdit.add(mntmEditAct);
+			
+			mntmEditAct.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					
+					if(selectedProject != null){
+						if(selectedAct != null){
+							EventQueue.invokeLater(new Runnable() {
+								public void run() {
+									try {
+										EditAct window = new EditAct();
+										window.editAct.setVisible(true);
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+								}
+							});
+						}
+						else{
+							JOptionPane.showMessageDialog(null, "Please select an activity!");
+						}
+					}
+					else{
+						JOptionPane.showMessageDialog(null, "Please select a project!");
+					}
+				}
+			});
 			
 			//assign user to activity
 			mntmAssignUser = new JMenuItem("Assign User");
@@ -373,7 +445,7 @@ public class MainWindow {
 							public void run() {
 								try {
 									UserAssign window = new UserAssign();
-									window.frmAssignUser.setVisible(true);
+									window.userAssign.setVisible(true);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
@@ -401,7 +473,7 @@ public class MainWindow {
 							public void run() {
 								try {
 									final Gantt gantt = new Gantt();
-							        gantt.frmGantt.setVisible(true);
+							        gantt.gantt.setVisible(true);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
@@ -536,21 +608,23 @@ public class MainWindow {
 		
 		lsm.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
-				//get selected activity name
-				int selectedRow = activityTable.getSelectedRow();
-			    selectedRow = activityTable.convertRowIndexToModel(selectedRow);
-			    String s = (String)activityTable.getValueAt(selectedRow, 0);
-			    
-			    //get selected activity by name
-			    ActivityController ac = new ActivityController();
-			    selectedAct = ac.getActByActName(s);
-			    
-			    //update activity details
-			    lblActValue.setText("Activity Value               :   " + selectedAct.getValue());
-			    lblPess.setText("Pessimistic Duration :   " + selectedAct.getPessimistic());
-			    lblOpt.setText("Optimistic Duration    :   " + selectedAct.getOptimistic());
-			    
-			    updateUserList();
+				if(activityTable.getSelectedRow() != -1){
+					//get selected activity name
+					int selectedRow = activityTable.getSelectedRow();
+				    selectedRow = activityTable.convertRowIndexToModel(selectedRow);
+				    String s = (String)activityTable.getValueAt(selectedRow, 0);
+				    
+				    //get selected activity by name
+				    ActivityController ac = new ActivityController();
+				    selectedAct = ac.getActByActName(s);
+				    
+				    //update activity details
+				    lblActValue.setText("Activity Value               :   " + selectedAct.getValue());
+				    lblPess.setText("Pessimistic Duration :   " + selectedAct.getPessimistic());
+				    lblOpt.setText("Optimistic Duration    :   " + selectedAct.getOptimistic());
+				    
+				    updateUserList();
+				}
 			}
 
 			

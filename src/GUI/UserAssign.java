@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.ListModel;
@@ -22,7 +23,7 @@ import Model.User;
 
 public class UserAssign {
 
-	protected JFrame frmAssignUser;
+	protected JDialog userAssign;
 	private JList assignList;
 	private JList userList;
 	private JLabel lblAssign;
@@ -42,24 +43,24 @@ public class UserAssign {
 		String s = "Project Member";
 		list = uc.getUserByRole(s);
 		
-		frmAssignUser = new JFrame();
-		frmAssignUser.setTitle("Assign User to Activity");
-		frmAssignUser.setBounds(100, 100, 333, 358);
-		frmAssignUser.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frmAssignUser.setResizable(false);
-		frmAssignUser.getContentPane().setLayout(null);
+		userAssign = new JDialog();
+		userAssign.setTitle("Assign User to Activity");
+		userAssign.setBounds(100, 100, 333, 358);
+		userAssign.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		userAssign.setResizable(false);
+		userAssign.getContentPane().setLayout(null);
 		
 		final DefaultListModel lm1 = new DefaultListModel<>();
 		userList = new JList(lm1);
 		userList.setBackground(Color.LIGHT_GRAY);
 		userList.setBounds(10, 67, 93, 197);
-		frmAssignUser.getContentPane().add(userList);
+		userAssign.getContentPane().add(userList);
 		
 		final DefaultListModel lm2 = new DefaultListModel<>();
 		assignList = new JList(lm2);
 		assignList.setBackground(Color.LIGHT_GRAY);
 		assignList.setBounds(214, 67, 93, 197);
-		frmAssignUser.getContentPane().add(assignList);
+		userAssign.getContentPane().add(assignList);
 		
 		//add users to the two lists
 		for(User u : list){
@@ -76,7 +77,7 @@ public class UserAssign {
 		//choose users to assign
 		JButton btnAdd = new JButton("=>");
 		btnAdd.setBounds(129, 111, 54, 22);
-		frmAssignUser.getContentPane().add(btnAdd);
+		userAssign.getContentPane().add(btnAdd);
 		
 		btnAdd.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -90,7 +91,7 @@ public class UserAssign {
 		
 		JButton btnDelete = new JButton("<=");
 		btnDelete.setBounds(129, 196, 54, 22);
-		frmAssignUser.getContentPane().add(btnDelete);
+		userAssign.getContentPane().add(btnDelete);
 		
 		btnDelete.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -108,22 +109,22 @@ public class UserAssign {
 		lblAssign.setFont(new Font("Arial", Font.PLAIN, 15));
 		lblAssign.setBounds(10, 10, 297, 22);
 		lblAssign.setText("Activity " + MainWindow.selectedAct.getActivity_name());
-		frmAssignUser.getContentPane().add(lblAssign);
+		userAssign.getContentPane().add(lblAssign);
 		
 		lblUserList = new JLabel("User List");
 		lblUserList.setHorizontalAlignment(SwingConstants.CENTER);
 		lblUserList.setBounds(10, 42, 93, 15);
-		frmAssignUser.getContentPane().add(lblUserList);
+		userAssign.getContentPane().add(lblUserList);
 		
 		lblAssignedList = new JLabel("Assign List");
 		lblAssignedList.setHorizontalAlignment(SwingConstants.CENTER);
 		lblAssignedList.setBounds(214, 42, 93, 15);
-		frmAssignUser.getContentPane().add(lblAssignedList);
+		userAssign.getContentPane().add(lblAssignedList);
 		
 		//confirm user assign
 		JButton btnConfirm = new JButton("Confirm");
 		btnConfirm.setBounds(37, 287, 93, 23);
-		frmAssignUser.getContentPane().add(btnConfirm);
+		userAssign.getContentPane().add(btnConfirm);
 		
 		btnConfirm.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -156,7 +157,7 @@ public class UserAssign {
 				}
 				
 				
-				frmAssignUser.dispose();
+				userAssign.dispose();
 				
 				MainWindow.updateUserList();
 			}
@@ -165,11 +166,11 @@ public class UserAssign {
 		//cancel user assign
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.setBounds(180, 287, 93, 23);
-		frmAssignUser.getContentPane().add(btnCancel);
+		userAssign.getContentPane().add(btnCancel);
 		
 		btnCancel.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				frmAssignUser.dispose();
+				userAssign.dispose();
 			}
 		});
 		

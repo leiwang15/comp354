@@ -7,6 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.SwingConstants;
 
 import Controller.UserController;
@@ -19,38 +20,25 @@ import javax.swing.JPasswordField;
 
 public class Login {
 
-	protected JFrame frmLogin;
+	protected JDialog login;
 	private JTextField inputUsername;
 	private JButton btnLogin;
 	private JPasswordField inputPassword;
-
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Login loginWindow = new Login();
-					loginWindow.frmLogin.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	public Login() {
 		initialize();
 	}
 
 	private void initialize() {
-		frmLogin = new JFrame();
-		frmLogin.setTitle("Login");
-		frmLogin.setBounds(100, 100, 202, 212);
-		frmLogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmLogin.setResizable(false);
+		login = new JDialog();
+		login.setTitle("Login");
+		login.setBounds(100, 100, 202, 212);
+		login.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		login.setResizable(false);
 		
 		JLabel lblProjectManagementSystem = new JLabel("Project Management System");
 		lblProjectManagementSystem.setBounds(10, 10, 155, 15);
-		frmLogin.getContentPane().add(lblProjectManagementSystem);
+		login.getContentPane().add(lblProjectManagementSystem);
 		
 		JLabel lblNewLabel = new JLabel("Username:");
 		lblNewLabel.setBounds(10, 48, 62, 15);
@@ -58,22 +46,22 @@ public class Login {
 		inputUsername = new JTextField();
 		inputUsername.setBounds(77, 45, 80, 21);
 		inputUsername.setColumns(10);
-		frmLogin.getContentPane().setLayout(null);
-		frmLogin.getContentPane().add(lblNewLabel);
-		frmLogin.getContentPane().add(inputUsername);
+		login.getContentPane().setLayout(null);
+		login.getContentPane().add(lblNewLabel);
+		login.getContentPane().add(inputUsername);
 		
 		JLabel lblNewLabel_1 = new JLabel("Password:");
 		lblNewLabel_1.setBounds(10, 73, 62, 15);
-		frmLogin.getContentPane().add(lblNewLabel_1);
+		login.getContentPane().add(lblNewLabel_1);
 			
 		inputPassword = new JPasswordField();
 		inputPassword.setBounds(77, 73, 80, 21);
-		frmLogin.getContentPane().add(inputPassword);
+		login.getContentPane().add(inputPassword);
 		
 		btnLogin = new JButton("Login");
 		btnLogin.setBounds(10, 131, 69, 23);
 		btnLogin.setVerticalAlignment(SwingConstants.BOTTOM);
-		frmLogin.getContentPane().add(btnLogin);
+		login.getContentPane().add(btnLogin);
 		
 		//actionListener for Login button
 		btnLogin.addActionListener(new ActionListener(){
@@ -93,7 +81,7 @@ public class Login {
 						JOptionPane.showMessageDialog(null, "Login successfully!");
 						
 						//close login window
-						frmLogin.dispose();
+						login.dispose();
 						
 						//store user to currentUser
 						MainWindow.currentUser = u;
@@ -124,18 +112,18 @@ public class Login {
 		
 		JButton btnRegister = new JButton("Register");
 		btnRegister.setBounds(85, 131, 91, 23);
-		frmLogin.getContentPane().add(btnRegister);
+		login.getContentPane().add(btnRegister);
 		
 		//actionListener for Register button
 		btnRegister.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				
-				frmLogin.dispose();
+				login.dispose();
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						try {
 							Register window = new Register();
-							window.frmRegister.setVisible(true);
+							window.userRegister.setVisible(true);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

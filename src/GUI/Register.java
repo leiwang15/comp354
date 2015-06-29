@@ -13,13 +13,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 
 import Controller.UserController;
 import Model.User;
 
 public class Register {
 
-	protected JFrame frmRegister;
+	protected JDialog userRegister;
 	private JTextField newUsername;
 	private JTextField newLastname;
 	private JTextField newFirstname;
@@ -33,75 +34,75 @@ public class Register {
 
 
 	private void initialize() {
-		frmRegister = new JFrame();
-		frmRegister.setTitle("Register");
-		frmRegister.setBounds(100, 100, 230, 284);
-		frmRegister.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frmRegister.setResizable(false);
-		frmRegister.getContentPane().setLayout(null);
+		userRegister = new JDialog();
+		userRegister.setTitle("Register");
+		userRegister.setBounds(100, 100, 230, 284);
+		userRegister.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		userRegister.setResizable(false);
+		userRegister.getContentPane().setLayout(null);
 		
 		JLabel lblUserRegistration = new JLabel("User Registration");
 		lblUserRegistration.setBounds(57, 10, 102, 15);
-		frmRegister.getContentPane().add(lblUserRegistration);
+		userRegister.getContentPane().add(lblUserRegistration);
 		
 		JLabel lblUsername = new JLabel("Username:");
 		lblUsername.setBounds(22, 49, 76, 15);
-		frmRegister.getContentPane().add(lblUsername);
+		userRegister.getContentPane().add(lblUsername);
 		
 		JLabel lblLastName = new JLabel("Last name:");
 		lblLastName.setBounds(22, 74, 71, 15);
-		frmRegister.getContentPane().add(lblLastName);
+		userRegister.getContentPane().add(lblLastName);
 		
 		JLabel lblFirstName = new JLabel("First name:");
 		lblFirstName.setBounds(22, 99, 71, 15);
-		frmRegister.getContentPane().add(lblFirstName);
+		userRegister.getContentPane().add(lblFirstName);
 		
 		JLabel lblPassword = new JLabel("Password:");
 		lblPassword.setBounds(22, 124, 76, 15);
-		frmRegister.getContentPane().add(lblPassword);
+		userRegister.getContentPane().add(lblPassword);
 		
 		JLabel lblConfirm = new JLabel("Confirm PW:");
 		lblConfirm.setBounds(22, 149, 76, 15);
-		frmRegister.getContentPane().add(lblConfirm);		
+		userRegister.getContentPane().add(lblConfirm);		
 		
 		newUsername = new JTextField();
 		newUsername.setBounds(96, 46, 97, 21);
-		frmRegister.getContentPane().add(newUsername);
+		userRegister.getContentPane().add(newUsername);
 		newUsername.setColumns(10);
 		
 		newLastname = new JTextField();
 		newLastname.setBounds(96, 71, 97, 21);
-		frmRegister.getContentPane().add(newLastname);
+		userRegister.getContentPane().add(newLastname);
 		newLastname.setColumns(10);
 		
 		newFirstname = new JTextField();
 		newFirstname.setBounds(96, 96, 97, 21);
-		frmRegister.getContentPane().add(newFirstname);
+		userRegister.getContentPane().add(newFirstname);
 		newFirstname.setColumns(10);
 		
 		newPW = new JPasswordField();
 		newPW.setBounds(96, 121, 97, 21);
-		frmRegister.getContentPane().add(newPW);
+		userRegister.getContentPane().add(newPW);
 		newPW.setColumns(10);
 		
 		newPWConfirm = new JPasswordField();
 		newPWConfirm.setBounds(96, 146, 97, 21);
-		frmRegister.getContentPane().add(newPWConfirm);
+		userRegister.getContentPane().add(newPWConfirm);
 		newPWConfirm.setColumns(10);
 		
 		JLabel lblRole = new JLabel("Role");
 		lblRole.setBounds(22, 174, 54, 15);
-		frmRegister.getContentPane().add(lblRole);
+		userRegister.getContentPane().add(lblRole);
 		
 		final Choice choice = new Choice();
 		choice.setBounds(96, 173, 97, 21);
-		frmRegister.getContentPane().add(choice);
+		userRegister.getContentPane().add(choice);
 		choice.add("Project Manager");
 		choice.add("Project Member");
 		
 		JButton btnRegister = new JButton("Register");
 		btnRegister.setBounds(22, 212, 87, 23);
-		frmRegister.getContentPane().add(btnRegister);
+		userRegister.getContentPane().add(btnRegister);
 		
 		//actionListener for Register button
 		btnRegister.addActionListener(new ActionListener(){
@@ -119,13 +120,13 @@ public class Register {
 
 					JOptionPane.showMessageDialog(null, "User created successfully!");
 					
-					frmRegister.dispose();
+					userRegister.dispose();
 					
 					EventQueue.invokeLater(new Runnable() {
 						public void run() {
 							try {
 								Login loginWindow = new Login();
-								loginWindow.frmLogin.setVisible(true);
+								loginWindow.login.setVisible(true);
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -140,18 +141,18 @@ public class Register {
 		
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.setBounds(113, 212, 80, 23);
-		frmRegister.getContentPane().add(btnCancel);
+		userRegister.getContentPane().add(btnCancel);
 		
 		//actionListener for Cancel button
 		btnCancel.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				frmRegister.dispose();
+				userRegister.dispose();
 				
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						try {
 							Login loginWindow = new Login();
-							loginWindow.frmLogin.setVisible(true);
+							loginWindow.login.setVisible(true);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

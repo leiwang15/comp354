@@ -161,7 +161,17 @@ public class ProjectController extends DB_Controller {
 
 	}
 	
-	public void deleteProject(Project p){
+	public void deleteProject(int id){
+		String sql = "DELETE FROM Project WHERE ProjectID = " + id +  ";";
 		
+		try {
+			st = c.createStatement();
+			st.executeUpdate(sql);
+			c.close();
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
 	}
 }

@@ -106,8 +106,10 @@ public class UserController extends DB_Controller {
 		try {
 			st = c.createStatement();
 			res = st.executeQuery(sql);
-			res.next();
-			u= new User(res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5), res.getString(6));
+			
+			if(res.next()){
+				u= new User(res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5), res.getString(6));
+			}
 			c.close();
 		} catch (SQLException e) {
 
@@ -124,8 +126,9 @@ public class UserController extends DB_Controller {
 		try {
 			st = c.createStatement();
 			res = st.executeQuery(sql);
-			res.next();
-			u= new User(res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5), res.getString(6));
+			if(res.next()){
+				u= new User(res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5), res.getString(6));
+			}
 			c.close();
 		} catch (SQLException e) {
 
