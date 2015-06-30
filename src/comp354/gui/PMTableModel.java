@@ -65,7 +65,7 @@ public class PMTableModel extends DefaultTableModel {
                 return Integer.parseInt(s);
             }
         }
-        return -1;
+        return 0;
     }
 
     public ActivityList fillActivityList() {

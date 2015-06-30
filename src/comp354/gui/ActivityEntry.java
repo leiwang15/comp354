@@ -100,7 +100,12 @@ public class ActivityEntry extends JPanel implements ActionListener, ItemListene
             ArrayList<Activity> activities = activityList.getActivities();
             for (int i = 0; i < activityList.getActivities().size(); i++) {
                 Activity activity = activities.get(i);
-                tableRows[i] = new String[]{Integer.toString(activity.getActivity_id()), activity.getActivity_name(), Integer.toString(activity.getDuration()), "", "", activity.getPredecessors().toString().replaceAll("\\[|\\]", "")};
+                tableRows[i] = new String[]{Integer.toString(activity.getActivity_id()),
+                        activity.getActivity_name(),
+                        Integer.toString(activity.getDuration()),
+                        "",
+                        "",
+                        activity.getPredecessors().toString().replaceAll("\\[|\\]", "")};
             }
             dtm.setDataVector(tableRows, columnNames);
         }
@@ -467,7 +472,6 @@ public class ActivityEntry extends JPanel implements ActionListener, ItemListene
             ActivityEntry.this.deleteActivity();
         }
 
-
         repaint();
     }
 
@@ -697,11 +701,20 @@ public class ActivityEntry extends JPanel implements ActionListener, ItemListene
         private void doPop(MouseEvent e) {
             PopUpDemo menu = new PopUpDemo();
 
+            int row = activitiesTable.rowAtPoint(e.getPoint());
+            if (!activitiesTable.isRowSelected(row)) {
+                activitiesTable.setRowSelectionInterval(row, row);
+            }
+
             menu.show(e.getComponent(), e.getX(), e.getY());
         }
     }
 
     private void deleteActivity() {
         ((PMTableModel) activitiesTable.getModel()).removeRow(activitiesTable.getSelectedRow());
+        createGraph();
+//        setActivities(getActivities(), true);
+//        drawGraph(activityList);
+
     }
 }
