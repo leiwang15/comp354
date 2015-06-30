@@ -300,7 +300,7 @@ public class ActivityEntry extends JPanel implements ActionListener, ItemListene
                     null,
                     null,
                     0,                                              //	x
-                    i * (activitiesTable.getRowHeight() + 2) + 14 + 22,  //	y
+                    i * activitiesTable.getRowHeight() + 14 + 22,  //	y
                     activities.get(i).getDuration() * X_SCALE,           //	width
                     activitiesTable.getRowHeight() - 2,             //	height
                     "rounded=0");
