@@ -10,6 +10,7 @@ import Model.Project;
 import Model.User;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JDialog;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JMenu;
@@ -152,7 +153,7 @@ public class MainWindow {
 					}
 				}
 				s[2] = pre;
-				s[3] = a.getProgress() + "";
+				s[3] = a.getProgress() + "%";
 				s[4] = a.getActivity_desc();
 				tableModel.addRow(s);
 			}	
@@ -195,7 +196,7 @@ public class MainWindow {
 					}
 				}
 				s[3] = pre;
-				s[4] = a.getProgress() + "";
+				s[4] = a.getProgress() + "%";
 				s[5] = a.getActivity_desc();
 				tableModel.addRow(s);
 			}
@@ -257,6 +258,17 @@ public class MainWindow {
 			
 			mntmEditProject = new JMenuItem("Edit Project");
 			mnFile.add(mntmEditProject);
+			
+			mntmEditProject.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					try {
+						EditPJ window = new EditPJ();
+						window.editPJ.setVisible(true);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			});	
 			
 			//Delete		
 			mntmDeleteProject = new JMenuItem("Delete Project");
@@ -499,6 +511,25 @@ public class MainWindow {
 		else{
 			mntmEditAct = new JMenuItem("Edit Activity");
 			mnEdit.add(mntmEditAct);
+			
+			mntmEditAct.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					if(selectedAct != null){
+						try {
+							EditActByMember window = new EditActByMember();
+							window.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+							window.setVisible(true);
+						} catch (Exception ex) {
+							ex.printStackTrace();
+						}
+					}
+					else{
+						JOptionPane.showMessageDialog(null, "Please select an activity!");
+					}
+				}
+			});
+			
+
 		}
 		
 		JLabel lblWelcomeBack = new JLabel("Welcome back " + currentUser.getUserName() + "    User type: " + currentUser.getRole());
@@ -609,11 +640,18 @@ public class MainWindow {
 		lsm.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				if(activityTable.getSelectedRow() != -1){
+					String s;
 					//get selected activity name
 					int selectedRow = activityTable.getSelectedRow();
 				    selectedRow = activityTable.convertRowIndexToModel(selectedRow);
-				    String s = (String)activityTable.getValueAt(selectedRow, 0);
-				    
+					
+				    if(currentUser.getRole().equals("Project Manager")){						
+					    s = (String)activityTable.getValueAt(selectedRow, 0);
+					}
+					else{
+					    s = (String)activityTable.getValueAt(selectedRow, 1);
+
+					}
 				    //get selected activity by name
 				    ActivityController ac = new ActivityController();
 				    selectedAct = ac.getActByActName(s);

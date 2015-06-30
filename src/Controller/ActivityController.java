@@ -46,14 +46,25 @@ public class ActivityController extends DB_Controller {
 		return id;
 	}
 	
-	public void updateActivity(Activity a){
+	public void updateActivity(Activity a){		
 		
-		String sql = "REPLACE INTO Activity (ActivityID,Project_ID,Name,Desc,Duration,Pessimistic,Optimistic,Value) "
-				+ "VALUES('" + a.getProject_id() + "', '" + a.getActivity_id() + "', '"
-				+ a.getActivity_name() + "', '"
-				+ a.getActivity_desc() + "', '" + a.getDuration() + "', '" + a.getPessimistic() +"', '"
-				+ a.getOptimistic() +"', '"  + a.getValue()
-				+ "');";
+		String sql = "update Activity set Name = '" + a.getActivity_name() + 
+				"',Desc = '" + a.getActivity_desc() + "',Duration = " + 
+				a.getDuration() + "',Pessimistic = '" + a.getPessimistic() + 
+				",Optimistic = " + a.getOptimistic() + ",Value = " + a.getValue() + 
+				" where ActivityID = "+ a.getActivity_id() + ";";
+		
+		try {
+			st = c.createStatement();
+			st.executeUpdate(sql);
+			c.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void updateActivity(int id, int progress, String des){
+		String sql = "update Activity set Desc = '" + des + "',Progress = " + progress + " where ActivityID = "+ id + ";";
 		
 		try {
 			st = c.createStatement();
@@ -214,6 +225,7 @@ public class ActivityController extends DB_Controller {
 				name = res.getString("Name");
 				desc = res.getString("Desc");
 				duration = res.getInt("Duration");
+				progress = res.getInt("Progress");
 				finished = res.getInt("Finished");
 				pess = res.getInt("Pessimistic");
 				opt = res.getInt("Optimistic");
@@ -255,6 +267,7 @@ public class ActivityController extends DB_Controller {
 				name = res.getString("Name");
 				desc = res.getString("Desc");
 				duration = res.getInt("Duration");
+				progress = res.getInt("Progress");
 				finished = res.getInt("Finished");
 				pess = res.getInt("Pessimistic");
 				opt = res.getInt("Optimistic");
@@ -296,6 +309,7 @@ public class ActivityController extends DB_Controller {
 				aID = res.getInt("ActivityID");
 				desc = res.getString("Desc");
 				duration = res.getInt("Duration");
+				progress = res.getInt("Progress");
 				finished = res.getInt("Finished");
 				pess = res.getInt("Pessimistic");
 				opt = res.getInt("Optimistic");

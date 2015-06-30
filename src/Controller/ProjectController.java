@@ -65,6 +65,24 @@ public class ProjectController extends DB_Controller {
 		// return assigned project id
 		return id;
 	}
+	
+	public void updateProject(Project p){
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");	
+		String sql = "update Project set Name = '" + p.getProject_name() + 
+				"',Desc = '" + p.getProject_desc() + "',StartDate = '" + 
+				df.format(p.getStart_date()) + "',EndDate = '" + 
+				df.format(p.getEnd_date()) + "' where ProjectID = "+ p.getProject_id() + ";";
+		
+		try {
+			st = c.createStatement();
+			st.executeUpdate(sql);
+			c.close();
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+	}
 
 	public List<Project> getProjectsByUser(User u) {
 
