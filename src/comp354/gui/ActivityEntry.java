@@ -16,7 +16,13 @@ import comp354.Model.ActivityList;
 import comp354.Model.Project;
 import comp354.gui.editors.IntegerEditor;
 import comp354.gui.editors.PredecessorEditor;
+import de.jollyday.Holiday;
+import de.jollyday.HolidayManager;
+import de.jollyday.ManagerParameters;
 import net.objectlab.kit.datecalc.common.DateCalculator;
+import net.objectlab.kit.datecalc.common.DefaultHolidayCalendar;
+import net.objectlab.kit.datecalc.common.HolidayCalendar;
+import net.objectlab.kit.datecalc.common.HolidayHandlerType;
 import net.objectlab.kit.datecalc.jdk8.LocalDateKitCalculatorsFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
@@ -36,8 +42,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 
 
@@ -67,8 +73,8 @@ public class ActivityEntry extends JPanel implements ActionListener, ItemListene
     private boolean hasCycles;
     ActivityOnNode lastActivity;
     Project project;
-    private Date startDate;
     private int[] actualCalendarDayOffsets;
+    private LocalDate startDate;
 
     public ActivityEntry(JFrame frame) {
 
@@ -259,7 +265,6 @@ public class ActivityEntry extends JPanel implements ActionListener, ItemListene
 
         //  todo: stub for now. Integrate with main project
 //        project = new Project(null, "project", "desc", new Date(), new Date());
-        startDate = new Date();
     }
 
     public mxGraph createGraph() {
@@ -300,8 +305,8 @@ public class ActivityEntry extends JPanel implements ActionListener, ItemListene
                     null,
                     null,
                     0,                                              //	x
-                    i * activitiesTable.getRowHeight() + 14 + 22,  //	y
-                    activities.get(i).getDuration() * X_SCALE,           //	width
+                    i * activitiesTable.getRowHeight() + 14 + 23,   //	y
+                    activities.get(i).getDuration() * X_SCALE,      //	width
                     activitiesTable.getRowHeight() - 2,             //	height
                     "rounded=0");
             v.setValue(new ActivityOnNode(activities.get(i), v));
@@ -329,9 +334,9 @@ public class ActivityEntry extends JPanel implements ActionListener, ItemListene
 
         TreeSet<mxCell> criticalNodes = calculateCPM(graph);
 
-        float duration = getProjectDuration();
+        float projectDuration = getProjectDuration();
 
-        computeActualCalendarDuration((int) duration);
+        computeActualCalendarDuration((int) projectDuration);
 
         positionGANTTNodes(activityID2mxCell);
 
@@ -339,24 +344,29 @@ public class ActivityEntry extends JPanel implements ActionListener, ItemListene
         graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "orange", criticalNodes.toArray());
     }
 
-    private void computeActualCalendarDuration(int duration) {
-        DateCalculator<LocalDate> dateCalculator = LocalDateKitCalculatorsFactory.forwardCalculator(Locale.getDefault().getCountry());
-        LocalDate startDate = this.startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    private void computeActualCalendarDuration(int projectDuration) {
+        DateCalculator<LocalDate> dateCalculator = LocalDateKitCalculatorsFactory.forwardCalculator("Canada");
+
+//        LocalDate startDate = this.startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        //todo: integrate with project start date
+        startDate = LocalDate.parse("2015-08-31");
+//        startDate = LocalDate.now();
 
         dateCalculator.setStartDate(startDate);
-        dateCalculator.moveByDays(duration);
+        dateCalculator.moveByDays(projectDuration);
 
-        actualCalendarDayOffsets = new int[duration];
+        actualCalendarDayOffsets = new int[projectDuration];
 
         dateCalculator.setStartDate(startDate);
-        for (int i = 0; i < duration; i++) {
+        for (int i = 0; i < projectDuration; i++) {
             while (dateCalculator.isCurrentDateNonWorking()) {
                 dateCalculator.setCurrentBusinessDate(dateCalculator.getCurrentBusinessDate().plusDays(1));
             }
-            actualCalendarDayOffsets[i] = (int) (dateCalculator.getCurrentBusinessDate().toEpochDay() - startDate.toEpochDay()) + 1;
-
+            actualCalendarDayOffsets[i] = (int) (dateCalculator.getCurrentBusinessDate().toEpochDay() - startDate.toEpochDay()) + startDate.getDayOfWeek().getValue();
             dateCalculator.setCurrentBusinessDate(dateCalculator.getCurrentBusinessDate().plusDays(1));
         }
+//        System.out.println(Arrays.toString(actualCalendarDayOffsets));
     }
 
     private void positionGANTTNodes(HashMap<Integer, mxCell> activityID2mxCell) {
@@ -598,8 +608,39 @@ public class ActivityEntry extends JPanel implements ActionListener, ItemListene
 //
 //            g2.clearRect(0,0,getWidth(),getHeight());
 
-            DateCalculator<LocalDate> dateCalculator = LocalDateKitCalculatorsFactory.forwardCalculator(Locale.getDefault().getCountry());
-            LocalDate date = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            String country = Locale.getDefault().getCountry();
+
+            HolidayManager.setManagerCachingEnabled(true);
+            HolidayManager manager = HolidayManager.getInstance(ManagerParameters.create("Canada"));
+
+
+// create or get the Holidays
+            final Set<Holiday> holidays = manager.getHolidays(2015);
+
+// fill dates into set of LocalDate
+            Set<LocalDate> holidayDates = new HashSet<LocalDate>();
+            for (Holiday h : holidays) {
+                holidayDates.add(h.getDate());
+            }
+
+            DateTimeFormatter localFormatter = DateTimeFormatter.ofLocalizedDate(
+                    FormatStyle.MEDIUM).withLocale(Locale.getDefault());
+
+// create the HolidayCalendar ASSUMING that the set covers 2015!
+            final HolidayCalendar<LocalDate> calendar = new DefaultHolidayCalendar<LocalDate>
+                    (holidayDates, LocalDate.parse("2015-01-01"), LocalDate.parse("2015-12-31"));
+
+// register the holidays, any calculator with name "Canada"
+// asked from now on will receive an IMMUTABLE reference to this calendar
+            LocalDateKitCalculatorsFactory.getDefaultInstance().registerHolidays("Canada", calendar);
+
+// ask for a LocalDate calculator for "Canada"
+// (even if a new set of holidays is registered, this one calculator is not affected
+            DateCalculator<LocalDate> dateCalculator = LocalDateKitCalculatorsFactory.getDefaultInstance()
+                    .getDateCalculator("Canada", HolidayHandlerType.FORWARD);
+
+
+            LocalDate date = startDate;
 
             dateCalculator.setStartDate(date);
 
