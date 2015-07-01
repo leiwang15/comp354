@@ -126,7 +126,7 @@ public class CreatePJ {
 				
 				Project p = new Project(MainWindow.currentUser, projectName, projectDescription, start, end);
 				
-				JOptionPane.showMessageDialog(null, "Project created successfully!");
+				//JOptionPane.showMessageDialog(null, "Project created successfully!");
 				MainWindow.updateProjectList();
 				
 				createPJ.dispose();

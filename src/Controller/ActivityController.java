@@ -50,7 +50,7 @@ public class ActivityController extends DB_Controller {
 		
 		String sql = "update Activity set Name = '" + a.getActivity_name() + 
 				"',Desc = '" + a.getActivity_desc() + "',Duration = " + 
-				a.getDuration() + "',Pessimistic = '" + a.getPessimistic() + 
+				a.getDuration() + ",Pessimistic = " + a.getPessimistic() + 
 				",Optimistic = " + a.getOptimistic() + ",Value = " + a.getValue() + 
 				" where ActivityID = "+ a.getActivity_id() + ";";
 		

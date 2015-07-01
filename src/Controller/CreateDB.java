@@ -9,28 +9,28 @@ import java.sql.*;
 
 public class CreateDB {
 
-	static String databasePath = "project.db";
+	private static String databasePath = "project.db";
 
-	public static void main(String[] args) {
+	public static void initializeDB() {
 
 		Connection c = null;
 		Statement stmt = null;
 		try {
 
-			try {
-				File f = new File(databasePath);
-				if(f.exists()){
-					Files.delete(Paths.get(databasePath));
-				}
-
-			} catch (NoSuchFileException x) {
-			    System.err.format("no such" + " file or directory%n");
-			} catch (DirectoryNotEmptyException x) {
-			    System.err.format("%s not empty%n");
-			} catch (IOException x) {
-			    // File permission problems are caught here.
-			    System.err.println(x);
-			}
+//			try {
+//				File f = new File(databasePath);
+//				if(f.exists()){
+//					Files.delete(Paths.get(databasePath));
+//				}
+//
+//			} catch (NoSuchFileException x) {
+//			    System.err.format("no such" + " file or directory%n");
+//			} catch (DirectoryNotEmptyException x) {
+//			    System.err.format("%s not empty%n");
+//			} catch (IOException x) {
+//			    // File permission problems are caught here.
+//			    System.err.println(x);
+//			}
 			Class.forName("org.sqlite.JDBC");
 			c = DriverManager.getConnection("jdbc:sqlite:" + databasePath);
 			System.out.println("Opened database successfully");

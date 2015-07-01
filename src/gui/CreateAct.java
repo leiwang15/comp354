@@ -140,7 +140,7 @@ public class CreateAct {
 				}
 				Activity act = new Activity(projectID, newName, newDes, newDuration, newPredecessors, pessimistic, optimistic, value);
 				
-				JOptionPane.showMessageDialog(null, "Activity created successfully!");
+				//JOptionPane.showMessageDialog(null, "Activity created successfully!");
 				MainWindow.updateActivityList();
 				createAct.dispose();
 			}

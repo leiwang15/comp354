@@ -229,7 +229,7 @@ public class EditAct {
 					}
 				}
 				
-				JOptionPane.showMessageDialog(null, "Activity saved successfully!");
+				//JOptionPane.showMessageDialog(null, "Activity saved successfully!");
 				MainWindow.updateActivityList();
 				editAct.dispose();
 			}

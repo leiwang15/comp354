@@ -290,7 +290,7 @@ public class MainWindow {
 	            				Activity act = it.next();
 	            				
 	            				ActivityController ac1 = new ActivityController();
-								ac.deleteAct(act.getActivity_id());
+								ac1.deleteAct(act.getActivity_id());
 								
 								ActivityController ac2 = new ActivityController();
 								ac2.deletePre(act.getActivity_id());
@@ -305,7 +305,10 @@ public class MainWindow {
 		            		JOptionPane.showMessageDialog(null, "Delete successfully!");
 		            		selectedProject = null;
 		            		updateProjectList();
-		            		updateActivityList();
+		            		//clear table
+		            		NonEditableModel tableModel = (NonEditableModel) activityTable.getModel();
+		            		tableModel.setRowCount(0);
+		            		activityTable.repaint();
 	            		}            			
 	            	}
 					else{

@@ -142,7 +142,7 @@ public class EditPJ {
 				ProjectController pc = new ProjectController();
 				pc.updateProject(p);
 				
-				JOptionPane.showMessageDialog(null, "Project edited successfully!");
+				//JOptionPane.showMessageDialog(null, "Project edited successfully!");
 				MainWindow.updateProjectList();
 				
 				editPJ.dispose();
