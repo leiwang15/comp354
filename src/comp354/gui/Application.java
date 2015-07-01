@@ -1,9 +1,9 @@
 package comp354.gui;
 
+import comp354.Controller.CreateDB;
 import comp354.Controller.UserController;
-import comp354.Model.User;
 
-import javax.swing.*;
+import java.io.File;
 
 /**
  * Created by joao on 15-06-02.
@@ -11,9 +11,15 @@ import javax.swing.*;
 public class Application {
 
     public static void main(String[] args) {
+
+        File f = new File("project.db");
+        if(!f.exists()){
+            CreateDB.initializeDB();
+        }
+
         UserController uc = new UserController();
-        MainWindow.currentUser = uc.getUserByUserName("a");
-        MainWindow mainWindow = new MainWindow();
+        MainDirectWindow.currentUser = uc.getUserByUserName("1");
+        MainDirectWindow mainWindow = new MainDirectWindow();
         mainWindow.frmProjectManagementSystem.setVisible(true);
     }
 }

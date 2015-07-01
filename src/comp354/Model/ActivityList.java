@@ -46,7 +46,7 @@ public class ActivityList {
                         predecessors.add(Integer.parseInt(p.trim()));
                     }
                 }
-                activities.add(new Activity(activity_id, 0, name, "", duration, 0, 0, predecessors));
+                activities.add(new Activity(activity_id, 0, name, "", duration, 0, 0, predecessors,0,0,0));
             }
 
             fis.close();

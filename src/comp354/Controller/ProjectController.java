@@ -67,6 +67,24 @@ public class ProjectController extends DB_Controller {
 		return id;
 	}
 
+	public void updateProject(Project p){
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");	
+		String sql = "update Project set Name = '" + p.getProject_name() + 
+				"',Desc = '" + p.getProject_desc() + "',StartDate = '" + 
+				df.format(p.getStart_date()) + "',EndDate = '" + 
+				df.format(p.getEnd_date()) + "' where ProjectID = "+ p.getProject_id() + ";";
+		
+		try {
+			st = c.createStatement();
+			st.executeUpdate(sql);
+			c.close();
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+	}
+
 	public List<Project> getProjectsByUser(User u) {
 
 		List<Project> lp = new ArrayList<Project>();
@@ -103,7 +121,7 @@ public class ProjectController extends DB_Controller {
 				finished = res.getInt("Finished");
 				// get activities for this project
 				ActivityController ac = new ActivityController();
-				ActivityList la = ac.getActByProjectId(id);
+				List<Activity> la = ac.getActByProjectId(id);
 				// save project to arraylist
 				temp = new Project(id, name, desc, startDate, endDate, finished, la);
 				lp.add(temp);
@@ -116,5 +134,63 @@ public class ProjectController extends DB_Controller {
 
 		return lp;
 
+	}
+	
+	public Project getProjectByID(int id) {
+		String sql = "SELECT * FROM Project "
+				+ "WHERE ProjectID = " + id;
+
+		ResultSet res;
+		String name = "";
+		String desc = "";
+		Date startDate;
+		Date endDate;
+		int finished = 0;
+		Project p = null;
+		try {
+
+			// get projects
+			st = c.createStatement();
+			res = st.executeQuery(sql);
+			while (res.next()) {
+				name = res.getString("Name");
+				desc = res.getString("Desc");
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+				Date d =  df.parse(res.getString("StartDate"));
+
+				//System.out.println(df.format(d));
+				startDate = d;
+
+				d= df.parse(res.getString("EndDate"));
+				endDate = d;
+				finished = res.getInt("Finished");
+				// get activities for this project
+				ActivityController ac = new ActivityController();
+				List<Activity> la = ac.getActByProjectId(id);
+				
+				p = new Project(id, name, desc, startDate, endDate, finished, la);
+			}
+
+			c.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return p;
+
+	}
+	
+	public void deleteProject(int id){
+		String sql = "DELETE FROM Project WHERE ProjectID = " + id +  ";";
+		
+		try {
+			st = c.createStatement();
+			st.executeUpdate(sql);
+			c.close();
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
 	}
 }

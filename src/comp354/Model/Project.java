@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import comp354.Controller.ActivityController;
 import comp354.Controller.ProjectController;
 public class Project {
     private int project_id;
@@ -13,7 +14,7 @@ public class Project {
     private Date start_date;
     private Date end_date;
     private int finished;
-    private ActivityList activities;
+    private List<Activity> activities;
 
     //initialization with writing to DB
     public Project(User u, String name, String desc, Date start, Date end){
@@ -27,7 +28,7 @@ public class Project {
     }
 
     //local initialization (usually read from DB)
-    public Project(int projectID, String name, String desc, Date start, Date end, int finished, ActivityList activities){
+    public Project(int projectID, String name, String desc, Date start, Date end, int finished, List<Activity> activities){
     	this.project_id = projectID;
     	this.project_name = name;
     	this.project_desc = desc;
@@ -110,14 +111,14 @@ public class Project {
     /**
      * @return the activities
      */
-    public ActivityList getActivities() {
+    public List<Activity> getActivities() {
         return activities;
     }
 
     /**
      * @param activities the activities to set
      */
-    public void setActivities(ActivityList activities) {
+    public void setActivities(List<Activity> activities) {
         this.activities = activities;
     }
 
@@ -153,11 +154,28 @@ public class Project {
 		+ this.getFinished()
 		+ "\n";
 
-		if ( activities != null ) {
-            for (Activity activity : activities.getActivities()) {
+		for (Activity activity : activities) {
                 s += activity.toString();
             }
-        }
 		return s;
+	}
+
+	public Object[][] getActivitityList() {
+		Object[][] data = null;
+		int i = 0;
+
+		ActivityController ac = new ActivityController();
+		List<Activity> list = ac.getActByProjectId(this.getProject_id());
+
+		for(Activity a : list){
+			data[i][0] = a.getActivity_name();
+			data[i][1] = a.getDuration();
+			data[i][2] = a.getPredecessors();
+			data[i][3] = a.getProgress();
+			data[i][4] = a.getFinished();
+			i++;
+		}
+
+		return null;
 	}
 }

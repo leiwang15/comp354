@@ -73,7 +73,7 @@ public class PMTableModel extends DefaultTableModel {
 
         for (int j = 0; j < getRowCount(); j++) {
             if (StringUtils.isNotEmpty((String) getValueAt(j, ID_COL))) {
-                Activity activity = new Activity(1, "", "", 0, new ArrayList<Integer>());
+                Activity activity = new Activity(1, "", "", 0, new ArrayList<Integer>(),0,0,0);
                 activity.setActivity_id(Integer.parseInt((String) getValueAt(j, ID_COL)));
                 activity.setActivity_name((String) getValueAt(j, NAME_COL));
                 activity.setDuration(getValueAt(j, DURATION_COL) != null ? (Integer) getValueAt(j, DURATION_COL) :0);

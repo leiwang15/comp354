@@ -17,54 +17,66 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
+import comp354.Controller.ProjectController;
 import comp354.Model.Project;
 
-public class CreatePJ {
+public class EditPJ {
 
-	protected JDialog createPJ;
+	protected JDialog editPJ;
 	private JTextField newPJName;
 	private JTextField newStartDate;
 	private JTextField newEndDate;
+	private JTextArea description;
 
 
-	public CreatePJ() {
+	public EditPJ() {
 		initialize();
+		loadPJ();
+	}
+
+	private void loadPJ(){
+		java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MM-yyyy");
+
+		newPJName.setText(MainDialogWindow.selectedProject.getProject_name());
+		newStartDate.setText(sdf.format(MainDialogWindow.selectedProject.getStart_date()));
+		newEndDate.setText(sdf.format(MainDialogWindow.selectedProject.getEnd_date()));
+		description.setText(MainDialogWindow.selectedProject.getProject_desc());
 	}
 
 	private void initialize() {
-		createPJ = new JDialog();
-		createPJ.setTitle("New Project");
-		createPJ.setBounds(100, 100, 351, 328);
-		createPJ.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		createPJ.setResizable(false);
-		createPJ.getContentPane().setLayout(null);
+		editPJ = new JDialog();
+		editPJ.setTitle("New Project");
+		editPJ.setBounds(100, 100, 351, 328);
+		editPJ.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		editPJ.setResizable(false);
+		editPJ.getContentPane().setLayout(null);
 
-		JLabel lblCreateNewProject = new JLabel("Create New Project");
+		JLabel lblCreateNewProject = new JLabel("Edit Project");
 		lblCreateNewProject.setFont(new Font("Arial", Font.PLAIN, 15));
 		lblCreateNewProject.setBounds(105, 10, 132, 34);
-		createPJ.getContentPane().add(lblCreateNewProject);
+		editPJ.getContentPane().add(lblCreateNewProject);
 
 		JLabel lblProjectName = new JLabel("Project Name:");
 		lblProjectName.setBounds(43, 63, 91, 22);
-		createPJ.getContentPane().add(lblProjectName);
+		editPJ.getContentPane().add(lblProjectName);
 
 		newPJName = new JTextField();
 		newPJName.setBounds(159, 63, 98, 22);
-		createPJ.getContentPane().add(newPJName);
+		editPJ.getContentPane().add(newPJName);
 		newPJName.setColumns(10);
 
 		JLabel lblNewLabel = new JLabel("Start Date:");
 		lblNewLabel.setBounds(43, 95, 91, 22);
-		createPJ.getContentPane().add(lblNewLabel);
+		editPJ.getContentPane().add(lblNewLabel);
 
 		newStartDate = new JTextField();
 		newStartDate.setBounds(159, 95, 98, 22);
-		createPJ.getContentPane().add(newStartDate);
+		editPJ.getContentPane().add(newStartDate);
 		newStartDate.setColumns(10);
 
 		JButton btnSelectDate = new JButton("...");
 		btnSelectDate.setBounds(267, 95, 31, 23);
-		createPJ.getContentPane().add(btnSelectDate);
+		editPJ.getContentPane().add(btnSelectDate);
 
 		btnSelectDate.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -75,25 +87,25 @@ public class CreatePJ {
 
 		JLabel lblNewLabel_1 = new JLabel("Description:");
 		lblNewLabel_1.setBounds(43, 159, 91, 22);
-		createPJ.getContentPane().add(lblNewLabel_1);
+		editPJ.getContentPane().add(lblNewLabel_1);
 
-		final JTextArea description = new JTextArea();
+		description = new JTextArea();
 		description.setBorder(new LineBorder(Color.LIGHT_GRAY));
 		description.setBounds(159, 160, 98, 72);
-		createPJ.getContentPane().add(description);
+		editPJ.getContentPane().add(description);
 
 		JLabel lblEndDate = new JLabel("End Date:");
 		lblEndDate.setBounds(43, 127, 98, 22);
-		createPJ.getContentPane().add(lblEndDate);
+		editPJ.getContentPane().add(lblEndDate);
 
 		newEndDate = new JTextField();
 		newEndDate.setBounds(159, 127, 98, 21);
-		createPJ.getContentPane().add(newEndDate);
+		editPJ.getContentPane().add(newEndDate);
 		newEndDate.setColumns(10);
 
 		JButton btnSelectDate2 = new JButton("...");
 		btnSelectDate2.setBounds(267, 127, 31, 22);
-		createPJ.getContentPane().add(btnSelectDate2);
+		editPJ.getContentPane().add(btnSelectDate2);
 
 		btnSelectDate2.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -102,16 +114,18 @@ public class CreatePJ {
 			}
 		});
 
-		JButton btnCreate = new JButton("Create");
+		JButton btnCreate = new JButton("Confirm");
 		btnCreate.setBounds(55, 245, 93, 23);
-		createPJ.getContentPane().add(btnCreate);
+		editPJ.getContentPane().add(btnCreate);
 
 		btnCreate.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
+				int id = MainDialogWindow.selectedProject.getProject_id();
 				String projectName = newPJName.getText();
 				String startDate = newStartDate.getText();
 				String endDate = newEndDate.getText();
 				String projectDescription = description.getText();
+				int finish = 0;
 
 				DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 				Date start = null;
@@ -123,23 +137,25 @@ public class CreatePJ {
 					e1.printStackTrace();
 				}
 
-				Project p = new Project(MainDialogWindow.currentUser, projectName, projectDescription, start, end);
+				Project p = new Project(id, projectName, projectDescription, start, end, finish, null);
+				ProjectController pc = new ProjectController();
+				pc.updateProject(p);
 
-				//JOptionPane.showMessageDialog(null, "Project created successfully!");
+				//JOptionPane.showMessageDialog(null, "Project edited successfully!");
 				MainDialogWindow.updateProjectList();
 
-				createPJ.dispose();
+				editPJ.dispose();
 			}
 		});
 
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.setBounds(187, 245, 93, 23);
-		createPJ.getContentPane().add(btnCancel);
+		editPJ.getContentPane().add(btnCancel);
 
 
 		btnCancel.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				createPJ.dispose();
+				editPJ.dispose();
 			}
 		});
 	}

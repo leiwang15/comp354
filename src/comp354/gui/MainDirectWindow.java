@@ -10,8 +10,6 @@ import java.awt.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
@@ -21,7 +19,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class MainWindow {
+public class MainDirectWindow {
 
 	protected static User currentUser;
 	protected static Project currentProject;
@@ -44,14 +42,14 @@ public class MainWindow {
 	private JLabel lblProjectList;
 	private ActivityEntry activityEntry;
 
-	public MainWindow() {
+	public MainDirectWindow() {
 		initialize();
 		updateList();
 	}
 
 	protected static void updateList() {
 		ProjectController pc = new ProjectController();
-		pjList = pc.getProjectsByUser(MainWindow.currentUser);
+		pjList = pc.getProjectsByUser(MainDirectWindow.currentUser);
 
 		for(Project p : pjList){
 			lm.addElement(p.getProject_name());
@@ -69,7 +67,7 @@ public class MainWindow {
 //	        @Override
 //	        public void focusGained(FocusEvent aE) {
 //	        	ProjectController pc = new ProjectController();
-//	    		pjList = pc.getProjectsByUser(MainWindow.currentUser);
+//	    		pjList = pc.getProjectsByUser(MainDirectWindow.currentUser);
 //
 //	    		for(Project p : pjList){
 //	    			lm.addElement(p.getProject_name());
@@ -93,7 +91,7 @@ public class MainWindow {
 					public void run() {
 						try {
 							CreatePJ window = new CreatePJ();
-							window.frame.setVisible(true);
+							window.createPJ.setVisible(true);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -156,7 +154,7 @@ public class MainWindow {
 					public void run() {
 						try {
 							Login loginWindow = new Login();
-							loginWindow.frmLogin.setVisible(true);
+							loginWindow.login.setVisible(true);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

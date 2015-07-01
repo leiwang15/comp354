@@ -13,28 +13,28 @@ import java.sql.Statement;
 
 public class CreateDB {
 
-    static String databasePath = "project.db";
+	private static String databasePath = "project.db";
 
-    public static void main(String[] args) {
+	public static void initializeDB() {
 
         Connection c = null;
         Statement stmt = null;
         try {
 
-            try {
-                File f = new File(databasePath);
-                if (f.exists()) {
-                    Files.delete(Paths.get(databasePath));
-                }
-
-            } catch (NoSuchFileException x) {
-                System.err.format("no such" + " file or directory%n");
-            } catch (DirectoryNotEmptyException x) {
-                System.err.format("%s not empty%n");
-            } catch (IOException x) {
-                // File permission problems are caught here.
-                System.err.println(x);
-            }
+//			try {
+//				File f = new File(databasePath);
+//				if(f.exists()){
+//					Files.delete(Paths.get(databasePath));
+//				}
+//
+//			} catch (NoSuchFileException x) {
+//			    System.err.format("no such" + " file or directory%n");
+//			} catch (DirectoryNotEmptyException x) {
+//			    System.err.format("%s not empty%n");
+//			} catch (IOException x) {
+//			    // File permission problems are caught here.
+//			    System.err.println(x);
+//			}
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:" + databasePath);
             System.out.println("Opened database successfully");
@@ -73,9 +73,12 @@ public class CreateDB {
                             + " Name		TEXT    NOT NULL, "
                             + " Desc		TEXT	NOT NULL, "
                             + " Duration	INT		NOT NULL, "
+					+ " Pessimistic	INT		NOT NULL, "
+					+ " Optimistic	INT		NOT NULL, "
+					+ " Value		INT		NOT NULL, "
                             + " Progress	INT		DEFAULT 0, 	"
                             + " Finished	INT		DEFAULT 0,	"
-                            + " FOREIGN KEY(Project_ID) 		REFERENCES Project(ProjectID));";
+					+ " FOREIGN KEY(Project_ID) 		REFERENCES Project(ProjectID) ON DELETE CASCADE);";
 
 
             stmt.executeUpdate(sql);
@@ -87,8 +90,8 @@ public class CreateDB {
                             + "	PA_ID		INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
                             + " Project_ID	INTEGER		NOT NULL, "
                             + " User_ID		INTEGER		NOT NULL, "
-                            + " FOREIGN KEY(Project_ID) 		REFERENCES Project(ProjectID),"
-                            + " FOREIGN KEY(User_ID) 			REFERENCES User(UserID))";
+					+ " FOREIGN KEY(Project_ID) 		REFERENCES Project(ProjectID) ON DELETE CASCADE,"
+					+ " FOREIGN KEY(User_ID) 			REFERENCES User(UserID) ON DELETE CASCADE)";
 
 
             stmt.executeUpdate(sql);
@@ -101,8 +104,8 @@ public class CreateDB {
                             + "	AA_ID		INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
                             + " Activity_ID	INTEGER		NOT NULL, "
                             + " User_ID		INTEGER		NOT NULL, "
-                            + " FOREIGN KEY(Activity_ID) 	REFERENCES Activity(ActivityID),"
-                            + " FOREIGN KEY(User_ID) 		REFERENCES User(UserID))";
+					+ " FOREIGN KEY(Activity_ID) 	REFERENCES Activity(ActivityID) ON DELETE CASCADE,"
+					+ " FOREIGN KEY(User_ID) 		REFERENCES User(UserID) ON DELETE CASCADE)";
 
 
             stmt.executeUpdate(sql);
@@ -128,8 +131,8 @@ public class CreateDB {
                             + "	AP_ID				INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
                             + " Activity_ID1		INTEGER		NOT NULL, "
                             + " Activity_ID2		INTEGER		NOT NULL, "
-                            + " FOREIGN KEY(Activity_ID1) 	REFERENCES Activity(ActivityID),"
-                            + " FOREIGN KEY(Activity_ID2) 	REFERENCES Activity(ActivityID))";
+					+ " FOREIGN KEY(Activity_ID1) 	REFERENCES Activity(ActivityID) ON DELETE CASCADE,"
+					+ " FOREIGN KEY(Activity_ID2) 	REFERENCES Activity(ActivityID) ON DELETE CASCADE)";
 
 
             stmt.executeUpdate(sql);

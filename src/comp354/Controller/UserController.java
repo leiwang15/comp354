@@ -4,6 +4,8 @@ import comp354.Model.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserController extends DB_Controller {
 
@@ -104,8 +106,10 @@ public class UserController extends DB_Controller {
         try {
             st = c.createStatement();
             res = st.executeQuery(sql);
-            res.next();
+
+			if(res.next()){
 			u= new User(res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5), res.getString(6));
+			}
 			c.close();
         } catch (SQLException e) {
 
@@ -122,8 +126,9 @@ public class UserController extends DB_Controller {
         try {
             st = c.createStatement();
             res = st.executeQuery(sql);
-            res.next();
+			if(res.next()){
 			u= new User(res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5), res.getString(6));
+			}
 			c.close();
         } catch (SQLException e) {
 
@@ -131,4 +136,25 @@ public class UserController extends DB_Controller {
         }
         return u;
     }
+
+	public List<User> getUserByRole(String role){
+
+		String sql = "SELECT * FROM User WHERE Role = '" + role + "';";
+		ResultSet res;
+		List<User> list = new ArrayList<User>();
+		User u = null;
+		try {
+			st = c.createStatement();
+			res = st.executeQuery(sql);
+			while(res.next()){
+				u= new User(res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5), res.getString(6));
+				list.add(u);
+			}
+			c.close();
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+		return list;
+	}
 }

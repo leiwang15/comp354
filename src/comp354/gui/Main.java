@@ -73,7 +73,7 @@ public class Main {
 					public void run() {
 						try {
 							Login loginWindow = new Login();
-							loginWindow.frmLogin.setVisible(true);
+							loginWindow.login.setVisible(true);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

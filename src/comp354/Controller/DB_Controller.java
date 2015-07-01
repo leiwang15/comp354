@@ -9,8 +9,8 @@ import java.sql.Statement;
 
 
 public class DB_Controller {
-    protected Connection c = null;
-    protected Statement st = null;
+	protected static Connection c = null;
+	protected static Statement st = null;
     protected static String DBpath = "project.db";
 
     public DB_Controller() {
