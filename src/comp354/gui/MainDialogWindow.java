@@ -20,9 +20,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class MainDialogWindow {
+public class MainDialogWindow extends MainWindow {
 
-    protected static User currentUser;
     protected static Project selectedProject;
     protected static Activity selectedAct;
 
@@ -45,7 +44,6 @@ public class MainDialogWindow {
     protected JLabel lblEndDate;
     protected JLabel lblDescription;
 
-    protected JFrame frmProjectManagementSystem;
     protected JList list;
     protected static DefaultListModel lm;
     protected static List<Project> pjList;
@@ -185,16 +183,17 @@ public class MainDialogWindow {
 
     }
 
-    private void initialize() {
-        frmProjectManagementSystem = new JFrame();
-        frmProjectManagementSystem.setTitle("Project Management System");
-        frmProjectManagementSystem.setBounds(100, 100, 988, 591);
-        frmProjectManagementSystem.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frmProjectManagementSystem.setResizable(false);
-        frmProjectManagementSystem.getContentPane().setLayout(null);
+    protected void initialize() {
+        super.initialize();
 
-        JMenuBar menuBar = new JMenuBar();
-        frmProjectManagementSystem.setJMenuBar(menuBar);
+        initMenu();
+
+
+        initPanel();
+    }
+
+    private void initMenu() {
+        JFrame parentJFrame = getParentJFrame();
 
         //menu file
         JMenu mnFile = new JMenu("File");
@@ -289,7 +288,7 @@ public class MainDialogWindow {
             public void actionPerformed(ActionEvent e) {
                 currentUser = null;
                 selectedProject = null;
-                frmProjectManagementSystem.dispose();
+                parentJFrame.dispose();
 
                 EventQueue.invokeLater(new Runnable() {
                     public void run() {
@@ -311,7 +310,7 @@ public class MainDialogWindow {
 
         mntmExit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                frmProjectManagementSystem.dispose();
+                parentJFrame.dispose();
             }
         });
 
@@ -488,17 +487,23 @@ public class MainDialogWindow {
 
 
         }
+    }
+
+    private void initPanel() {
+
+        Container parentContainer = getParentContainer("Dialog Entry");
+        parentContainer.setLayout(null);
 
         JLabel lblWelcomeBack = new JLabel("Welcome back " + currentUser.getUserName() + "    User type: " + currentUser.getRole());
         lblWelcomeBack.setBounds(0, 0, 984, 541);
         lblWelcomeBack.setVerticalAlignment(SwingConstants.BOTTOM);
-        frmProjectManagementSystem.getContentPane().add(lblWelcomeBack);
+        parentContainer.add(lblWelcomeBack);
 
         JPanel panel = new JPanel();
         panel.setBackground(Color.WHITE);
         panel.setBorder(new LineBorder(Color.LIGHT_GRAY));
         panel.setBounds(0, 0, 984, 525);
-        frmProjectManagementSystem.getContentPane().add(panel);
+        parentContainer.add(panel);
         panel.setLayout(null);
 
         JLabel lblPJInfo = new JLabel("Project Info");
@@ -652,7 +657,5 @@ public class MainDialogWindow {
         listUser.setBackground(Color.LIGHT_GRAY);
         listUser.setBounds(794, 189, 180, 326);
         panel.add(listUser);
-
-
     }
 }

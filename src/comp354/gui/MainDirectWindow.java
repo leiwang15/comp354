@@ -4,7 +4,6 @@ import javax.swing.*;
 
 import comp354.Controller.ProjectController;
 import comp354.Model.Project;
-import comp354.Model.User;
 
 import java.awt.*;
 
@@ -17,29 +16,16 @@ import javax.swing.event.ListSelectionListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.List;
 
-public class MainDirectWindow {
-
-	protected static User currentUser;
-	protected static Project currentProject;
-
-	protected JMenuItem mntmNewProject;
-	protected JMenuItem mntmLoad;
-	protected JMenuItem mntmSave;
-	protected JMenuItem mntmLogOut;
-	protected JMenuItem mntmExit;
+public class MainDirectWindow extends MainWindow {
 
 	protected JLabel lblPJName;
 	protected JLabel lblStartDate;
 	protected JLabel lblEndDate;
 	protected JLabel lblDescription;
 
-	protected JFrame frmProjectManagementSystem;
 	protected JList list;
 	protected static DefaultListModel lm;
-	protected static List<Project> pjList;
-	private JLabel lblProjectList;
 	private ActivityEntry activityEntry;
 
 	public MainDirectWindow() {
@@ -49,34 +35,23 @@ public class MainDirectWindow {
 
 	protected static void updateList() {
 		ProjectController pc = new ProjectController();
-		pjList = pc.getProjectsByUser(MainDirectWindow.currentUser);
+		pjList = pc.getProjectsByUser(MainWindow.currentUser);
 
 		for(Project p : pjList){
 			lm.addElement(p.getProject_name());
 		}
 	}
 
-	private void initialize() {
-		frmProjectManagementSystem = new JFrame();
-		frmProjectManagementSystem.setTitle("Project Management System");
-		frmProjectManagementSystem.setBounds(0, 0, 1024, 800);
-		frmProjectManagementSystem.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	protected void initialize() {
+		super.initialize();
 
-//		frmProjectManagementSystem.addFocusListener(new FocusAdapter() {
-//
-//	        @Override
-//	        public void focusGained(FocusEvent aE) {
-//	        	ProjectController pc = new ProjectController();
-//	    		pjList = pc.getProjectsByUser(MainDirectWindow.currentUser);
-//
-//	    		for(Project p : pjList){
-//	    			lm.addElement(p.getProject_name());
-//	    		}
-//	        }
-//	    });
+		initMenus();
 
-		JMenuBar menuBar = new JMenuBar();
-		frmProjectManagementSystem.setJMenuBar(menuBar);
+		initPanel();
+	}
+
+	protected void initMenus() {
+		JFrame parentJFrame = getParentJFrame();
 
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
@@ -100,35 +75,6 @@ public class MainDirectWindow {
 			}
 		});
 
-
-		//Load
-//		mntmLoad = new JMenuItem("Load");
-//		mnFile.add(mntmLoad);
-//
-//		mntmLoad.addActionListener(new ActionListener(){
-//			public void actionPerformed(ActionEvent e){
-//				JFileChooser fc = new JFileChooser("D:\\my projects\\COMP354-Yixuan\\");
-//				fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-//
-//				int returnVal = fc.showOpenDialog(frmProjectManagementSystem);
-//
-//	            if (returnVal == JFileChooser.APPROVE_OPTION) {
-//	                File file = fc.getSelectedFile();
-//	                String path = file.getPath();
-//	                ProjectController pc = new ProjectController(path);
-//	                Project p = pc.getProjectFromFile(file);
-//
-//	                currentProject = p;
-//	                lblPJName.setText(p.getProject_name());
-//	                lblPJOwner.setText(p.getOwner());
-//	                lblStartDate.setText(p.getStart_date());
-//	                lblDescription.setText(p.getProject_desc());
-//	            }
-//			}
-//		});
-
-
-
 		//Save
 		mntmSave = new JMenuItem("Save");
 		mnFile.add(mntmSave);
@@ -148,7 +94,7 @@ public class MainDirectWindow {
 			public void actionPerformed(ActionEvent e){
 				currentUser = null;
 				currentProject = null;
-				frmProjectManagementSystem.dispose();
+				parentJFrame.dispose();
 
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
@@ -170,11 +116,14 @@ public class MainDirectWindow {
 
 		mntmExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frmProjectManagementSystem.dispose();
+				parentJFrame.dispose();
 			}
 		});
+	}
 
+	protected void initPanel() {
 
+		Container parentContainer = getParentContainer("Direct Entry");
 
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
@@ -244,7 +193,7 @@ public class MainDirectWindow {
 			}
 		});
 
-		frmProjectManagementSystem.getContentPane().setLayout(new BorderLayout());
+		parentContainer.setLayout(new BorderLayout());
 
 
 		Dimension dimension = new Dimension(200, 600);
@@ -254,10 +203,10 @@ public class MainDirectWindow {
 //		panel.setBackground(Color.YELLOW);
 
 
-		frmProjectManagementSystem.getContentPane().add(panel, BorderLayout.WEST);
+		parentContainer.add(panel, BorderLayout.WEST);
 
-		activityEntry = new ActivityEntry(frmProjectManagementSystem);
+		activityEntry = new ActivityEntry();
 
-		frmProjectManagementSystem.add(activityEntry.panel1, BorderLayout.CENTER);
+		parentContainer.add(activityEntry.panel1, BorderLayout.CENTER);
 	}
 }

@@ -18,8 +18,11 @@ public class Application {
         }
 
         UserController uc = new UserController();
-        MainDirectWindow.currentUser = uc.getUserByUserName("1");
-        MainDirectWindow mainWindow = new MainDirectWindow();
-        mainWindow.frmProjectManagementSystem.setVisible(true);
+        MainWindow.currentUser = uc.getUserByUserName("1");
+        MainWindow mainDirectWindow = new MainDirectWindow();
+        MainWindow mainDialogWindow = new MainDialogWindow();
+
+        mainDirectWindow.frmProjectManagementSystem.setVisible(true);
+        mainDialogWindow.frmProjectManagementSystem.setVisible(true);
     }
 }

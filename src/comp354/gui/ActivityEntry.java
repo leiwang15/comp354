@@ -76,7 +76,7 @@ public class ActivityEntry extends JPanel implements ActionListener, ItemListene
     private int[] actualCalendarDayOffsets;
     private LocalDate startDate;
 
-    public ActivityEntry(JFrame frame) {
+    public ActivityEntry() {
 
         createUIComponents();
 
