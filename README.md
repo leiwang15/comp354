@@ -1,2 +1,2 @@
-# comp354
+# edu.concordia.comp354
 Comp354 project

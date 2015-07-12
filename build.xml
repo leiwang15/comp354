@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="comp_354" default="all">
-  
-  
+
+
   <property file="build.properties"/>
   <!-- Uncomment the following property if no tests compilation is needed -->
-  <!-- 
+  <!--
   <property name="skip.tests" value="true"/>
    -->
-  
+
   <!-- Compiler options -->
-  
+
   <property name="compiler.debug" value="on"/>
   <property name="compiler.generate.no.warnings" value="off"/>
   <property name="compiler.args" value=""/>
@@ -60,9 +60,9 @@
     <exclude name="**/?*.clj"/>
     <exclude name="**/?*.aj"/>
   </patternset>
-  
+
   <!-- JDK definitions -->
-  
+
   <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
   <path id="jdk.classpath.1.8">
     <fileset dir="${jdk.home.1.8}">
@@ -94,33 +94,33 @@
       <include name="jre/lib/ext/zipfs.jar"/>
     </fileset>
   </path>
-  
+
   <property name="project.jdk.home" value="${jdk.home.1.8}"/>
   <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
   <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
-  
+
   <!-- Modules -->
-  
-  
-  <!-- Module comp354 -->
-  
-  <dirname property="module.comp354.basedir" file="${ant.file}"/>
-  
-  
+
+
+  <!-- Module edu.concordia.comp354 -->
+
+  <dirname property="module.edu.concordia.comp354.basedir" file="${ant.file}"/>
+
+
   <property name="module.jdk.home.comp354" value="${jdk.home.1.8}"/>
   <property name="module.jdk.bin.comp354" value="${jdk.bin.1.8}"/>
   <property name="module.jdk.classpath.comp354" value="jdk.classpath.1.8"/>
-  
-  <property name="compiler.args.comp354" value="-encoding UTF-8 -source 8 ${compiler.args}"/>
-  
-  <property name="comp354.output.dir" value="${module.comp354.basedir}/out/production/comp354"/>
-  <property name="comp354.testoutput.dir" value="${module.comp354.basedir}/out/test/comp354"/>
-  
-  <path id="comp354.module.bootclasspath">
+
+  <property name="compiler.args.edu.concordia.comp354" value="-encoding UTF-8 -source 8 ${compiler.args}"/>
+
+  <property name="edu.concordia.comp354.output.dir" value="${module.comp354.basedir}/out/production/comp354"/>
+  <property name="edu.concordia.comp354.testoutput.dir" value="${module.comp354.basedir}/out/test/comp354"/>
+
+  <path id="edu.concordia.comp354.module.bootclasspath">
     <!-- Paths to be included in compilation bootclasspath -->
   </path>
-  
-  <path id="comp354.module.production.classpath">
+
+  <path id="edu.concordia.comp354.module.production.classpath">
     <path refid="${module.jdk.classpath.comp354}"/>
     <pathelement location="${basedir}/lib/forms_rt.jar"/>
     <pathelement location="${basedir}/lib/forms-1.0.4.jar"/>
@@ -135,8 +135,8 @@
     <pathelement location="${basedir}/lib/swingx-all-1.6.5.jar"/>
     <pathelement location="${basedir}/lib/commons-lang3-3.4.jar"/>
   </path>
-  
-  <path id="comp354.runtime.production.module.classpath">
+
+  <path id="edu.concordia.comp354.runtime.production.module.classpath">
     <pathelement location="${basedir}/lib/forms_rt.jar"/>
     <pathelement location="${comp354.output.dir}"/>
     <pathelement location="${basedir}/lib/forms-1.0.4.jar"/>
@@ -151,8 +151,8 @@
     <pathelement location="${basedir}/lib/swingx-all-1.6.5.jar"/>
     <pathelement location="${basedir}/lib/commons-lang3-3.4.jar"/>
   </path>
-  
-  <path id="comp354.module.classpath">
+
+  <path id="edu.concordia.comp354.module.classpath">
     <path refid="${module.jdk.classpath.comp354}"/>
     <pathelement location="${basedir}/lib/forms_rt.jar"/>
     <pathelement location="${comp354.output.dir}"/>
@@ -168,8 +168,8 @@
     <pathelement location="${basedir}/lib/swingx-all-1.6.5.jar"/>
     <pathelement location="${basedir}/lib/commons-lang3-3.4.jar"/>
   </path>
-  
-  <path id="comp354.runtime.module.classpath">
+
+  <path id="edu.concordia.comp354.runtime.module.classpath">
     <pathelement location="${basedir}/lib/forms_rt.jar"/>
     <pathelement location="${comp354.testoutput.dir}"/>
     <pathelement location="${comp354.output.dir}"/>
@@ -185,26 +185,26 @@
     <pathelement location="${basedir}/lib/swingx-all-1.6.5.jar"/>
     <pathelement location="${basedir}/lib/commons-lang3-3.4.jar"/>
   </path>
-  
-  
-  <patternset id="excluded.from.module.comp354">
+
+
+  <patternset id="excluded.from.module.edu.concordia.comp354">
     <patternset refid="ignored.files"/>
   </patternset>
-  
-  <patternset id="excluded.from.compilation.comp354">
+
+  <patternset id="excluded.from.compilation.edu.concordia.comp354">
     <patternset refid="excluded.from.module.comp354"/>
   </patternset>
-  
-  <path id="comp354.module.sourcepath">
+
+  <path id="edu.concordia.comp354.module.sourcepath">
     <dirset dir="${module.comp354.basedir}">
       <include name="src"/>
     </dirset>
   </path>
-  
-  
-  <target name="compile.module.comp354" depends="compile.module.comp354.production,compile.module.comp354.tests" description="Compile module comp354"/>
-  
-  <target name="compile.module.comp354.production" description="Compile module comp354; production classes">
+
+
+  <target name="compile.module.edu.concordia.comp354" depends="compile.module.comp354.production,compile.module.comp354.tests" description="Compile module edu.concordia.comp354"/>
+
+  <target name="compile.module.edu.concordia.comp354.production" description="Compile module edu.concordia.comp354; production classes">
     <mkdir dir="${comp354.output.dir}"/>
     <javac destdir="${comp354.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.comp354}/javac">
       <compilerarg line="${compiler.args.comp354}"/>
@@ -213,7 +213,7 @@
       <src refid="comp354.module.sourcepath"/>
       <patternset refid="excluded.from.compilation.comp354"/>
     </javac>
-    
+
     <copy todir="${comp354.output.dir}">
       <fileset dir="${module.comp354.basedir}/src">
         <patternset refid="compiler.resources"/>
@@ -221,34 +221,34 @@
       </fileset>
     </copy>
   </target>
-  
-  <target name="compile.module.comp354.tests" depends="compile.module.comp354.production" description="compile module comp354; test classes" unless="skip.tests"/>
-  
-  <target name="clean.module.comp354" description="cleanup module">
+
+  <target name="compile.module.edu.concordia.comp354.tests" depends="compile.module.comp354.production" description="compile module edu.concordia.comp354; test classes" unless="skip.tests"/>
+
+  <target name="clean.module.edu.concordia.comp354" description="cleanup module">
     <delete dir="${comp354.output.dir}"/>
     <delete dir="${comp354.testoutput.dir}"/>
   </target>
-  
+
   <target name="init" description="Build initialization">
     <!-- Perform any build initialization in this target -->
   </target>
-  
+
   <target name="clean" depends="clean.module.comp354, clean.artifact.comp354:jar" description="cleanup all"/>
-  
+
   <target name="build.modules" depends="init, clean, compile.module.comp354" description="build all modules"/>
-  
+
   <target name="init.artifacts">
     <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
-    <property name="artifact.output.comp354:jar" value="${basedir}/dist"/>
+    <property name="artifact.output.edu.concordia.comp354:jar" value="${basedir}/dist"/>
     <mkdir dir="${artifacts.temp.dir}"/>
-    <property name="temp.jar.path.comp354.jar" value="${artifacts.temp.dir}/comp354.jar"/>
+    <property name="temp.jar.path.edu.concordia.comp354.jar" value="${artifacts.temp.dir}/comp354.jar"/>
   </target>
-  
-  <target name="clean.artifact.comp354:jar" description="clean comp354:jar artifact output">
+
+  <target name="clean.artifact.edu.concordia.comp354:jar" description="clean edu.concordia.comp354:jar artifact output">
     <delete dir="${artifact.output.comp354:jar}"/>
   </target>
-  
-  <target name="artifact.comp354:jar" depends="init.artifacts, compile.module.comp354" description="Build &#39;comp354:jar&#39; artifact">
+
+  <target name="artifact.edu.concordia.comp354:jar" depends="init.artifacts, compile.module.comp354" description="Build &#39;edu.concordia.comp354:jar&#39; artifact">
     <mkdir dir="${artifact.output.comp354:jar}"/>
     <jar destfile="${temp.jar.path.comp354.jar}" duplicate="preserve" filesetmanifest="merge">
       <zipfileset dir="${comp354.output.dir}"/>
@@ -268,12 +268,12 @@
     <copy file="${basedir}/lib/grph-1.5.29-big.jar" tofile="${artifact.output.comp354:jar}/grph-1.5.29-big.jar"/>
     <copy file="${basedir}/lib/jdnc-jxcombobox.jar" tofile="${artifact.output.comp354:jar}/jdnc-jxcombobox.jar"/>
   </target>
-  
+
   <target name="build.all.artifacts" depends="artifact.comp354:jar" description="Build all artifacts">
-    
+
     <!-- Delete temporary files -->
     <delete dir="${artifacts.temp.dir}"/>
   </target>
-  
+
   <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
 </project>
