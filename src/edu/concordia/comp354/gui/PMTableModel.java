@@ -68,8 +68,8 @@ public class PMTableModel extends DefaultTableModel {
         return 0;
     }
 
-    public ActivityList fillActivityList() {
-        ActivityList activityList = new ActivityList();
+    public ArrayList<Activity> fillActivityList() {
+        ArrayList<Activity> activityList = new ArrayList<Activity>();
 
         for (int j = 0; j < getRowCount(); j++) {
             if (StringUtils.isNotEmpty((String) getValueAt(j, ID_COL))) {
@@ -88,7 +88,7 @@ public class PMTableModel extends DefaultTableModel {
                     activity.setPredecessors(predecessors);
                 }
 
-                activityList.getActivities().add(activity);
+                activityList.add(activity);
             }
         }
 

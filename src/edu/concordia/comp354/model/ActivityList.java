@@ -23,8 +23,7 @@ public class ActivityList {
 
     ArrayList<Activity> activities;
     public mxGraph graph;
-    public final Object parent;
-    ActivityEntry    activityEntry;
+    public Object parent;
     private ActivityOnNode lastActivity;
     private int[] actualCalendarDayOffsets;
     public boolean hasCycles;
@@ -34,23 +33,13 @@ public class ActivityList {
 
     public ActivityList(IActivityRenderer renderer) {
         this.activities = new ArrayList<Activity>();
-
         graph = new mxGraph();
         parent = graph.getDefaultParent();
         this.renderer = renderer;
     }
 
-    public ActivityList(ArrayList<Activity> activities) {
-        this.activities = activities;
-        parent = null;
-    }
-
-    public ActivityList() {
-        parent = null;
-    }
-
     public ArrayList<Activity> getActivities() {
-        return activities;
+        return activities = renderer.fillActivityList();
     }
 
     public void readFromFile(File file) throws FileNotFoundException {
@@ -99,10 +88,10 @@ public class ActivityList {
     }
 
     public mxGraph createGraph() {
-        return activityEntry.getActivities().createGraph(activityEntry);
+        return createGraph(getActivities());
     }
 
-    public mxGraph createGraph(ActivityEntry activityEntry) {
+    public mxGraph createGraph(ArrayList<Activity> activities) {
 
         Map<String, Object> style = graph.getStylesheet().getDefaultEdgeStyle();
         style.put(mxConstants.STYLE_EDGE, mxEdgeStyle.SideToSide);
@@ -120,15 +109,9 @@ public class ActivityList {
         linkNodes();
 
         graph.setMaximumGraphBounds(new mxRectangle(0, 0, 800, 800));
-        activityEntry.autoLayout(graph);
+        renderer.autoLayout(graph);
 
         return graph;
-    }
-
-    public boolean hasCycles(ActivityEntry activityEntry) {
-        hasCycles = false;
-        createGraph(activityEntry);
-        return hasCycles(activityEntry.getActivities().createGraph(activityEntry)) || hasCycles;
     }
 
     public void linkNodes() {
@@ -249,6 +232,12 @@ public class ActivityList {
 
             cell.setGeometry(geometry);
         }
+    }
+
+    public boolean hasCycles() {
+        hasCycles = false;
+
+        return hasCycles(createGraph(getActivities())) || hasCycles;
     }
 
     public boolean hasCycles(mxGraph graph) {

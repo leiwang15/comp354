@@ -48,7 +48,7 @@ public class ActivityEntry extends JPanel implements IActivityRenderer, ActionLi
     private JPanel charts;
     private JScrollPane tablePane;
     private JScrollPane chartPane;
-    PMTableModel dtm;
+    public PMTableModel dtm;
     public ActivityList activityList;
     String[] columnNames;
 
@@ -63,13 +63,13 @@ public class ActivityEntry extends JPanel implements IActivityRenderer, ActionLi
         activityList = new ActivityList(this);
         graphComponent = new mxGraphComponent(activityList.graph);
     }
-
-    /*
-        get activities from grid input
-    */
-    public ActivityList getActivities() {
-        return this.activityList = dtm.fillActivityList();
-    }
+//
+//    /*
+//        get activities from grid input
+//    */
+//    public ActivityList getActivities() {
+//        return this.activityList = dtm.fillActivityList();
+//    }
 
     /*
         Set activities in grid
@@ -420,6 +420,11 @@ public class ActivityEntry extends JPanel implements IActivityRenderer, ActionLi
         return X_GAP;
     }
 
+    @Override
+    public ArrayList<Activity> fillActivityList() {
+        return dtm.fillActivityList();
+    }
+
 
     class ChartPanel extends mxGraphComponent {
         public ChartPanel(mxGraph graph) {
@@ -578,11 +583,11 @@ public class ActivityEntry extends JPanel implements IActivityRenderer, ActionLi
         }
     }
 
-    private void deleteActivity() {
-        ((PMTableModel) activitiesTable.getModel()).removeRow(activitiesTable.getSelectedRow());
-        activityList.createGraph(this);
-//        setActivities(getActivities(), true);
-//        drawGraph(activityList);
-
-    }
+//    private void deleteActivity() {
+//        ((PMTableModel) activitiesTable.getModel()).removeRow(activitiesTable.getSelectedRow());
+//        activityList.createGraph(this);
+////        setActivities(getActivities(), true);
+////        drawGraph(activityList);
+//
+//    }
 }
