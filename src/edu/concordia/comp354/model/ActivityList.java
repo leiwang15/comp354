@@ -21,8 +21,6 @@ import java.util.*;
 
 public class ActivityList {
 
-    Project project;
-
     ArrayList<Activity> activities;
     public mxGraph graph;
     public final Object parent;
@@ -32,13 +30,13 @@ public class ActivityList {
     public boolean hasCycles;
 
     IActivityRenderer renderer;
+    LocalDate startDate;
 
-    public ActivityList(Project project, IActivityRenderer renderer) {
+    public ActivityList(IActivityRenderer renderer) {
         this.activities = new ArrayList<Activity>();
 
         graph = new mxGraph();
         parent = graph.getDefaultParent();
-        this.project = project;
         this.renderer = renderer;
     }
 
@@ -186,19 +184,17 @@ public class ActivityList {
     private void computeActualCalendarDuration(int projectDuration) {
         DateCalculator<LocalDate> dateCalculator = LocalDateKitCalculatorsFactory.forwardCalculator("Canada");
 
-        project.setStart_date(LocalDate.parse("2015-08-31"));
-
-        dateCalculator.setStartDate(project.getStart_date());
+        dateCalculator.setStartDate(this.startDate);
         dateCalculator.moveByDays(projectDuration);
 
         actualCalendarDayOffsets = new int[projectDuration];
 
-        dateCalculator.setStartDate(project.getStart_date());
+        dateCalculator.setStartDate(startDate);
         for (int i = 0; i < projectDuration; i++) {
             while (dateCalculator.isCurrentDateNonWorking()) {
                 dateCalculator.setCurrentBusinessDate(dateCalculator.getCurrentBusinessDate().plusDays(1));
             }
-            actualCalendarDayOffsets[i] = (int) (dateCalculator.getCurrentBusinessDate().toEpochDay() - project.getStart_date().toEpochDay()) + project.getStart_date().getDayOfWeek().getValue();
+            actualCalendarDayOffsets[i] = (int) (dateCalculator.getCurrentBusinessDate().toEpochDay() - startDate.toEpochDay()) + startDate.getDayOfWeek().getValue();
             dateCalculator.setCurrentBusinessDate(dateCalculator.getCurrentBusinessDate().plusDays(1));
         }
 //        System.out.println(Arrays.toString(actualCalendarDayOffsets));
@@ -260,5 +256,13 @@ public class ActivityList {
         graphAnalysis.setGraph(graph);
 
         return mxGraphStructure.isCyclicDirected(graphAnalysis);
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 }

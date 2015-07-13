@@ -16,6 +16,7 @@ import javax.swing.event.ListSelectionListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 
 public class MainDirectWindow extends MainWindow {
 
@@ -205,7 +206,8 @@ public class MainDirectWindow extends MainWindow {
 
 		parentContainer.add(panel, BorderLayout.WEST);
 
-		activityEntry = new ActivityEntry(currentProject);
+		activityEntry = new ActivityEntry();
+		activityEntry.activityList.setStartDate(LocalDate.parse("2015-08-31"));
 
 		parentContainer.add(activityEntry.panel1, BorderLayout.CENTER);
 	}

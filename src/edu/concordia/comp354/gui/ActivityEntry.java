@@ -56,11 +56,11 @@ public class ActivityEntry extends JPanel implements IActivityRenderer, ActionLi
     mxGraphComponent graphComponent;
     Project project;
 
-    public ActivityEntry(Project project) {
+    public ActivityEntry() {
 
         createUIComponents();
 
-        activityList = new ActivityList(project,this);
+        activityList = new ActivityList(this);
         graphComponent = new mxGraphComponent(activityList.graph);
     }
 
@@ -467,7 +467,7 @@ public class ActivityEntry extends JPanel implements IActivityRenderer, ActionLi
                     .getDateCalculator("Canada", HolidayHandlerType.FORWARD);
 
 
-            LocalDate date = project.getStart_date();
+            LocalDate date = activityList.getStartDate();
 
             dateCalculator.setStartDate(date);
 
