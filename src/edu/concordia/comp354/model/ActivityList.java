@@ -160,8 +160,10 @@ public class ActivityList {
 
         positionGANTTNodes(activityID2mxCell);
 
-        graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "lightblue", activityID2mxCell.values().toArray());
-        graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "orange", criticalNodes.toArray());
+        renderer.setCPMData(activityID2mxCell.values().toArray(), criticalNodes.toArray());
+//
+//        graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "lightblue", activityID2mxCell.values().toArray());
+//        graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "orange", criticalNodes.toArray());
     }
 
     private void computeActualCalendarDuration(int projectDuration) {
@@ -195,7 +197,7 @@ public class ActivityList {
         mxCell root = (mxCell) graph.getDefaultParent();
 
         if (root != null && root.getChildCount() != 0) {
-			System.out.println("root.getChildCount()=" + root.getChildCount());
+//			System.out.println("root.getChildCount()=" + root.getChildCount());
             ActivityOnNode activityOnNode = (ActivityOnNode) root.getChildAt(0).getValue();
 
             activityOnNode.setES(0);

@@ -16,4 +16,6 @@ public interface IActivityRenderer {
     ArrayList<Activity> fillActivityList();
 
     void autoLayout(mxGraph graph);
+
+    void setCPMData(Object[] objects, Object[] objects1);
 }

@@ -1,6 +1,8 @@
 package edu.concordia.comp354.gui;
 
+import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxGraph;
 import edu.concordia.comp354.model.*;
@@ -299,6 +301,11 @@ public class ActivityEntry extends JPanel implements IActivityRenderer, ActionLi
 //        }
 //
 //        repaint();
+    }
+
+    public void setCPMData(Object[] nonCriticals, Object[] criticals) {
+        activityList.graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "lightblue", nonCriticals);
+        activityList.graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "orange", criticals);
     }
 
 //    private void doNewProject() {
