@@ -13,7 +13,7 @@ public interface IActivityRenderer {
     int getXScale();
     int getXGap();
 
-    ArrayList<Activity> fillActivityList();
+    ArrayList<Activity> getActivityList();
 
     void autoLayout(mxGraph graph);
 

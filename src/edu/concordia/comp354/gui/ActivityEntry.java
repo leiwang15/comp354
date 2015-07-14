@@ -1,6 +1,5 @@
 package edu.concordia.comp354.gui;
 
-import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxRectangle;
@@ -70,7 +69,7 @@ public class ActivityEntry extends JPanel implements IActivityRenderer, ActionLi
 //        get activities from grid input
 //    */
 //    public ActivityList getActivities() {
-//        return this.activityList = dtm.fillActivityList();
+//        return this.activityList = dtm.getActivityList();
 //    }
 
     /*
@@ -428,10 +427,9 @@ public class ActivityEntry extends JPanel implements IActivityRenderer, ActionLi
     }
 
     @Override
-    public ArrayList<Activity> fillActivityList() {
-        return dtm.fillActivityList();
+    public ArrayList<Activity> getActivityList() {
+        return dtm.getActivityList();
     }
-
 
     class ChartPanel extends mxGraphComponent {
         public ChartPanel(mxGraph graph) {
@@ -467,7 +465,7 @@ public class ActivityEntry extends JPanel implements IActivityRenderer, ActionLi
 
 // create the HolidayCalendar ASSUMING that the set covers 2015!
             final HolidayCalendar<LocalDate> calendar = new DefaultHolidayCalendar<LocalDate>
-                    (holidayDates, LocalDate.parse("2015-01-01"), LocalDate.parse("2015-12-31"));
+                    (holidayDates, LocalDate.parse("2015-01-01"), LocalDate.parse("2025-12-31"));
 
 // register the holidays, any calculator with name "Canada"
 // asked from now on will receive an IMMUTABLE reference to this calendar

@@ -195,7 +195,7 @@ public class EditAct {
 				int optimistic = Integer.parseInt(newOpt.getText());
 				int value = Integer.parseInt(newActValue.getText());
 				int progress = MainDialogWindow.selectedAct.getProgress();
-				int finished = MainDialogWindow.selectedAct.getFinished();
+//				int finished = MainDialogWindow.selectedAct.getFinished();
 
 				//get all selected acitivities
 				ListModel m = listPre.getModel();
@@ -216,7 +216,7 @@ public class EditAct {
 						newPredecessors.add(act.getActivity_id());
 					}
 				}
-				Activity act = new Activity(actID, projectID, newName, newDes, newDuration,progress,finished, newPredecessors, pessimistic, optimistic, value);
+				Activity act = new Activity(actID, projectID, newName, newDes, newDuration,progress,0, newPredecessors, pessimistic, optimistic, value);
 				ActivityController ac = new ActivityController();
 				ac.updateActivity(act);
 				ActivityController ac1 = new ActivityController();

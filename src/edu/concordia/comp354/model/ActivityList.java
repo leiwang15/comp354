@@ -9,7 +9,6 @@ import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxEdgeStyle;
 import com.mxgraph.view.mxGraph;
-import edu.concordia.comp354.gui.ActivityEntry;
 import edu.concordia.comp354.model.AON.ActivityOnNode;
 import net.objectlab.kit.datecalc.common.DateCalculator;
 import net.objectlab.kit.datecalc.jdk8.LocalDateKitCalculatorsFactory;
@@ -39,7 +38,7 @@ public class ActivityList {
     }
 
     public ArrayList<Activity> getActivities() {
-        return activities = renderer.fillActivityList();
+        return activities = renderer.getActivityList();
     }
 
     public void readFromFile(File file) throws FileNotFoundException {
@@ -88,10 +87,6 @@ public class ActivityList {
     }
 
     public mxGraph createGraph() {
-        return createGraph(getActivities());
-    }
-
-    public mxGraph createGraph(ArrayList<Activity> activities) {
 
         Map<String, Object> style = graph.getStylesheet().getDefaultEdgeStyle();
         style.put(mxConstants.STYLE_EDGE, mxEdgeStyle.SideToSide);
@@ -239,7 +234,7 @@ public class ActivityList {
     public boolean hasCycles() {
         hasCycles = false;
 
-        return hasCycles(createGraph(getActivities())) || hasCycles;
+        return hasCycles(createGraph()) || hasCycles;
     }
 
     public boolean hasCycles(mxGraph graph) {

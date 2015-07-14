@@ -16,6 +16,7 @@ public class Activity {
     private int value;
     private int finished;
     private ArrayList<Integer> predecessors;
+	boolean dirty = false;
 
   //initialization with writing to DB
     public Activity (int project_id, String name, String desc, int duration, ArrayList<Integer> predecessors, int pessimistic, int optimistic, int value){
@@ -37,28 +38,32 @@ public class Activity {
     	}
     }
 
-    //Local initialization without writing to DB
-    public Activity (int activity_id, int project_id, String name, String desc, int duration, int progress, int finished, ArrayList<Integer> predecessors, int pessimistic, int optimistic, int value){
+	//Local initialization without writing to DB
+	public Activity (int activity_id, int project_id, String name, String desc, int duration, int progress, int finished, ArrayList<Integer> predecessors, int pessimistic, int optimistic, int value){
 
-    	this.activity_id = activity_id;
-    	this.project_id = project_id;
-    	this.activity_name = name;
-    	this.activity_desc = desc;
-    	this.duration = duration;
-    	this.progress = progress;
-    	this.finished = finished;
+		this.activity_id = activity_id;
+		this.project_id = project_id;
+		this.activity_name = name;
+		this.activity_desc = desc;
+		this.duration = duration;
+		this.progress = progress;
+		this.finished = finished;
 		this.predecessors = predecessors;
 		this.pessimistic = pessimistic;
-        this.optimistic = optimistic;
-        this.value = value;
+		this.optimistic = optimistic;
+		this.value = value;
 
-    }
+	}
     public int getPessimistic() {
 		return pessimistic;
 	}
 
 	public void setPessimistic(int pessimistic) {
-		this.pessimistic = pessimistic;
+
+		if ( pessimistic != this.pessimistic) {
+			this.pessimistic = pessimistic;
+			changed();
+		}
 	}
 
 	public int getOptimistic() {
@@ -66,7 +71,10 @@ public class Activity {
     }
 
 	public void setOptimistic(int optimistic) {
-		this.optimistic = optimistic;
+		if ( optimistic != this.optimistic) {
+			this.optimistic = optimistic;
+			changed();
+		}
 	}
 
 	public int getValue() {
@@ -74,7 +82,11 @@ public class Activity {
 	}
 
 	public void setValue(int value) {
-		this.value = value;
+
+		if ( value != this.value) {
+			this.value = value;
+			changed();
+		}
 	}
 
     /**
@@ -88,8 +100,12 @@ public class Activity {
      * @param activity_id the activity_id to set
      */
     public void setActivity_id(int activity_id) {
-        this.activity_id = activity_id;
-    }
+
+		if ( activity_id != this.activity_id) {
+			this.activity_id = activity_id;
+			changed();
+		}
+	}
 
     /**
      * @return the activity_name
@@ -102,8 +118,12 @@ public class Activity {
      * @param activity_name the activity_name to set
      */
     public void setActivity_name(String activity_name) {
-        this.activity_name = activity_name;
-    }
+
+		if ( !activity_name.equals(this.activity_name)) {
+			this.activity_name = activity_name;
+			changed();
+		}
+	}
 
     /**
      * @return the activity_desc
@@ -116,8 +136,12 @@ public class Activity {
      * @param activity_desc the activity_desc to set
      */
     public void setActivity_desc(String activity_desc) {
-        this.activity_desc = activity_desc;
-    }
+
+		if ( !activity_desc.equals(this.activity_desc)) {
+			this.activity_desc = activity_desc;
+			changed();
+		}
+	}
 
     /**
      * @return the duration
@@ -130,8 +154,11 @@ public class Activity {
      * @param duration the duration to set
      */
     public void setDuration(int duration) {
-        this.duration = duration;
-    }
+		if ( duration != this.duration) {
+			this.duration = duration;
+			changed();
+		}
+	}
 
 	/**
 	 * @return the progress
@@ -144,7 +171,10 @@ public class Activity {
 	 * @param progress the progress to set
 	 */
 	public void setProgress(int progress) {
-		this.progress = progress;
+		if ( progress != this.progress) {
+			this.progress = progress;
+			changed();
+		}
 	}
 
 	/**
@@ -158,22 +188,17 @@ public class Activity {
 	 * @param project_id the project_id to set
 	 */
 	public void setProject_id(int project_id) {
-		this.project_id = project_id;
-	}
-	/**
-	 * @return the finished
-	 */
-	public int getFinished() {
-		return finished;
-	}
-	/**
-	 * @param finished the finished to set
-	 */
-	public void setFinished(int finished) {
-		this.finished = finished;
+		if ( project_id != this.project_id) {
+			this.project_id = project_id;
+			changed();
+		}
 	}
 
-    /**
+	private void changed() {
+		dirty = true;
+	}
+
+	/**
      * @return the predecessors
      */
     public ArrayList<Integer> getPredecessors() {
@@ -184,8 +209,12 @@ public class Activity {
      * @param predecessors the predecessors
      */
     public void setPredecessors(ArrayList<Integer> predecessors) {
-        this.predecessors = predecessors;
-    }
+
+		if ( !predecessors.equals(this.predecessors)) {
+			this.predecessors = predecessors;
+			changed();
+		}
+	}
 
 	@Override
 
@@ -201,8 +230,6 @@ public class Activity {
 		+ this.getDuration()
 		+ " Progress: "
 		+ this.getProgress()
-		+ " Is finished: "
-		+ this.getFinished()
 		+ " predecessors: "
 		+ Arrays.asList(predecessors)
 		+ "\n";

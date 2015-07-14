@@ -155,7 +155,7 @@ public class Project {
 			data[i][1] = a.getDuration();
 			data[i][2] = a.getPredecessors();
 			data[i][3] = a.getProgress();
-			data[i][4] = a.getFinished();
+//			data[i][4] = a.getFinished();
 			i++;
 		}
 
