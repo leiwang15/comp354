@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Created by joao on 15.07.12.
  */
-public interface IActivityRenderer {
+public interface IActivityListRenderer {
 
     int getRowHeight();
     int getXScale();
@@ -18,4 +18,6 @@ public interface IActivityRenderer {
     void autoLayout(mxGraph graph);
 
     void setCPMData(Object[] objects, Object[] objects1);
+
+    void activitySelected(int id);
 }

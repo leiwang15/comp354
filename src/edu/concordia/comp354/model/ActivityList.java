@@ -27,10 +27,10 @@ public class ActivityList {
     private int[] actualCalendarDayOffsets;
     public boolean hasCycles;
 
-    IActivityRenderer renderer;
+    IActivityListRenderer renderer;
     LocalDate startDate;
 
-    public ActivityList(IActivityRenderer renderer) {
+    public ActivityList(IActivityListRenderer renderer) {
         this.activities = new ArrayList<Activity>();
         graph = new mxGraph();
         parent = graph.getDefaultParent();
@@ -250,5 +250,9 @@ public class ActivityList {
 
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
+    }
+
+    public int size() {
+        return activities.size();
     }
 }

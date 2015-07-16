@@ -19,7 +19,7 @@ public class Application {
 
         UserController uc = new UserController();
         MainWindow.currentUser = uc.getUserByUserName("1");
-        MainWindow mainDialogWindow = new MainDialogWindow();
+//        MainWindow mainDialogWindow = new MainDialogWindow();
         MainWindow mainDirectWindow = new MainDirectWindow();
 
         MainWindow.frmProjectManagementSystem.setVisible(true);

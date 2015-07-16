@@ -37,7 +37,7 @@ import java.util.*;
 /**
  * Created by joao on 15.06.05.
  */
-public class ActivityEntry extends JPanel implements IActivityRenderer, ActionListener, ItemListener {
+public class ActivityEntry extends JPanel implements IActivityListRenderer, ActionListener, ItemListener {
     protected static final int MAX_TABLE_SIZE = 1024;
     protected static final String DATE_FORMAT = "yyyy/MM/dd";
 
@@ -56,13 +56,17 @@ public class ActivityEntry extends JPanel implements IActivityRenderer, ActionLi
     String[][] tableRows;
     mxGraphComponent graphComponent;
     Project project;
+    private IActivityDetailRenderer detailRenderer;
+    private int previousID = -1;
 
-    public ActivityEntry() {
+    public ActivityEntry(IActivityDetailRenderer detailRenderer) {
 
         createUIComponents();
 
         activityList = new ActivityList(this);
         graphComponent = new mxGraphComponent(activityList.graph);
+
+        this.detailRenderer = detailRenderer;
     }
 //
 //    /*
@@ -110,7 +114,7 @@ public class ActivityEntry extends JPanel implements IActivityRenderer, ActionLi
 
         DefaultTableColumnModel scm = new DefaultTableColumnModel();
 
-        activitiesTable = new PMTable(dtm, scm);
+        activitiesTable = new PMTable(dtm, scm,this);
         activitiesTable.setCellSelectionEnabled(true);
         activitiesTable.addMouseListener(new PopClickListener());
 
@@ -305,6 +309,17 @@ public class ActivityEntry extends JPanel implements IActivityRenderer, ActionLi
     public void setCPMData(Object[] nonCriticals, Object[] criticals) {
         activityList.graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "lightblue", nonCriticals);
         activityList.graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "orange", criticals);
+    }
+
+    public void activitySelected(int id) {
+        if ( previousID != -1) {
+            detailRenderer.fillActivityDetails(activityList.getActivities().get(previousID));
+        }
+
+        if ( id < activityList.size()) {
+            detailRenderer.setActivityDetails(activityList.getActivities().get(id));
+            previousID = id;
+        }
     }
 
 //    private void doNewProject() {

@@ -1,13 +1,13 @@
 package edu.concordia.comp354.model;
 
+import edu.concordia.comp354.controller.ActivityController;
+import edu.concordia.comp354.controller.ProjectController;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
-import edu.concordia.comp354.controller.ActivityController;
-import edu.concordia.comp354.controller.ProjectController;
 public class Project {
     private int project_id;
     private String project_name;
@@ -17,26 +17,27 @@ public class Project {
     private List<Activity> activities;
 
     //initialization with writing to DB
-    public Project(User u, String name, String desc, LocalDate start, LocalDate end){
-    	this.project_name = name;
-    	this.project_desc = desc;
-    	this.start_date = start;
-    	this.end_date = end;
-     	ProjectController pc = new ProjectController();
-    	this.project_id = pc.addProject(this, u);
+    public Project(User u, String name, String desc, LocalDate start, LocalDate end) {
+        this.project_name = name;
+        this.project_desc = desc;
+        this.start_date = start;
+        this.end_date = end;
+        ProjectController pc = new ProjectController();
+        this.project_id = pc.addProject(this, u);
 
     }
 
     //local initialization (usually read from DB)
-    public Project(int projectID, String name, String desc, LocalDate start, LocalDate end, List<Activity> activities){
-    	this.project_id = projectID;
-    	this.project_name = name;
-    	this.project_desc = desc;
-    	this.start_date = start;
-    	this.end_date = end;
-    	this.activities = activities;
+    public Project(int projectID, String name, String desc, LocalDate start, LocalDate end, List<Activity> activities) {
+        this.project_id = projectID;
+        this.project_name = name;
+        this.project_desc = desc;
+        this.start_date = start;
+        this.end_date = end;
+        this.activities = activities;
 
     }
+
     /**
      * @return the project_id
      */
@@ -123,42 +124,42 @@ public class Project {
 
 
     @Override
-	public String toString(){
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		String s = "Project ID: " +
-		this.getProject_id()
-		+ " Project Name: "
-		+ this.getProject_name()
-		+ " Project Desc: "
-		+ this.getProject_desc()
-		+ " Start Date: "
-		+ df.format(this.start_date)
-		+ " End Date: "
-		+ df.format(this.end_date)
-		+ "\n";
+    public String toString() {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        String s = "Project ID: " +
+                this.getProject_id()
+                + " Project Name: "
+                + this.getProject_name()
+                + " Project Desc: "
+                + this.getProject_desc()
+                + " Start Date: "
+                + df.format(this.start_date)
+                + " End Date: "
+                + df.format(this.end_date)
+                + "\n";
 
-		for (Activity activity : activities) {
-                s += activity.toString();
-            }
-		return s;
-	}
+        for (Activity activity : activities) {
+            s += activity.toString();
+        }
+        return s;
+    }
 
-	public Object[][] getActivitityList() {
-		Object[][] data = null;
-		int i = 0;
+    public Object[][] getActivitityList() {
+        Object[][] data = null;
+        int i = 0;
 
-		ActivityController ac = new ActivityController();
-		List<Activity> list = ac.getActByProjectId(this.getProject_id());
+        ActivityController ac = new ActivityController();
+        List<Activity> list = ac.getActByProjectId(this.getProject_id());
 
-		for(Activity a : list){
-			data[i][0] = a.getActivity_name();
-			data[i][1] = a.getDuration();
-			data[i][2] = a.getPredecessors();
-			data[i][3] = a.getProgress();
+        for (Activity a : list) {
+            data[i][0] = a.getActivity_name();
+            data[i][1] = a.getDuration();
+            data[i][2] = a.getPredecessors();
+            data[i][3] = a.getProgress();
 //			data[i][4] = a.getFinished();
-			i++;
-		}
+            i++;
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

@@ -17,8 +17,10 @@ public class Activity {
     private int finished;
     private ArrayList<Integer> predecessors;
 	boolean dirty = false;
+	private ArrayList<User> users;
+	private float cost;
 
-  //initialization with writing to DB
+	//initialization with writing to DB
     public Activity (int project_id, String name, String desc, int duration, ArrayList<Integer> predecessors, int pessimistic, int optimistic, int value){
     	this.project_id = project_id;
     	this.activity_name = name;
@@ -36,6 +38,8 @@ public class Activity {
     		ActivityController ac1 = new ActivityController();
     		ac1.setActPrecedence(this.getActivity_id(), i);
     	}
+
+		users = new ArrayList<>();
     }
 
 	//Local initialization without writing to DB
@@ -119,7 +123,7 @@ public class Activity {
      */
     public void setActivity_name(String activity_name) {
 
-		if ( !activity_name.equals(this.activity_name)) {
+		if ( activity_name != null && !activity_name.equals(this.activity_name)) {
 			this.activity_name = activity_name;
 			changed();
 		}
@@ -234,5 +238,13 @@ public class Activity {
 		+ Arrays.asList(predecessors)
 		+ "\n";
 		return s;
+	}
+
+	public ArrayList<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(ArrayList<User> users) {
+		this.users = users;
 	}
 }
