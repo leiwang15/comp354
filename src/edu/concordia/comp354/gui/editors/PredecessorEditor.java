@@ -146,7 +146,7 @@ public class PredecessorEditor extends DefaultCellEditor {
             if (StringUtils.isNumericSpace(tmp)) {
                 for (String s : tmp.split(" ")) {
                     int pred = Integer.parseInt(s);
-                    if (pred < 1 || pred > activityEntry.getActivitiesTable().getMaxPredID()) {
+                    if (pred < 1 || pred > activityEntry.getProjectManager().getCurrentProject().getActivities().size()) {
                         valid = false;
                     }
                 }
@@ -165,7 +165,7 @@ public class PredecessorEditor extends DefaultCellEditor {
         }
         boolean stop = super.stopCellEditing();
 
-        if (valid && activityEntry.activityList.hasCycles()) {
+        if (valid && activityEntry.getProjectManager().getActivityList().hasCycles()) {
             stop = userSaysRevert();
 //            System.out.println("Has cycles");
         }
@@ -188,7 +188,7 @@ public class PredecessorEditor extends DefaultCellEditor {
                 SwingUtilities.getWindowAncestor(ftf),
                 "The value must be an integer between "
                         + 1 + " and "
-                        + activityEntry.getActivitiesTable().getMaxPredID() + " and not form cycles.\n"
+                        + activityEntry.getProjectManager().getCurrentProject().getActivities().size() + " and not form cycles.\n"
                         + "You can either continue editing "
                         + "or revert to the last valid value.",
                 "Invalid Text Entered",

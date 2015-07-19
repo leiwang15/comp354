@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +16,7 @@ import edu.concordia.comp354.model.Project;
 import edu.concordia.comp354.model.User;
 
 public class ProjectController extends DB_Controller {
+	DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	public ProjectController() {
 		super();
@@ -27,13 +29,10 @@ public class ProjectController extends DB_Controller {
 	public int addProject(Project p, User u) {
 
 		int id = 0;
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		String sql = "INSERT INTO Project (Name,Desc,StartDate,EndDate) "
 				+ "VALUES('" + p.getProject_name() + "', '"
-				+ p.getProject_desc() + "', '" + df.format(p.getStart_date())
-				+ "', '" + df.format(p.getEnd_date()) + "');";
-
-		//System.out.println(sql);
+				+ p.getProject_desc() + "', '" + p.getStart_date().format(df)
+				+ "', '" + p.getEnd_date().format(df) + "');";
 
 		try {
 			st = c.createStatement();
@@ -68,11 +67,10 @@ public class ProjectController extends DB_Controller {
 	}
 
 	public void updateProject(Project p){
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		String sql = "update Project set Name = '" + p.getProject_name() +
 				"',Desc = '" + p.getProject_desc() + "',StartDate = '" +
-				df.format(p.getStart_date()) + "',EndDate = '" +
-				df.format(p.getEnd_date()) + "' where ProjectID = "+ p.getProject_id() + ";";
+				p.getStart_date().format(df) + "',EndDate = '" +
+				p.getEnd_date().format(df) + "' where ProjectID = "+ p.getProject_id() + ";";
 
 		try {
 			st = c.createStatement();

@@ -8,6 +8,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import javax.swing.JButton;
@@ -20,9 +21,11 @@ import javax.swing.border.LineBorder;
 
 import edu.concordia.comp354.controller.ProjectController;
 import edu.concordia.comp354.model.Project;
+import edu.concordia.comp354.model.ProjectManager;
 
 public class EditPJ {
 
+	private final ProjectManager projectManager;
 	protected JDialog editPJ;
 	private JTextField newPJName;
 	private JTextField newStartDate;
@@ -30,18 +33,19 @@ public class EditPJ {
 	private JTextArea description;
 
 
-	public EditPJ() {
+	public EditPJ(ProjectManager projectManager) {
+		this.projectManager = projectManager;
 		initialize();
 		loadPJ();
 	}
 
 	private void loadPJ(){
-		java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MM-yyyy");
+		DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-		newPJName.setText(MainDialogWindow.selectedProject.getProject_name());
-		newStartDate.setText(sdf.format(MainDialogWindow.selectedProject.getStart_date()));
-		newEndDate.setText(sdf.format(MainDialogWindow.selectedProject.getEnd_date()));
-		description.setText(MainDialogWindow.selectedProject.getProject_desc());
+		newPJName.setText(projectManager.getCurrentProject().getProject_name());
+		newStartDate.setText(projectManager.getCurrentProject().getStart_date().format(df));
+//		newEndDate.setText(projectManager.getCurrentProject().getEnd_date().format(df));
+		description.setText(projectManager.getCurrentProject().getProject_desc());
 	}
 
 	private void initialize() {
@@ -94,52 +98,49 @@ public class EditPJ {
 		description.setBorder(new LineBorder(Color.LIGHT_GRAY));
 		description.setBounds(159, 160, 98, 72);
 		editPJ.getContentPane().add(description);
+//
+//		JLabel lblEndDate = new JLabel("End Date:");
+//		lblEndDate.setBounds(43, 127, 98, 22);
+//		editPJ.getContentPane().add(lblEndDate);
+//
+//		newEndDate = new JTextField();
+//		newEndDate.setBounds(159, 127, 98, 21);
+//		editPJ.getContentPane().add(newEndDate);
+//		newEndDate.setColumns(10);
+//
+//		JButton btnSelectDate2 = new JButton("...");
+//		btnSelectDate2.setBounds(267, 127, 31, 22);
+//		editPJ.getContentPane().add(btnSelectDate2);
+//
+//		btnSelectDate2.addActionListener(new ActionListener(){
+//			public void actionPerformed(ActionEvent e){
+//				final JFrame f = new JFrame();
+//				newEndDate.setText(new DatePicker(f).setPickedDate());
+//			}
+//		});
 
-		JLabel lblEndDate = new JLabel("End Date:");
-		lblEndDate.setBounds(43, 127, 98, 22);
-		editPJ.getContentPane().add(lblEndDate);
-
-		newEndDate = new JTextField();
-		newEndDate.setBounds(159, 127, 98, 21);
-		editPJ.getContentPane().add(newEndDate);
-		newEndDate.setColumns(10);
-
-		JButton btnSelectDate2 = new JButton("...");
-		btnSelectDate2.setBounds(267, 127, 31, 22);
-		editPJ.getContentPane().add(btnSelectDate2);
-
-		btnSelectDate2.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				final JFrame f = new JFrame();
-				newEndDate.setText(new DatePicker(f).setPickedDate());
-			}
-		});
-
-		JButton btnCreate = new JButton("Confirm");
+		JButton btnCreate = new JButton("Save");
 		btnCreate.setBounds(55, 245, 93, 23);
 		editPJ.getContentPane().add(btnCreate);
 
 		btnCreate.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				int id = MainDialogWindow.selectedProject.getProject_id();
+				int id = projectManager.getCurrentProject().getProject_id();
 				String projectName = newPJName.getText();
 				String startDate = newStartDate.getText();
-				String endDate = newEndDate.getText();
 				String projectDescription = description.getText();
-				int finish = 0;
 
 				DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 				LocalDate start = null;
 				LocalDate end = null;
 				start = LocalDate.parse(startDate);
-				end = LocalDate.parse(endDate);
 
-				Project p = new Project(id, projectName, projectDescription, start, end, null);
+				Project p = new Project(id, projectName, projectDescription, start, start, null);
 				ProjectController pc = new ProjectController();
 				pc.updateProject(p);
 
-				//JOptionPane.showMessageDialog(null, "Project edited successfully!");
-				MainDialogWindow.updateProjectList();
+				projectManager.loadProjects();
+				projectManager.setCurrentProject(p.getProject_name());
 
 				editPJ.dispose();
 			}

@@ -16,7 +16,7 @@ public class ActivityController extends DB_Controller {
 	}
 
 	/**
-	 * @param  activity (Joao: Removed Activity a to pass compile validations for now)
+	 * @param  activity
 	 * @return status assigned activity id
 	 */
 	public int addActivity(Activity activity) {
@@ -46,13 +46,13 @@ public class ActivityController extends DB_Controller {
 		return id;
 	}
 
-	public void updateActivity(Activity a){
+	public void updateActivity(Activity activity){
 
-		String sql = "update Activity set Name = '" + a.getActivity_name() +
-				"',Desc = '" + a.getActivity_desc() + "',Duration = " +
-				a.getDuration() + ",Pessimistic = " + a.getPessimistic() +
-				",Optimistic = " + a.getOptimistic() + ",Value = " + a.getValue() +
-				" where ActivityID = "+ a.getActivity_id() + ";";
+		String sql = "update Activity set Name = '" + activity.getActivity_name() +
+				"',Desc = '" + activity.getActivity_desc() + "',Duration = " +
+				activity.getDuration() + ",Pessimistic = " + activity.getPessimistic() +
+				",Optimistic = " + activity.getOptimistic() + ",Value = " + activity.getValue() +
+				" where ActivityID = "+ activity.getDBID() + ";";
 
 		try {
 			st = c.createStatement();
@@ -83,7 +83,7 @@ public class ActivityController extends DB_Controller {
 
 		int status = 0;
 		String sql = "INSERT INTO Activity_Assign (Activity_Id, User_ID)"
-				+ "VALUES(" + a.getActivity_id() + ", " + u.getUser_id() + ")";
+				+ "VALUES(" + a.getDBID() + ", " + u.getUser_id() + ")";
 		try {
 			st = c.createStatement();
 			status = st.executeUpdate(sql);
@@ -91,11 +91,13 @@ public class ActivityController extends DB_Controller {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
+		a.written();
 		return status;
 	}
 
 	public List<Integer> getUserByAssignment(Activity a){
-		String sql = "Select * FROM Activity_Assign WHERE Activity_ID = '" + a.getActivity_id() + "';";
+		String sql = "Select * FROM Activity_Assign WHERE Activity_ID = '" + a.getDBID() + "';";
 		ResultSet res;
 		List<Integer> list = new ArrayList<Integer>();
 
@@ -134,8 +136,8 @@ public class ActivityController extends DB_Controller {
 		return list;
 	}
 
-	public void removeAssignment(Activity a, int uid){
-		String sql = "DELETE FROM Activity_Assign WHERE User_ID = '" + uid +"' AND Activity_Id = '" + a.getActivity_id() +"';";
+	public void removeUserFromActivity(Activity a, int uid){
+		String sql = "DELETE FROM Activity_Assign WHERE User_ID = '" + uid +"' AND Activity_Id = '" + a.getDBID() +"';";
 
 		try {
 			st = c.createStatement();
@@ -151,7 +153,7 @@ public class ActivityController extends DB_Controller {
 	 * @param aID, Activity pre
 	 * @return status 1 for successful
 	 */
-	public int setActPrecedence(int aID, int preID){
+	public int setActPredecessor(int aID, int preID){
 		int status = 0;
 		String sql = "INSERT INTO Activity_Pre (Activity_ID1, Activity_ID2)"
 				+ "VALUES(" + aID + ", " + preID + ")";
@@ -167,7 +169,7 @@ public class ActivityController extends DB_Controller {
 
 	}
 
-	public List<Integer> getActPrecedence(int id){
+	public List<Integer> getActPredecessors(int id){
 		String sql = "SELECT * FROM Activity_Pre " + "WHERE Activity_ID1 = " + id + ";";
 		ResultSet res;
 		List<Integer> list = new ArrayList<Integer>();
@@ -187,7 +189,7 @@ public class ActivityController extends DB_Controller {
 		return list;
 	}
 
-	public void removePrecedence(int id){
+	public void removePredecessor(int id){
 		String sql = "DELETE FROM Activity_Pre WHERE Activity_ID1 = " + id + ";";
 		try {
 			st = c.createStatement();
@@ -339,8 +341,21 @@ public class ActivityController extends DB_Controller {
 		}
 	}
 
-	public void deletePre(int id){
-		String sql = "DELETE FROM Activity_Pre WHERE Activity_ID1 = " + id + " OR Activity_ID2 = " + id + ";";
+//	public void deletePredecessor(int id){
+//		String sql = "DELETE FROM Activity_Pre WHERE Activity_ID1 = " + id + " OR Activity_ID2 = " + id + ";";
+//		try {
+//			st = c.createStatement();
+//			st.executeUpdate(sql);
+//			c.close();
+//
+//		} catch (SQLException e) {
+//
+//			e.printStackTrace();
+//		}
+//	}
+
+	public void severPredecessorsFromActivity(int dbID){
+		String sql = "DELETE FROM Activity_Pre WHERE Activity_ID1 = " + dbID + ";";
 		try {
 			st = c.createStatement();
 			st.executeUpdate(sql);

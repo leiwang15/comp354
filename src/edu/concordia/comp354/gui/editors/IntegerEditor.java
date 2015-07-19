@@ -151,7 +151,7 @@ public class IntegerEditor extends DefaultCellEditor {
             }
         }
         boolean value = super.stopCellEditing();
-        activityEntry.activityList.createGraph();
+        activityEntry.getProjectManager().activityChanged();
         return value;
     }
 

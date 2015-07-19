@@ -8,6 +8,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.JButton;
@@ -19,16 +21,20 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
 import edu.concordia.comp354.model.Project;
+import edu.concordia.comp354.model.ProjectManager;
+import org.jdesktop.swingx.JXDatePicker;
 
 public class CreatePJ {
 
+	private final ProjectManager projectManager;
 	protected JDialog createPJ;
 	private JTextField newPJName;
 	private JTextField newStartDate;
 	private JTextField newEndDate;
 
 
-	public CreatePJ() {
+	public CreatePJ(ProjectManager projectManager) {
+		this.projectManager = projectManager;
 		initialize();
 	}
 
@@ -58,21 +64,27 @@ public class CreatePJ {
 		lblNewLabel.setBounds(43, 95, 91, 22);
 		createPJ.getContentPane().add(lblNewLabel);
 
-		newStartDate = new JTextField();
-		newStartDate.setBounds(159, 95, 98, 22);
+		JXDatePicker newStartDate = new JXDatePicker();
+		newStartDate.setDate(Calendar.getInstance().getTime());
+		newStartDate.setFormats(new SimpleDateFormat("yyyy-MM-dd"));
+
+//		newStartDate = new JTextField();
+		newStartDate.setBounds(159, 95, 125, 22);
 		createPJ.getContentPane().add(newStartDate);
-		newStartDate.setColumns(10);
+//		newStartDate.setColumns(10);
 
-		JButton btnSelectDate = new JButton("...");
-		btnSelectDate.setBounds(267, 95, 31, 23);
-		createPJ.getContentPane().add(btnSelectDate);
+//		JButton btnSelectDate = new JButton("...");
+//		btnSelectDate.setBounds(267, 95, 31, 23);
+//		createPJ.getContentPane().add(btnSelectDate);
 
-		btnSelectDate.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				final JFrame f = new JFrame();
-				newStartDate.setText(new DatePicker(f).setPickedDate());
-			}
-		});
+//		btnSelectDate.addActionListener(new ActionListener(){
+//			public void actionPerformed(ActionEvent e){
+//				final JFrame f = new JFrame();
+////				newStartDate.setText(new DatePicker(f).setPickedDate());
+////				newStartDate.setText(new JXDatePicker().getDate().toString());
+//
+//			}
+//		});
 
 		JLabel lblNewLabel_1 = new JLabel("Description:");
 		lblNewLabel_1.setBounds(43, 159, 91, 22);
@@ -82,26 +94,26 @@ public class CreatePJ {
 		description.setBorder(new LineBorder(Color.LIGHT_GRAY));
 		description.setBounds(159, 160, 98, 72);
 		createPJ.getContentPane().add(description);
+//
+//		JLabel lblEndDate = new JLabel("End Date:");
+//		lblEndDate.setBounds(43, 127, 98, 22);
+//		createPJ.getContentPane().add(lblEndDate);
+//
+//		newEndDate = new JTextField();
+//		newEndDate.setBounds(159, 127, 98, 21);
+//		createPJ.getContentPane().add(newEndDate);
+//		newEndDate.setColumns(10);
 
-		JLabel lblEndDate = new JLabel("End Date:");
-		lblEndDate.setBounds(43, 127, 98, 22);
-		createPJ.getContentPane().add(lblEndDate);
+//		JButton btnSelectDate2 = new JButton("...");
+//		btnSelectDate2.setBounds(267, 127, 31, 22);
+//		createPJ.getContentPane().add(btnSelectDate2);
 
-		newEndDate = new JTextField();
-		newEndDate.setBounds(159, 127, 98, 21);
-		createPJ.getContentPane().add(newEndDate);
-		newEndDate.setColumns(10);
-
-		JButton btnSelectDate2 = new JButton("...");
-		btnSelectDate2.setBounds(267, 127, 31, 22);
-		createPJ.getContentPane().add(btnSelectDate2);
-
-		btnSelectDate2.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				final JFrame f = new JFrame();
-				newEndDate.setText(new DatePicker(f).setPickedDate());
-			}
-		});
+//		btnSelectDate2.addActionListener(new ActionListener(){
+//			public void actionPerformed(ActionEvent e){
+//				final JFrame f = new JFrame();
+//				newEndDate.setText(new DatePicker(f).setPickedDate());
+//			}
+//		});
 
 		JButton btnCreate = new JButton("Create");
 		btnCreate.setBounds(55, 245, 93, 23);
@@ -110,20 +122,20 @@ public class CreatePJ {
 		btnCreate.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				String projectName = newPJName.getText();
-				String startDate = newStartDate.getText();
-				String endDate = newEndDate.getText();
+//				String startDate = newStartDate.getText();
 				String projectDescription = description.getText();
 
-				DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 				LocalDate start = null;
 				LocalDate end = null;
-				start = LocalDate.parse(startDate);
-				end = LocalDate.parse(endDate);
+//				start = LocalDate.parse(startDate);
+				start = newStartDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-				Project p = new Project(MainDialogWindow.currentUser, projectName, projectDescription, start, end);
+				projectManager.createProject(projectName, projectDescription, start, start);
+//				Project p = new Project(MainDirectWindow.currentUser, projectName, projectDescription, start, start);
 
 				//JOptionPane.showMessageDialog(null, "Project created successfully!");
-				MainDialogWindow.updateProjectList();
+//				MainDirectWindow.updateProjectList();
 
 				createPJ.dispose();
 			}

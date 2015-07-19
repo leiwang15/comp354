@@ -83,14 +83,14 @@ public class Login {
 						login.dispose();
 
 						//store user to currentUser
-						MainDialogWindow.currentUser = u;
+						MainDirectWindow.currentUser = u;
 
 						//open main window
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
 								try {
-									MainDialogWindow mainWindow = new MainDialogWindow();
-									mainWindow.frmProjectManagementSystem.setVisible(true);
+//									MainDirectWindow mainWindow = new MainDirectWindow();
+									MainDirectWindow.frmProjectManagementSystem.setVisible(true);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}

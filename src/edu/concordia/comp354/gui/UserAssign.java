@@ -63,7 +63,7 @@ public class UserAssign {
 		//add users to the two lists
 		for(User u : list){
 			ActivityController ac2 = new ActivityController();
-		    List<Integer> list1 = ac2.getUserByAssignment(MainDialogWindow.selectedAct);
+		    List<Integer> list1 = ac2.getUserByAssignment(MainDirectWindow.selectedAct);
 		    if(list1.contains(u.getUser_id())){
 		    	lm2.addElement(u.getUserName());
 		    }
@@ -106,7 +106,7 @@ public class UserAssign {
 		lblAssign.setHorizontalAlignment(SwingConstants.CENTER);
 		lblAssign.setFont(new Font("Arial", Font.PLAIN, 15));
 		lblAssign.setBounds(10, 10, 297, 22);
-		lblAssign.setText("Activity " + MainDialogWindow.selectedAct.getActivity_name());
+		lblAssign.setText("Activity " + MainDirectWindow.selectedAct.getActivity_name());
 		userAssign.getContentPane().add(lblAssign);
 
 		lblUserList = new JLabel("User List");
@@ -142,22 +142,22 @@ public class UserAssign {
 
 				//assign the users to the activity
 				ActivityController ac2 = new ActivityController();
-				List<Integer> list1 = ac2.getUserByAssignment(MainDialogWindow.selectedAct);
+				List<Integer> list1 = ac2.getUserByAssignment(MainDirectWindow.selectedAct);
 
 				for(Integer i : list1){
 					ActivityController ac = new ActivityController();
-					ac.removeAssignment(MainDialogWindow.selectedAct, i);
+					ac.removeUserFromActivity(MainDirectWindow.selectedAct, i);
 				}
 
 				for(User u : l){
 					ActivityController ac = new ActivityController();
-					ac.assignUserToActivity(u, MainDialogWindow.selectedAct);
+					ac.assignUserToActivity(u, MainDirectWindow.selectedAct);
 				}
 
 
 				userAssign.dispose();
 
-				MainDialogWindow.updateUserList();
+				MainDirectWindow.updateUserList();
 			}
 		});
 

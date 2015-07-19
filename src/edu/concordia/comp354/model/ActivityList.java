@@ -12,79 +12,37 @@ import com.mxgraph.view.mxGraph;
 import edu.concordia.comp354.model.AON.ActivityOnNode;
 import net.objectlab.kit.datecalc.common.DateCalculator;
 import net.objectlab.kit.datecalc.jdk8.LocalDateKitCalculatorsFactory;
-import org.apache.commons.lang3.StringUtils;
 
-import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
 
 public class ActivityList {
 
-    ArrayList<Activity> activities;
+    private final ProjectManager projectManager;
     public mxGraph graph;
     public Object parent;
     private ActivityOnNode lastActivity;
     private int[] actualCalendarDayOffsets;
     public boolean hasCycles;
 
-    IActivityListRenderer renderer;
-    LocalDate startDate;
+    IActivityEntryRenderer renderer;
 
-    public ActivityList(IActivityListRenderer renderer) {
-        this.activities = new ArrayList<Activity>();
+    public ActivityList(IActivityEntryRenderer renderer, ProjectManager projectManager) {
+        this.projectManager = projectManager;
         graph = new mxGraph();
         parent = graph.getDefaultParent();
+
+        assert renderer != null : "ActivityList: renderer is null";
         this.renderer = renderer;
     }
 
-    public ArrayList<Activity> getActivities() {
-        return activities = renderer.getActivityList();
+    public void fillActivities() {
+        renderer.fillActivityList();
     }
 
-    public void readFromFile(File file) throws FileNotFoundException {
-
-        activities = new ArrayList<>();
-
-        try {
-            BufferedReader fis = new BufferedReader(new InputStreamReader(new FileInputStream(file.getAbsolutePath()), "UTF-8"));
-
-            String line;
-            while (StringUtils.isNotEmpty(line = fis.readLine())) {
-                StringTokenizer stringTokenizer = new StringTokenizer(line, "\t");
-
-                int activity_id = Integer.parseInt(stringTokenizer.nextToken());
-                String name = stringTokenizer.nextToken();
-                int duration = Integer.parseInt(stringTokenizer.nextToken());
-
-                ArrayList<Integer> predecessors = new ArrayList<Integer>();
-                if (stringTokenizer.hasMoreTokens()) {
-                    String predStr = stringTokenizer.nextToken();
-
-                    for (String p : predStr.split(",")) {
-                        predecessors.add(Integer.parseInt(p.trim()));
-                    }
-                }
-                activities.add(new Activity(activity_id, 0, name, "", duration, 0, 0, predecessors, 0, 0, 0));
-            }
-
-            fis.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void writeToFile(File file) throws IOException {
-        BufferedWriter fos = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file.getAbsolutePath()), "UTF-8"));
-
-        for (Activity activity : getActivities()) {
-            fos.write(Integer.toString(activity.getActivity_id()) + "\t" +
-                    activity.getActivity_name() + "\t" +
-                    activity.getDuration() + "\t" +
-                    Arrays.asList(activity.getPredecessors()).toString().replaceAll("\\[|\\]", "") + "\n");
-        }
-
-        fos.close();
-    }
+//    public void setActivities(List<Activity> activities) {
+//        this.activities = activities;
+//    }
 
     public mxGraph createGraph() {
 
@@ -110,10 +68,10 @@ public class ActivityList {
     }
 
     public void linkNodes() {
-        ArrayList<Activity> activities = getActivities();
 
         HashMap<Integer, mxCell> activityID2mxCell = new HashMap<Integer, mxCell>();
 
+        List<Activity> activities = projectManager.getCurrentProject().getActivities();
         for (int i = 0; i < activities.size(); i++) {
 
             mxCell v = (mxCell) graph.insertVertex(parent,
@@ -133,7 +91,7 @@ public class ActivityList {
 
             Activity parentActivity = activities.get(i);
             for (Activity childActivity : activities) {
-                if (childActivity.getPredecessors().contains(parentActivity.getActivity_id())) {
+                if (childActivity.getPredecessors() != null && childActivity.getPredecessors().contains(parentActivity.getActivity_id())) {
                     mxCell v2 = activityID2mxCell.get(childActivity.getActivity_id());
 
                     if (!hasCycles) {
@@ -164,17 +122,21 @@ public class ActivityList {
     private void computeActualCalendarDuration(int projectDuration) {
         DateCalculator<LocalDate> dateCalculator = LocalDateKitCalculatorsFactory.forwardCalculator("Canada");
 
-        dateCalculator.setStartDate(this.startDate);
+        //  set and move from start date; destructive to dateCalculator. Must reset start date later
+        assert getStartDate() != null : "getStartDate() == null";
+        dateCalculator.setStartDate(getStartDate());
         dateCalculator.moveByDays(projectDuration);
 
-        actualCalendarDayOffsets = new int[projectDuration];
+        actualCalendarDayOffsets = new int[365];
 
-        dateCalculator.setStartDate(startDate);
+        //  reset start date
+        assert getStartDate() != null : "getStartDate() == null";
+        dateCalculator.setStartDate(getStartDate());
         for (int i = 0; i < projectDuration; i++) {
             while (dateCalculator.isCurrentDateNonWorking()) {
                 dateCalculator.setCurrentBusinessDate(dateCalculator.getCurrentBusinessDate().plusDays(1));
             }
-            actualCalendarDayOffsets[i] = (int) (dateCalculator.getCurrentBusinessDate().toEpochDay() - startDate.toEpochDay()) + startDate.getDayOfWeek().getValue();
+            actualCalendarDayOffsets[i] = (int) (dateCalculator.getCurrentBusinessDate().toEpochDay() - getStartDate().toEpochDay()) + getStartDate().getDayOfWeek().getValue();
             dateCalculator.setCurrentBusinessDate(dateCalculator.getCurrentBusinessDate().plusDays(1));
         }
 //        System.out.println(Arrays.toString(actualCalendarDayOffsets));
@@ -222,7 +184,11 @@ public class ActivityList {
 
             final int es = (int) ((ActivityOnNode) cell.getValue()).getES();
             int startDay = actualCalendarDayOffsets[es];
-            int actualDuration = actualCalendarDayOffsets[es + ((ActivityOnNode) cell.getValue()).getActivity().getDuration() - 1] - startDay + 1;
+
+            int offset = es + ((ActivityOnNode) cell.getValue()).getActivity().getDuration() - 1;
+            assert 0 <= offset && offset < actualCalendarDayOffsets.length : "offset = " + offset;
+
+            int actualDuration = actualCalendarDayOffsets[offset] - startDay + 1;
 
             geometry.setX(startDay * renderer.getXScale() + renderer.getXGap());
             geometry.setWidth(actualDuration * renderer.getXScale() + renderer.getXGap());
@@ -234,7 +200,9 @@ public class ActivityList {
     public boolean hasCycles() {
         hasCycles = false;
 
-        return hasCycles(createGraph()) || hasCycles;
+        projectManager.activityChanged();
+
+        return hasCycles(projectManager.getActivityList().graph) || hasCycles;
     }
 
     public boolean hasCycles(mxGraph graph) {
@@ -245,14 +213,23 @@ public class ActivityList {
     }
 
     public LocalDate getStartDate() {
-        return startDate;
+        return projectManager.getCurrentProject().getStart_date();
     }
 
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
+    public List<Activity> getActivities() {
+        return projectManager.getCurrentProject().getActivities();
     }
 
     public int size() {
-        return activities.size();
+        return getActivities().size();
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("ActivityList{");
+        sb.append(", lastActivity=").append(lastActivity);
+        sb.append(", hasCycles=").append(hasCycles);
+        sb.append('}');
+        return sb.toString();
     }
 }

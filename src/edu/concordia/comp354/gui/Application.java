@@ -2,6 +2,7 @@ package edu.concordia.comp354.gui;
 
 import edu.concordia.comp354.controller.CreateDB;
 import edu.concordia.comp354.controller.UserController;
+import edu.concordia.comp354.model.ProjectManager;
 
 import java.io.File;
 
@@ -15,12 +16,22 @@ public class Application {
         File f = new File("project.db");
         if(!f.exists()){
             CreateDB.initializeDB();
+            try {
+                Login loginWindow = new Login();
+                loginWindow.login.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
+
         UserController uc = new UserController();
+
+        ProjectManager projectManager = new ProjectManager();
         MainWindow.currentUser = uc.getUserByUserName("1");
-//        MainWindow mainDialogWindow = new MainDialogWindow();
-        MainWindow mainDirectWindow = new MainDirectWindow();
+        projectManager.setCurrentUser(MainWindow.currentUser);
+
+        MainDirectWindow mainDirectWindow = new MainDirectWindow(projectManager);
 
         MainWindow.frmProjectManagementSystem.setVisible(true);
     }

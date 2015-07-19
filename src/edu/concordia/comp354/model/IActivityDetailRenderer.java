@@ -7,9 +7,9 @@ public interface IActivityDetailRenderer {
 	/*
 		set UI details from Activity
 	 */
-	void setActivityDetails(Activity activity);
+	void setUIDetailsFromActivity(Activity activity);
 	/*
 		fill Activity with details from UI
 	 */
-	void fillActivityDetails(Activity activity);
+	void getActivityDetailsFromUI(Activity activity);
 }
