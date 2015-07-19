@@ -16,7 +16,7 @@ public class Activity extends DirtyAware {
     private int optimistic;
     private int value;
     private List<Integer> predecessors;
-    private ArrayList<User> users;
+    private List<User> users;
 
     public Activity() {
         super(DirtyLevels.NEW);
@@ -64,6 +64,8 @@ public class Activity extends DirtyAware {
         this.pessimistic = pessimistic;
         this.optimistic = optimistic;
         this.value = value;
+
+        users = new ArrayList<>();
     }
 
     public int getDBID() {
@@ -274,12 +276,15 @@ public class Activity extends DirtyAware {
         return s;
     }
 
-    public ArrayList<User> getUsers() {
+    public List<User> getUsers() {
         return users;
     }
 
-    public void setUsers(ArrayList<User> users) {
-        this.users = users;
+    public void setUsers(List<User> users) {
+        if (!users.equals(this.users)) {
+            this.users = users;
+            changed();
+        }
     }
 
 }

@@ -4,12 +4,16 @@ import edu.concordia.comp354.model.*;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -39,12 +43,15 @@ public class MainWindow implements IActivityDetailRenderer {
     //  activity details
     private JTextField activityName;
     private JTextArea projectDescription;
-    private JList users;
+    private CheckBoxList users;
     private JSlider progressSlider;
     private JTextField cost;
+    private HashMap<String,JCheckBox> checkboxMap;
 
     public MainWindow(ProjectManager projectManager) {
         this.projectManager = projectManager;
+
+        checkboxMap = new HashMap<>();
     }
 
     protected void initialize(ActivityEntry activityEntry) {
@@ -239,20 +246,13 @@ public class MainWindow implements IActivityDetailRenderer {
         scrollPane_2.setBounds(21, 312, 161, 144);
         panelSouth.add(scrollPane_2);
 
-        users = new JList();
-        users.setModel(new AbstractListModel() {
-            String[] values = new String[]{"John", "Jane", "Fred"};
+        users = new CheckBoxList();
 
-            public int getSize() {
-                return values.length;
-            }
-
-            public Object getElementAt(int index) {
-                return values[index];
-            }
-        });
-        users.setSelectedIndex(1);
+        populateUserNames();
         scrollPane_2.setViewportView(users);
+
+        users.setSelectedIndex(1);
+
 
 
         JLabel lblCost = new JLabel("Value:");
@@ -265,6 +265,26 @@ public class MainWindow implements IActivityDetailRenderer {
         cost.setText("$10,000");
         panelSouth.add(cost);
 
+    }
+
+    private void populateUserNames() {
+
+        for (String userName : projectManager.getUserNames()) {
+            JCheckBox checkbox = new JCheckBox(userName);
+
+            checkboxMap.put(userName,checkbox);
+            addCheckbox(checkbox);
+        }
+    }
+
+    public void addCheckbox(JCheckBox checkBox) {
+        ListModel currentList = users.getModel();
+        JCheckBox[] newList = new JCheckBox[currentList.getSize() + 1];
+        for (int i = 0; i < currentList.getSize(); i++) {
+            newList[i] = (JCheckBox) currentList.getElementAt(i);
+        }
+        newList[newList.length - 1] = checkBox;
+        users.setListData(newList);
     }
 
     private void projectSelected(ListSelectionEvent e) {
@@ -294,33 +314,100 @@ public class MainWindow implements IActivityDetailRenderer {
         activityName.setText(activity.getActivity_name());
         projectDescription.setText(activity.getActivity_desc());
 
-        ArrayList<User> actUsers = activity.getUsers();
+        for (JCheckBox checkbox : checkboxMap.values()) {
+            checkbox.setSelected(false);
+        }
+
+        List<User> actUsers = activity.getUsers();
         if (actUsers != null) {
-            users.setListData(actUsers.toArray());
+            for (User user : actUsers) {
+                JCheckBox checkbox = checkboxMap.get(user.getUserName());
+                checkbox.setSelected(true);
+            }
+
+//            JCheckBox[] newList = new JCheckBox[actUsers.size()];
+//            for (int i = 0; i < actUsers.size(); i++) {
+//                newList[i] = new JCheckBox(actUsers.get(i).getUserName());
+//            }
+//            users.setListData(newList);
         }
 
         progressSlider.setValue(activity.getProgress());
         DecimalFormat df = new DecimalFormat("#,###");
         cost.setText(df.format(activity.getValue()));
+        users.repaint();
 
     }
 
     public void getActivityDetailsFromUI(Activity activity) {
 
-//        activity.setActivity_name(activityName.getText());
         activity.setActivity_desc(projectDescription.getText());
 
-        ListModel model = users.getModel();
+        ListModel<JCheckBox> model = users.getModel();
 
-        ArrayList<String> actUsers = new ArrayList<>();
+        List<String> actUsers = new ArrayList<>();
 
         for (int i = 0; i < model.getSize(); i++) {
-            actUsers.add((String) model.getElementAt(i));
+
+            if ( model.getElementAt(i).isSelected() ) {
+                actUsers.add(model.getElementAt(i).getText());
+            }
         }
 
-//        todo: persist users
-//        activity.setUsers(actUsers);
+        activity.setUsers(projectManager.getUserList(actUsers));
         activity.setProgress(progressSlider.getValue());
         activity.setValue(Integer.parseInt(cost.getText().replaceAll(",", "")));
+    }
+}
+
+class CheckBoxList extends JList
+{
+    protected static Border noFocusBorder =
+            new EmptyBorder(1, 1, 1, 1);
+
+    public CheckBoxList()
+    {
+        setCellRenderer(new CellRenderer());
+
+        addMouseListener(new MouseAdapter()
+                         {
+                             public void mousePressed(MouseEvent e)
+                             {
+                                 int index = locationToIndex(e.getPoint());
+
+                                 if (index != -1) {
+                                     JCheckBox checkbox = (JCheckBox)
+                                             getModel().getElementAt(index);
+                                     checkbox.setSelected(
+                                             !checkbox.isSelected());
+                                     repaint();
+                                 }
+                             }
+                         }
+        );
+
+        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    }
+
+    protected class CellRenderer implements ListCellRenderer
+    {
+        public Component getListCellRendererComponent(
+                JList list, Object value, int index,
+                boolean isSelected, boolean cellHasFocus)
+        {
+            JCheckBox checkbox = (JCheckBox) value;
+            checkbox.setBackground(isSelected ?
+                    getSelectionBackground() : getBackground());
+            checkbox.setForeground(isSelected ?
+                    getSelectionForeground() : getForeground());
+            checkbox.setEnabled(isEnabled());
+            checkbox.setFont(getFont());
+            checkbox.setFocusPainted(false);
+            checkbox.setBorderPainted(true);
+            checkbox.setBorder(isSelected ?
+                    UIManager.getBorder(
+                            "List.focusCellHighlightBorder") : noFocusBorder);
+            return checkbox;
+        }
     }
 }

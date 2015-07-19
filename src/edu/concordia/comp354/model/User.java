@@ -18,8 +18,7 @@ public class User {
         this.userName = userName;
         this.password = password;
 
-        UserController uc = new UserController();
-        this.user_id = uc.addUser(this);
+        this.user_id = new UserController().addUser(this);
     }
 
 

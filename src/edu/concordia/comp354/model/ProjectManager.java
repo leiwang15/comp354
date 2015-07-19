@@ -2,17 +2,17 @@ package edu.concordia.comp354.model;
 
 import edu.concordia.comp354.controller.ActivityController;
 import edu.concordia.comp354.controller.ProjectController;
+import edu.concordia.comp354.controller.UserController;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by joao on 15.07.12.
  */
 public class ProjectManager {
 
+    public static final String ROLE_DEVELOPER = "dev";
     protected List<Project> projectList;
     private User currentUser;
     Project currentProject;
@@ -22,9 +22,8 @@ public class ProjectManager {
     IProjectRenderer projectRenderer;
     IActivityDetailRenderer activityDetailRenderer;
     IActivityEntryRenderer activityEntryRenderer;
-
-
-    private List<Integer> deleteList;
+    Map<String, User> userMap;
+    List<User> userList;
 
     public ProjectManager() {
     }
@@ -264,9 +263,8 @@ public class ProjectManager {
                 if (preds != null) {
                     for (int j = 0; j < preds.size(); j++) {
                         if (preds.get(j) > id) {
-                            preds.set(j,preds.get(j)-1);
-                        }
-                        else if (preds.get(j)== id) {
+                            preds.set(j, preds.get(j) - 1);
+                        } else if (preds.get(j) == id) {
                             preds.remove(j);
                         }
                     }
@@ -277,5 +275,53 @@ public class ProjectManager {
 
             currentProject.flagDeletedActivity(deletedAct);
         }
+    }
+
+    public List<User> getUserList(List<String> list) {
+
+        List<User> userList = new ArrayList<>();
+        for (String name : list) {
+            userList.add(getUser(name));
+        }
+
+        return userList;
+    }
+
+    public User getUser(String userName) {
+        return userMap.get(userName);
+    }
+
+    public List<String> getUserNames() {
+
+        List<String> list = new ArrayList<>();
+        for (User user : userList) {
+            list.add(user.getUserName());
+        }
+
+        return list;
+    }
+
+    public List<User> loadUsers() {
+        userList = new UserController().getUserByRole(ROLE_DEVELOPER);
+
+        userMap = new HashMap<>();
+        for (User user : userList) {
+            userMap.put(user.getUserName(), user);
+        }
+
+        return userList;
+    }
+
+    public void createTestUsers() {
+
+        new User("John", "Tesh", ProjectManager.ROLE_DEVELOPER, "John", "John");
+        new User("Jack", "Black", ProjectManager.ROLE_DEVELOPER, "Jack", "Jack");
+        new User("Fred", "Flintstone", ProjectManager.ROLE_DEVELOPER, "Fred", "Fred");
+        new User("Jane", "Fonda", ProjectManager.ROLE_DEVELOPER, "Jane", "Jane");
+        new User("June", "Carter", ProjectManager.ROLE_DEVELOPER, "June", "June");
+    }
+
+    public void initialize() {
+        loadUsers();
     }
 }
