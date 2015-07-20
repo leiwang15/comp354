@@ -247,7 +247,7 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
         projectDescription.setLineWrap(true);
         projectDescription.setWrapStyleWord(true);
         scrollPane_1.setViewportView(projectDescription);
-        projectDescription.setText("ipsum lorem");
+//        projectDescription.setText("ipsum lorem");
 
         JLabel lblProgress = new JLabel("Progress:");
         lblProgress.setBounds(70, 260, 61, 16);
