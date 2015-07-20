@@ -6,6 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableCellRenderer;
+import java.awt.*;
 
 /**
  * Created by joao on 15.06.06.
@@ -43,17 +45,21 @@ public class PMTable extends JTable {
 
         int col = e.getColumn();
         int row = e.getFirstRow();
-        if (col == 0) {
+        if ( renderer == null || renderer.isActiveActivity(row) ) {
+            if (col == 0) {
 
 //            setCellSelectionEnabled(true);
 
-            changeSelection(row, 1, false, false);
-            requestFocus();
-        } else if (row != -1 && getValueAt(row, 0).equals("") &&
-                StringUtils.isNotEmpty((CharSequence) getValueAt(row, col))) {
-            findMaxPredID(row);
-            addActivity();
-            dataModel.setValueAt(Integer.toString(maxPredID), row, 0);
+                changeSelection(row, 1, false, false);
+                requestFocus();
+            } else if (row != -1 && getValueAt(row, 0).equals("") &&
+                    StringUtils.isNotEmpty((CharSequence) getValueAt(row, col))) {
+                findMaxPredID(row);
+                addActivity();
+                dataModel.setValueAt(Integer.toString(maxPredID), row, 0);
+            }
+        } else {
+            renderer.clearActivityDetails();
         }
     }
 
@@ -69,7 +75,19 @@ public class PMTable extends JTable {
     public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend) {
         super.changeSelection(rowIndex, columnIndex, toggle, extend);
 
-        renderer.activitySelected(rowIndex);
+        if ( renderer.isActiveActivity(rowIndex) ) {
+            renderer.activitySelected(rowIndex);
+        } else {
+            renderer.clearActivityDetails();
+        }
+    }
+
+    @Override
+    public TableCellRenderer getCellRenderer(int row, int column) {
+
+        setForeground(renderer.isActiveActivity(row) ? Color.BLACK : Color.GRAY);
+
+        return super.getCellRenderer(row, column);
     }
 
     public int getMaxPredID() {

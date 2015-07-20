@@ -6,7 +6,6 @@ import edu.concordia.comp354.controller.UserController;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by joao on 15.07.12.
@@ -14,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ProjectManager {
 
     public static final String ROLE_DEVELOPER = "dev";
+    public static final String NO_FILTER = "-";
     protected List<Project> projectList;
     private User currentUser;
     Project currentProject;
@@ -26,8 +26,10 @@ public class ProjectManager {
     Map<String, User> userMap;
     List<User> userList;
     private Map<Integer, User> userIDMap;
+    private String filterUserName;
 
     public ProjectManager() {
+        filterUserName = null;
     }
 
     public ActivityList getActivityList() {
@@ -322,6 +324,8 @@ public class ProjectManager {
             userIDMap.put(user.getUser_id(), user);
         }
 
+        usersAdded();
+
         return userList;
     }
 
@@ -344,7 +348,39 @@ public class ProjectManager {
         new User("June", "Carter", ProjectManager.ROLE_DEVELOPER, "June", "June");
     }
 
+    public void usersAdded() {
+        if (projectRenderer != null) {
+            projectRenderer.populateUsers();
+        }
+    }
+
     public void initialize() {
         loadUsers();
+    }
+
+    public void userFilterSelected(String userName) {
+//        System.out.println(userName);
+        this.filterUserName = userName.equals(NO_FILTER) ? null : userName;
+
+        activityEntryRenderer.filterByUser(userName);
+    }
+
+    public boolean isActiveActivity(int id) {
+
+        boolean isActive = true;
+
+        if (filterUserName != null && id < getCurrentProject().getActivities().size()) {
+            isActive = false;
+            List<User> users = getCurrentProject().getActivities().get(id).getUsers();
+
+            for (User user : users) {
+                if (user.getUserName().equals(filterUserName)) {
+                    isActive = true;
+                    break;
+                }
+            }
+        }
+
+        return isActive;
     }
 }

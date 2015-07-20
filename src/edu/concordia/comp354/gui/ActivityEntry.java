@@ -337,7 +337,7 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
         if (id < projectManager.getCurrentProject().getActivities().size()) {
             projectManager.gainingDetailFocus(id);
         } else {
-            projectManager.getActivityDetailRenderer().setUIDetailsFromActivity(new Activity());
+            clearActivityDetails();
         }
 
         previousID = id;
@@ -354,6 +354,21 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
         return projectManager.getCurrentProject().getProject_id();
     }
 
+    @Override
+    public void filterByUser(String userName) {
+        activitiesTable.repaint();
+    }
+
+    @Override
+    public boolean isActiveActivity(int id) {
+        return projectManager.isActiveActivity(id);
+    }
+
+    @Override
+    public void clearActivityDetails() {
+        projectManager.getActivityDetailRenderer().setUIDetailsFromActivity(new Activity());
+
+    }
 //    private void doNewProject() {
 //        clear();
 //

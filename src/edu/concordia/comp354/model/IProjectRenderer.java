@@ -10,4 +10,6 @@ public interface IProjectRenderer {
     void setProjectList();
 
     void setCurrentProject(int i);
+
+    void populateUsers();
 }

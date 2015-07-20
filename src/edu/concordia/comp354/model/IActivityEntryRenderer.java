@@ -26,4 +26,10 @@ public interface IActivityEntryRenderer {
     void clear();
 
     int getProjectID();
+
+    void filterByUser(String userName);
+
+    boolean isActiveActivity(int id);
+
+    void clearActivityDetails();
 }

@@ -9,6 +9,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
@@ -19,7 +21,7 @@ import java.util.List;
 /**
  * Created by joao on 15.07.01.
  */
-public class MainWindow implements IActivityDetailRenderer {
+public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
     protected static User currentUser;
     protected static List<Project> pjList;
     protected static Project selectedProject;
@@ -46,10 +48,14 @@ public class MainWindow implements IActivityDetailRenderer {
     private CheckBoxList users;
     private JSlider progressSlider;
     private JTextField cost;
-    private HashMap<String,JCheckBox> checkboxMap;
+    private HashMap<String, JCheckBox> checkboxMap;
+    JComboBox<String> userFilter;
 
     public MainWindow(ProjectManager projectManager) {
         this.projectManager = projectManager;
+
+        projectManager.setProjectRenderer(this);
+        projectManager.setActivityDetailRenderer(this);
 
         checkboxMap = new HashMap<>();
     }
@@ -188,28 +194,53 @@ public class MainWindow implements IActivityDetailRenderer {
         panel.add(panelSouth, BorderLayout.SOUTH);
         panelSouth.setLayout(null);
 
+        JSeparator separator = new JSeparator();
+        separator.setBounds(5, 6, 189, 16);
+        panelSouth.add(separator);
+
+        JLabel lblUserFilter = new JLabel("User Filter");
+        lblUserFilter.setBounds(12, 20, 90, 16);
+        panelSouth.add(lblUserFilter);
+
+        userFilter = new JComboBox<>();
+
+        userFilter.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                projectManager.userFilterSelected(((JComboBox<String>) e.getSource()).getSelectedItem().toString());
+            }
+        });
+
+//        userFilter.setModel(new DefaultComboBoxModel<>(new String[]{"All", "Jack", "John", "Jill"}));
+        userFilter.setBounds(5, 40, 177, 27);
+        panelSouth.add(userFilter);
+
+
+        JSeparator separator_1 = new JSeparator();
+        separator_1.setBounds(2, 70, 189, 16);
+        panelSouth.add(separator_1);
+
         JLabel lblNewLabel = new JLabel("Details");
         lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        lblNewLabel.setBounds(70, 18, 44, 16);
+        lblNewLabel.setBounds(70, 83, 44, 16);
         panelSouth.add(lblNewLabel);
 
         JLabel label = new JLabel("Name:");
-        label.setBounds(5, 40, 40, 16);
+        label.setBounds(5, 105, 40, 16);
         panelSouth.add(label);
 
         activityName = new JTextField();
-        activityName.setBounds(57, 34, 134, 28);
+        activityName.setBounds(57, 99, 134, 28);
         activityName.setColumns(10);
         activityName.setEnabled(false);
         panelSouth.add(activityName);
 
         JLabel label_1 = new JLabel("Description:");
-        label_1.setBounds(5, 66, 83, 16);
+        label_1.setBounds(5, 131, 83, 16);
         panelSouth.add(label_1);
 
         JScrollPane scrollPane_1 = new JScrollPane();
         scrollPane_1.setViewportBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-        scrollPane_1.setBounds(15, 94, 179, 93);
+        scrollPane_1.setBounds(15, 159, 179, 93);
         panelSouth.add(scrollPane_1);
 
         projectDescription = new JTextArea();
@@ -219,7 +250,7 @@ public class MainWindow implements IActivityDetailRenderer {
         projectDescription.setText("ipsum lorem");
 
         JLabel lblProgress = new JLabel("Progress:");
-        lblProgress.setBounds(70, 195, 61, 16);
+        lblProgress.setBounds(70, 260, 61, 16);
         panelSouth.add(lblProgress);
 
         progressSlider = new JSlider();
@@ -230,50 +261,61 @@ public class MainWindow implements IActivityDetailRenderer {
         progressSlider.setMajorTickSpacing(10);
         progressSlider.setPaintTicks(true);
         progressSlider.setPaintLabels(true);
-        progressSlider.setBounds(0, 218, 200, 38);
+        progressSlider.setBounds(0, 283, 200, 38);
         panelSouth.add(progressSlider);
-
-        JSeparator separator = new JSeparator();
-        separator.setBounds(5, 6, 189, 16);
-        panelSouth.add(separator);
 
         JLabel label_2 = new JLabel("Users");
         label_2.setAlignmentX(0.5f);
-        label_2.setBounds(81, 287, 50, 16);
+        label_2.setBounds(81, 352, 50, 16);
         panelSouth.add(label_2);
 
         JScrollPane scrollPane_2 = new JScrollPane();
-        scrollPane_2.setBounds(21, 312, 161, 144);
+        scrollPane_2.setBounds(21, 377, 161, 144);
         panelSouth.add(scrollPane_2);
 
         users = new CheckBoxList();
 
-        populateUserNames();
+        populateUsers();
         scrollPane_2.setViewportView(users);
 
         users.setSelectedIndex(1);
 
 
-
         JLabel lblCost = new JLabel("Value:");
-        lblCost.setBounds(6, 477, 40, 16);
+        lblCost.setBounds(5, 540, 40, 16);
         panelSouth.add(lblCost);
 
         cost = new JTextField();
-        cost.setBounds(45, 471, 134, 28);
+        cost.setBounds(45, 536, 134, 28);
         cost.setColumns(10);
-        cost.setText("$10,000");
+//        cost.setText("$10,000");
         panelSouth.add(cost);
 
     }
 
-    private void populateUserNames() {
+    @Override
+    public void setProjectList() {
+
+        lm.removeAllElements();
+
+        for (Project p : projectManager.getProjectList()) {
+            lm.addElement(p.getProject_name());
+        }
+
+        projectList.setListData(lm.toArray());
+    }
+
+    public void populateUsers() {
+
+        userFilter.addItem(ProjectManager.NO_FILTER);
 
         for (String userName : projectManager.getUserNames()) {
             JCheckBox checkbox = new JCheckBox(userName);
 
-            checkboxMap.put(userName,checkbox);
+            checkboxMap.put(userName, checkbox);
             addCheckbox(checkbox);
+
+            userFilter.addItem(userName);
         }
     }
 
@@ -290,14 +332,14 @@ public class MainWindow implements IActivityDetailRenderer {
     private void projectSelected(ListSelectionEvent e) {
 //        if (!e.getValueIsAdjusting()) {
 
-            if (projectList.getSelectedValue() == null) {
-                projectList.setSelectedIndex(0);
-            }
-            if (pjList.size() != 0 && projectList.getSelectedValue() != null) {
-                String s = projectList.getSelectedValue().toString();
+        if (projectList.getSelectedValue() == null) {
+            projectList.setSelectedIndex(0);
+        }
+        if (pjList.size() != 0 && projectList.getSelectedValue() != null) {
+            String s = projectList.getSelectedValue().toString();
 
-                selectProject(s);
-            }
+            selectProject(s);
+        }
 //        }
     }
 
@@ -335,8 +377,8 @@ public class MainWindow implements IActivityDetailRenderer {
         progressSlider.setValue(activity.getProgress());
         DecimalFormat df = new DecimalFormat("#,###");
         cost.setText(df.format(activity.getValue()));
+//        users.setSelectionInterval(-1,-1);
         users.repaint();
-
     }
 
     public void getActivityDetailsFromUI(Activity activity) {
@@ -349,7 +391,7 @@ public class MainWindow implements IActivityDetailRenderer {
 
         for (int i = 0; i < model.getSize(); i++) {
 
-            if ( model.getElementAt(i).isSelected() ) {
+            if (model.getElementAt(i).isSelected()) {
                 actUsers.add(model.getElementAt(i).getText());
             }
         }
@@ -358,21 +400,41 @@ public class MainWindow implements IActivityDetailRenderer {
         activity.setProgress(progressSlider.getValue());
         activity.setValue(Integer.parseInt(cost.getText().replaceAll(",", "")));
     }
+
+    @Override
+    public void setCurrentProject(int i) {
+
+        if (projectList.getSelectedIndex() != i) {
+            projectList.setSelectedIndex(i);
+        }
+
+//        activityEntry.setActivities(projectManager.getCurrentProject().getActivitityList(), true);
+//
+//        for (int i = 0; i < pjList.size(); i++) {
+//            Project p = pjList.get(i);
+//            if (p.getProject_name().equals(s)) {
+//                selectedProject = activityEntry.project = p;
+//
+//                projectList.setSelectedIndex(i);
+//                ActivityList activityList = new ActivityList(activityEntry);
+//                activityList.setActivities(selectedProject.getActivities());
+//                activityList.setStartDate(selectedProject.getStart_date());
+//
+//                activityEntry.setActivities(activityList, true);
+//            }
+//        }
+    }
 }
 
-class CheckBoxList extends JList
-{
+class CheckBoxList extends JList {
     protected static Border noFocusBorder =
             new EmptyBorder(1, 1, 1, 1);
 
-    public CheckBoxList()
-    {
+    public CheckBoxList() {
         setCellRenderer(new CellRenderer());
 
-        addMouseListener(new MouseAdapter()
-                         {
-                             public void mousePressed(MouseEvent e)
-                             {
+        addMouseListener(new MouseAdapter() {
+                             public void mousePressed(MouseEvent e) {
                                  int index = locationToIndex(e.getPoint());
 
                                  if (index != -1) {
@@ -389,12 +451,10 @@ class CheckBoxList extends JList
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
 
-    protected class CellRenderer implements ListCellRenderer
-    {
+    protected class CellRenderer implements ListCellRenderer {
         public Component getListCellRendererComponent(
                 JList list, Object value, int index,
-                boolean isSelected, boolean cellHasFocus)
-        {
+                boolean isSelected, boolean cellHasFocus) {
             JCheckBox checkbox = (JCheckBox) value;
             checkbox.setBackground(isSelected ?
                     getSelectionBackground() : getBackground());

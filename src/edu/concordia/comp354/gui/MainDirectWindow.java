@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainDirectWindow extends MainWindow implements IProjectRenderer {
+public class MainDirectWindow extends MainWindow  {
     protected static Activity selectedAct;
 
     private JMenuItem mntmNewProject;
@@ -56,9 +56,6 @@ public class MainDirectWindow extends MainWindow implements IProjectRenderer {
 
     public MainDirectWindow(ProjectManager projectManager) {
         super(projectManager);
-
-        projectManager.setProjectRenderer(this);
-        projectManager.setActivityDetailRenderer(this);
 
         initialize();
 
@@ -543,41 +540,5 @@ public class MainDirectWindow extends MainWindow implements IProjectRenderer {
 
 
         parentContainer.add(activityEntry.panel1, BorderLayout.CENTER);
-    }
-
-    @Override
-    public void setProjectList() {
-
-        lm.removeAllElements();
-
-        for (Project p : projectManager.getProjectList()) {
-            lm.addElement(p.getProject_name());
-        }
-
-        projectList.setListData(lm.toArray());
-    }
-
-    @Override
-    public void setCurrentProject(int i) {
-
-        if (projectList.getSelectedIndex() != i) {
-            projectList.setSelectedIndex(i);
-        }
-
-//        activityEntry.setActivities(projectManager.getCurrentProject().getActivitityList(), true);
-//
-//        for (int i = 0; i < pjList.size(); i++) {
-//            Project p = pjList.get(i);
-//            if (p.getProject_name().equals(s)) {
-//                selectedProject = activityEntry.project = p;
-//
-//                projectList.setSelectedIndex(i);
-//                ActivityList activityList = new ActivityList(activityEntry);
-//                activityList.setActivities(selectedProject.getActivities());
-//                activityList.setStartDate(selectedProject.getStart_date());
-//
-//                activityEntry.setActivities(activityList, true);
-//            }
-//        }
     }
 }
