@@ -638,11 +638,21 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
         }
     }
 
-    private void deleteActivity() {
-        projectManager.deleteActivity(activitiesTable.getSelectedRow());
+    public void deleteActivity() {
+        projectManager.deleteActivity(getSelectedActivityRow());
 
-        ((PMTableModel) activitiesTable.getModel()).removeRow(activitiesTable.getSelectedRow());
+        ((PMTableModel) activitiesTable.getModel()).removeRow(getSelectedActivityRow());
         setActivities(true);
         projectManager.getActivityList().createGraph();
+    }
+
+    public boolean isActivitySelected() {
+        int row = getSelectedActivityRow();
+
+        return 0 <= row && row <= projectManager.getCurrentProject().getActivities().size();
+    }
+
+    public int getSelectedActivityRow() {
+        return activitiesTable.getSelectedRow();
     }
 }

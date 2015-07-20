@@ -6,6 +6,7 @@ import edu.concordia.comp354.controller.UserController;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by joao on 15.07.12.
@@ -24,6 +25,7 @@ public class ProjectManager {
     IActivityEntryRenderer activityEntryRenderer;
     Map<String, User> userMap;
     List<User> userList;
+    private Map<Integer, User> userIDMap;
 
     public ProjectManager() {
     }
@@ -77,6 +79,7 @@ public class ProjectManager {
         for (int i1 = 0; i1 < projectActivities.size(); i1++) {
             Activity activity = projectActivities.get(i1);
             activity.setActivity_id(i1 + 1);
+
             //  get predecessors
             List<Integer> dbPreds = new ActivityController().getActPredecessors(activity.getDBID());
             if (!dbPreds.isEmpty()) {
@@ -93,8 +96,12 @@ public class ProjectManager {
                 }
 
                 activity.setPredecessors(uiPreds);
-                activity.setDirty(DirtyAware.DirtyLevels.UNTOUCHED);
             }
+
+            //  get users
+            List<Integer> userIDs = new ActivityController().getUserByAssignment(activity);
+            activity.setUsers(getUsersByID(userIDs));
+            activity.setDirty(DirtyAware.DirtyLevels.UNTOUCHED);
         }
 
         project.setDirty(DirtyAware.DirtyLevels.UNTOUCHED);
@@ -291,6 +298,10 @@ public class ProjectManager {
         return userMap.get(userName);
     }
 
+    public User getUser(int userID) {
+        return userIDMap.get(userID);
+    }
+
     public List<String> getUserNames() {
 
         List<String> list = new ArrayList<>();
@@ -305,11 +316,23 @@ public class ProjectManager {
         userList = new UserController().getUserByRole(ROLE_DEVELOPER);
 
         userMap = new HashMap<>();
+        userIDMap = new HashMap<>();
         for (User user : userList) {
             userMap.put(user.getUserName(), user);
+            userIDMap.put(user.getUser_id(), user);
         }
 
         return userList;
+    }
+
+    private List<User> getUsersByID(List<Integer> userIDs) {
+
+        List<User> list = new ArrayList<>();
+        for (Integer userID : userIDs) {
+            list.add(userIDMap.get(userID));
+        }
+
+        return list;
     }
 
     public void createTestUsers() {

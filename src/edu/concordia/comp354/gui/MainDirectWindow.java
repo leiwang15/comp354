@@ -327,23 +327,26 @@ public class MainDirectWindow extends MainWindow implements IProjectRenderer {
             mntmDeleteAct.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
 
-                    if (selectedProject != null) {
-                        if (selectedAct != null) {
-                            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure to delete the activity " + selectedAct.getActivity_name()
-                                    + "?", "Warning", JOptionPane.YES_NO_OPTION);
+                    if (projectManager.getCurrentProject() != null) {
+                        if (activityEntry.isActivitySelected()) {
+                            String activityName = projectManager.getCurrentProject().getActivities().get(activityEntry.getSelectedActivityRow()).getActivity_name();
+                            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure to delete the activity " +
+                                    activityName + "?", "Warning", JOptionPane.YES_NO_OPTION);
                             if (dialogResult == JOptionPane.YES_OPTION) {
-                                ActivityController ac = new ActivityController();
-                                ac.deleteAct(selectedAct.getActivity_id());
 
-                                ActivityController ac2 = new ActivityController();
-                                ac2.severPredecessorsFromActivity(selectedAct.getDBID());
-
-                                ActivityController ac3 = new ActivityController();
-                                ac3.deleteAssign(selectedAct.getActivity_id());
-
-                                selectedAct = null;
-//                                JOptionPane.showMessageDialog(null, "Delete successfully!");
-                                updateActivityList();
+                                activityEntry.deleteActivity();
+//                                ActivityController ac = new ActivityController();
+//                                ac.deleteAct(selectedAct.getActivity_id());
+//
+//                                ActivityController ac2 = new ActivityController();
+//                                ac2.severPredecessorsFromActivity(selectedAct.getDBID());
+//
+//                                ActivityController ac3 = new ActivityController();
+//                                ac3.deleteAssign(selectedAct.getActivity_id());
+//
+//                                selectedAct = null;
+////                                JOptionPane.showMessageDialog(null, "Delete successfully!");
+//                                updateActivityList();
                             }
                         } else {
                             JOptionPane.showMessageDialog(null, "Please select an activity to delete!");
@@ -381,30 +384,30 @@ public class MainDirectWindow extends MainWindow implements IProjectRenderer {
 //                }
 //            });
 
-            //assign user to activity
-            mntmAssignUser = new JMenuItem("Assign User");
-            mnEdit.add(mntmAssignUser);
-
-            mntmAssignUser.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-
-                    if (!lsm.isSelectionEmpty()) {
-
-                        EventQueue.invokeLater(new Runnable() {
-                            public void run() {
-                                try {
-                                    UserAssign window = new UserAssign();
-                                    window.userAssign.setVisible(true);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Please select an activity to assign user!");
-                    }
-                }
-            });
+//            //assign user to activity
+//            mntmAssignUser = new JMenuItem("Assign User");
+//            mnEdit.add(mntmAssignUser);
+//
+//            mntmAssignUser.addActionListener(new ActionListener() {
+//                public void actionPerformed(ActionEvent e) {
+//
+//                    if (!lsm.isSelectionEmpty()) {
+//
+//                        EventQueue.invokeLater(new Runnable() {
+//                            public void run() {
+//                                try {
+//                                    UserAssign window = new UserAssign();
+//                                    window.userAssign.setVisible(true);
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        });
+//                    } else {
+//                        JOptionPane.showMessageDialog(null, "Please select an activity to assign user!");
+//                    }
+//                }
+//            });
 
 
             JMenu mnAnalysis = new JMenu("Analysis");
