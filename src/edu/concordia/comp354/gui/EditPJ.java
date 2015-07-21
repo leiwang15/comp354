@@ -3,6 +3,7 @@ package edu.concordia.comp354.gui;
 import edu.concordia.comp354.controller.ProjectController;
 import edu.concordia.comp354.model.Project;
 import edu.concordia.comp354.model.ProjectManager;
+import org.jdesktop.swingx.JXDatePicker;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -11,15 +12,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
 
 public class EditPJ {
 
     private final ProjectManager projectManager;
     protected JDialog editPJ;
     private JTextField newPJName;
-    private JTextField newStartDate;
+    private JXDatePicker newStartDate;
     private JTextArea description;
 
 
@@ -30,10 +35,11 @@ public class EditPJ {
     }
 
     private void loadPJ() {
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         newPJName.setText(projectManager.getCurrentProject().getProject_name());
-        newStartDate.setText(projectManager.getCurrentProject().getStart_date().format(df));
+        Instant instant = projectManager.getCurrentProject().getStart_date().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
+        newStartDate.setDate(Date.from(instant));
+
         description.setText(projectManager.getCurrentProject().getProject_desc());
     }
 
@@ -63,21 +69,12 @@ public class EditPJ {
         lblNewLabel.setBounds(43, 95, 91, 22);
         editPJ.getContentPane().add(lblNewLabel);
 
-        newStartDate = new JTextField();
-        newStartDate.setBounds(159, 95, 98, 22);
+        newStartDate = new JXDatePicker();
+        newStartDate.setDate(Calendar.getInstance().getTime());
+        newStartDate.setFormats(new SimpleDateFormat("yyyy-MM-dd"));
+
+        newStartDate.setBounds(159, 95, 125, 22);
         editPJ.getContentPane().add(newStartDate);
-        newStartDate.setColumns(10);
-
-        JButton btnSelectDate = new JButton("...");
-        btnSelectDate.setBounds(267, 95, 31, 23);
-        editPJ.getContentPane().add(btnSelectDate);
-
-        btnSelectDate.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                final JFrame f = new JFrame();
-                newStartDate.setText(new DatePicker(f).setPickedDate());
-            }
-        });
 
         JLabel lblNewLabel_1 = new JLabel("Description:");
         lblNewLabel_1.setBounds(43, 159, 91, 22);
@@ -96,13 +93,8 @@ public class EditPJ {
             public void actionPerformed(ActionEvent e) {
                 int id = projectManager.getCurrentProject().getProject_id();
                 String projectName = newPJName.getText();
-                String startDate = newStartDate.getText();
+                LocalDate start = newStartDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 String projectDescription = description.getText();
-
-                DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-                LocalDate start = null;
-                LocalDate end = null;
-                start = LocalDate.parse(startDate);
 
                 Project p = new Project(id, projectName, projectDescription, start, start, null);
                 ProjectController pc = new ProjectController();

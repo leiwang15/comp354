@@ -72,13 +72,6 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
 
         previousID = -1;
     }
-//
-//    /*
-//        get activities from grid input
-//    */
-//    public ActivityList fillActivities() {
-//        return this.activityList = dtm.fillActivityList();
-//    }
 
     public ProjectManager getProjectManager() {
         return projectManager;
@@ -102,14 +95,11 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
 
                             Integer.toString(activity.getActivity_id()),
                             activity.getActivity_name(),
-//                        activity.getDuration() != 0 ? Integer.toString(activity.getDuration()) : "",
                             activity.getDuration() != 0 ? activity.getDuration() : null,
                             "",
                             "",
                             activity.getPredecessors() != null ? activity.getPredecessors().toString().replaceAll("\\[|\\]", "") : ""
-//                        activity.getPredecessors()};
                     };
-//                dtm.projectManager.getCurrentProject().addActivity();
                 }
 
                 for (; i < PMTable.MAX_TABLE_SIZE; i++) {
@@ -268,23 +258,7 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
             }
 
         };
-
-        //  todo: stub for now. Integrate with main project
-//        project = new Project(null, "project", "desc", new Date(), new Date());
     }
-
-//    public void drawGraph(ActivityList activityList) {
-//
-//        activityList.graph.getModel().beginUpdate();
-//        try {
-//            activityList.linkNodes();
-//        } finally {
-//            activityList.graph.getModel().endUpdate();
-//        }
-//
-//        activityList.graph.setMaximumGraphBounds(new mxRectangle(0, 0, 800, 800));
-//        autoLayout(activityList.graph);
-//    }
 
     public void autoLayout(mxGraph graph) {
         charts.remove(graphComponent);
@@ -309,18 +283,6 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
             ActivityEntry.this.deleteActivity();
         }
 
-//        if (e.getActionCommand().equals("New")) {
-//            doNewProject();
-//        } else if (e.getActionCommand().equals("Open...")) {
-//            doOpenProject();
-//        } else if (e.getActionCommand().equals("Save As...")) {
-//            doSaveProject();
-//        } else if (e.getActionCommand().equals("Close")) {
-//            doCloseProject();
-//        } else if (e.getActionCommand().equals("Delete")) {
-//            ActivityEntry.this.deleteActivity();
-//        }
-//
         repaint();
     }
 
@@ -369,84 +331,6 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
         projectManager.getActivityDetailRenderer().setUIDetailsFromActivity(new Activity());
 
     }
-//    private void doNewProject() {
-//        clear();
-//
-//        ActivityList activities = fillActivities();
-//
-//        activities.fillActivities();
-//
-//        drawGraph(new ActivityList());
-//
-//    }
-//
-//    private void doOpenProject() {
-//        try {
-////            File file = getOpenFilename();
-//            File file = new File("/Users/joao/Documents/Home/Education/Concordia/Courses/COMP 354/Project/edu.concordia.comp354/slides_project.db");
-//
-//            if (file != null) {
-//
-//                clear();
-//                activityList.readFromFile(file);
-//
-//                setActivities(activityList, true);
-//
-//                drawGraph(activityList);
-//            }
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    private void doSaveProject() {
-//        try {
-//            File file = getSaveFilename();
-////            File file = new File("/Users/joao/Documents/Home/Education/Concordia/Courses/COMP 354/Project/edu.concordia.comp354/slides_project.db");
-//
-//            if (file != null) {
-//
-//                fillActivities().writeToFile(file);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    private void doCloseProject() {
-//    }
-//
-//    private File getOpenFilename() {
-//        JFileChooser chooser = new JFileChooser();
-//
-//        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-//                "Project", "db");
-//        chooser.setFileFilter(filter);
-//        int returnVal = chooser.showOpenDialog(this);
-//        if (returnVal == JFileChooser.APPROVE_OPTION) {
-//            System.out.println("You chose to open this file: " + chooser.getSelectedFile().getAbsolutePath());
-//        }
-//        if (returnVal == JFileChooser.APPROVE_OPTION) {
-//            return chooser.getSelectedFile();
-//        }
-//        return null;
-//    }
-//
-//    private File getSaveFilename() {
-//        JFileChooser chooser = new JFileChooser();
-//        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-//                "Project", "db");
-//        chooser.setFileFilter(filter);
-//        int returnVal = chooser.showSaveDialog(this);
-//        if (returnVal == JFileChooser.APPROVE_OPTION) {
-//            System.out.println("You chose to save to this file: " + chooser.getSelectedFile().getAbsolutePath());
-//        }
-//        String path = chooser.getSelectedFile().getAbsolutePath();
-//        if (path.endsWith(".db")) {
-//            return chooser.getSelectedFile();
-//        }
-//        return null;
-//    }
 
     @Override
     public void itemStateChanged(ItemEvent e) {
@@ -504,10 +388,6 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
         protected void paintBackground(Graphics g) {
             super.paintBackground(g);
             Graphics2D g2 = (Graphics2D) g;
-
-//                    setBackground(Color.WHITE);
-//
-//            g2.clearRect(0,0,getWidth(),getHeight());
 
             String country = Locale.getDefault().getCountry();
 
@@ -602,14 +482,6 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
                 g2.drawString(days[i % days.length], i * X_SCALE + 6, y * zoom + zoom / 2 + 19 + 1);
             }
             g2.drawLine(x * zoom + 6, y * zoom + zoom / 2 + 3 + 20 + 1, getWidth(), y * zoom + zoom / 2 + 3 + 20 + 1);
-
-
-//        setBackground(Color.WHITE);
-//        g.setColor(Color.WHITE);
-//        g2.fill(new Rectangle2D.Double(0, 0, 600, 600));
-//        setBackground(Color.BLACK);
-//        g.setColor(Color.BLACK);
-
         }
 
         @Override
