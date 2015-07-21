@@ -25,13 +25,7 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
     protected static User currentUser;
     protected static List<Project> pjList;
     protected static Project selectedProject;
-    protected JMenuItem mntmNewProject;
-    protected JMenuItem mntmLoad;
-    protected JMenuItem mntmSave;
-    protected JMenuItem mntmLogOut;
-    protected JMenuItem mntmExit;
     protected static JFrame frmProjectManagementSystem;
-    protected JLabel lblProjectList;
     static JMenuBar menuBar;
     static JTabbedPane tabbedPane;
     protected ActivityEntry activityEntry;
@@ -50,6 +44,7 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
     private JTextField cost;
     private HashMap<String, JCheckBox> checkboxMap;
     JComboBox<String> userFilter;
+    private JTextField login;
 
     public MainWindow(ProjectManager projectManager) {
         this.projectManager = projectManager;
@@ -83,12 +78,6 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
             splitPane.setOneTouchExpandable(true);
             panel.add(splitPane);
             frmProjectManagementSystem.add(panel);
-
-//            JSplitPane splitPane_1 = new JSplitPane();
-//            splitPane.setRightComponent(splitPane_1);
-
-//            JPanel panel_1 = new JPanel();
-//            splitPane_1.setLeftComponent(panel_1);
 
             tabbedPane = new JTabbedPane();
 
@@ -129,7 +118,6 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
     protected void initializeLeftPanel() {
 
         JPanel panel = new JPanel();
-//		panel.setMaximumSize(new Dimension(189,640));
         splitPane.setLeftComponent(panel);
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         JLabel lblProjects = new JLabel("Projects");
@@ -154,7 +142,6 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
 
         projectList.setBackground(Color.LIGHT_GRAY);
         projectList.setBounds(10, 189, 180, 326);
-//        panel.add(projectList);
 
         projectList.addListSelectionListener(new ListSelectionListener() {
 
@@ -180,7 +167,6 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
                             break;
 
                         case JOptionPane.CANCEL_OPTION:
-//                            projectList.setSelectedIndex(e.getFirstIndex());
                             break;
                     }
                 } else {
@@ -210,7 +196,6 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
             }
         });
 
-//        userFilter.setModel(new DefaultComboBoxModel<>(new String[]{"All", "Jack", "John", "Jill"}));
         userFilter.setBounds(5, 40, 177, 27);
         panelSouth.add(userFilter);
 
@@ -219,9 +204,9 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
         separator_1.setBounds(2, 70, 189, 16);
         panelSouth.add(separator_1);
 
-        JLabel lblNewLabel = new JLabel("Details");
+        JLabel lblNewLabel = new JLabel("Activity Details");
         lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        lblNewLabel.setBounds(70, 83, 44, 16);
+        lblNewLabel.setBounds(43, 80, 109, 16);
         panelSouth.add(lblNewLabel);
 
         JLabel label = new JLabel("Name:");
@@ -229,7 +214,7 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
         panelSouth.add(label);
 
         activityName = new JTextField();
-        activityName.setBounds(57, 99, 134, 28);
+        activityName.setBounds(43, 99, 134, 28);
         activityName.setColumns(10);
         activityName.setEnabled(false);
         panelSouth.add(activityName);
@@ -247,7 +232,6 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
         projectDescription.setLineWrap(true);
         projectDescription.setWrapStyleWord(true);
         scrollPane_1.setViewportView(projectDescription);
-//        projectDescription.setText("ipsum lorem");
 
         JLabel lblProgress = new JLabel("Progress:");
         lblProgress.setBounds(70, 260, 61, 16);
@@ -288,9 +272,23 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
         cost = new JTextField();
         cost.setBounds(45, 536, 134, 28);
         cost.setColumns(10);
-//        cost.setText("$10,000");
         panelSouth.add(cost);
 
+        separator = new JSeparator();
+        separator.setBounds(5, 580, 189, 16);
+        panelSouth.add(separator);
+
+        label = new JLabel("Login:");
+        label.setBounds(5, 605, 40, 16);
+        panelSouth.add(label);
+
+        login = new JTextField();
+        login.setBounds(45, 600, 134, 28);
+        login.setColumns(10);
+        login.setEnabled(false);
+        panelSouth.add(login);
+
+        setCurrentUser(projectManager.getCurrentUser());
     }
 
     @Override
@@ -366,12 +364,6 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
                 JCheckBox checkbox = checkboxMap.get(user.getUserName());
                 checkbox.setSelected(true);
             }
-
-//            JCheckBox[] newList = new JCheckBox[actUsers.size()];
-//            for (int i = 0; i < actUsers.size(); i++) {
-//                newList[i] = new JCheckBox(actUsers.get(i).getUserName());
-//            }
-//            users.setListData(newList);
         }
 
         progressSlider.setValue(activity.getProgress());
@@ -407,22 +399,11 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
         if (projectList.getSelectedIndex() != i) {
             projectList.setSelectedIndex(i);
         }
+    }
 
-//        activityEntry.setActivities(projectManager.getCurrentProject().getActivitityList(), true);
-//
-//        for (int i = 0; i < pjList.size(); i++) {
-//            Project p = pjList.get(i);
-//            if (p.getProject_name().equals(s)) {
-//                selectedProject = activityEntry.project = p;
-//
-//                projectList.setSelectedIndex(i);
-//                ActivityList activityList = new ActivityList(activityEntry);
-//                activityList.setActivities(selectedProject.getActivities());
-//                activityList.setStartDate(selectedProject.getStart_date());
-//
-//                activityEntry.setActivities(activityList, true);
-//            }
-//        }
+    @Override
+    public void setCurrentUser(User currentUser) {
+        login.setText(currentUser != null ? currentUser.getUserName() : "");
     }
 }
 

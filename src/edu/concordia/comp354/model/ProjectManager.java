@@ -12,7 +12,8 @@ import java.util.*;
  */
 public class ProjectManager {
 
-    public static final String ROLE_DEVELOPER = "dev";
+    public static final String ROLE_MANAGER = "Project Manager";
+    public static final String ROLE_MEMBER = "Project Member";
     public static final String NO_FILTER = "-";
     protected List<Project> projectList;
     private User currentUser;
@@ -70,6 +71,10 @@ public class ProjectManager {
 
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
+
+        if ( projectRenderer != null ) {
+            projectRenderer.setCurrentUser(currentUser);
+        }
     }
 
     public void loadProject(Project project) {
@@ -315,7 +320,8 @@ public class ProjectManager {
     }
 
     public List<User> loadUsers() {
-        userList = new UserController().getUserByRole(ROLE_DEVELOPER);
+        userList = new UserController().getUserByRole(ROLE_MANAGER);
+        userList.addAll(new UserController().getUserByRole(ROLE_MEMBER));
 
         userMap = new HashMap<>();
         userIDMap = new HashMap<>();
@@ -341,11 +347,11 @@ public class ProjectManager {
 
     public void createTestUsers() {
 
-        new User("John", "Tesh", ProjectManager.ROLE_DEVELOPER, "John", "John");
-        new User("Jack", "Black", ProjectManager.ROLE_DEVELOPER, "Jack", "Jack");
-        new User("Fred", "Flintstone", ProjectManager.ROLE_DEVELOPER, "Fred", "Fred");
-        new User("Jane", "Fonda", ProjectManager.ROLE_DEVELOPER, "Jane", "Jane");
-        new User("June", "Carter", ProjectManager.ROLE_DEVELOPER, "June", "June");
+        new User("John", "Tesh", ProjectManager.ROLE_MANAGER, "John", "John");
+        new User("Jack", "Black", ProjectManager.ROLE_MEMBER, "Jack", "Jack");
+        new User("Fred", "Flintstone", ProjectManager.ROLE_MEMBER, "Fred", "Fred");
+        new User("Jane", "Fonda", ProjectManager.ROLE_MEMBER, "Jane", "Jane");
+        new User("June", "Carter", ProjectManager.ROLE_MEMBER, "June", "June");
     }
 
     public void usersAdded() {

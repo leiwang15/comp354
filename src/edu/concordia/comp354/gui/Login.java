@@ -1,134 +1,127 @@
 package edu.concordia.comp354.gui;
 
-import java.awt.EventQueue;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.SwingConstants;
-
 import edu.concordia.comp354.controller.UserController;
+import edu.concordia.comp354.model.ProjectManager;
 import edu.concordia.comp354.model.User;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JPasswordField;
-
 public class Login {
 
-	protected JDialog login;
-	private JTextField inputUsername;
-	private JButton btnLogin;
-	private JPasswordField inputPassword;
+    private final ProjectManager projectManager;
+    protected JDialog login;
+    private JTextField inputUsername;
+    private JButton btnLogin;
+    private JPasswordField inputPassword;
 
-	public Login() {
-		initialize();
-	}
+    public Login(ProjectManager projectManager) {
+        this.projectManager = projectManager;
 
-	private void initialize() {
-		login = new JDialog();
-		login.setTitle("Login");
-		login.setBounds(100, 100, 202, 212);
-		login.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		login.setResizable(false);
+        initialize();
+    }
 
-		JLabel lblProjectManagementSystem = new JLabel("Project Management System");
-		lblProjectManagementSystem.setBounds(10, 10, 155, 15);
-		login.getContentPane().add(lblProjectManagementSystem);
+    private void initialize() {
+        login = new JDialog();
+        login.setTitle("Login");
+        login.setBounds(100, 100, 202, 212);
+        login.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        login.setResizable(false);
 
-		JLabel lblNewLabel = new JLabel("Username:");
-		lblNewLabel.setBounds(10, 48, 62, 15);
+        JLabel lblProjectManagementSystem = new JLabel("Project Management System");
+        lblProjectManagementSystem.setBounds(10, 10, 155, 15);
+        login.getContentPane().add(lblProjectManagementSystem);
 
-		inputUsername = new JTextField();
-		inputUsername.setBounds(77, 45, 80, 21);
-		inputUsername.setColumns(10);
-		login.getContentPane().setLayout(null);
-		login.getContentPane().add(lblNewLabel);
-		login.getContentPane().add(inputUsername);
+        JLabel lblNewLabel = new JLabel("Username:");
+        lblNewLabel.setBounds(10, 48, 62, 15);
 
-		JLabel lblNewLabel_1 = new JLabel("Password:");
-		lblNewLabel_1.setBounds(10, 73, 62, 15);
-		login.getContentPane().add(lblNewLabel_1);
+        inputUsername = new JTextField();
+        inputUsername.setBounds(77, 45, 80, 21);
+        inputUsername.setColumns(10);
+        login.getContentPane().setLayout(null);
+        login.getContentPane().add(lblNewLabel);
+        login.getContentPane().add(inputUsername);
 
-		inputPassword = new JPasswordField();
-		inputPassword.setBounds(77, 73, 80, 21);
-		login.getContentPane().add(inputPassword);
+        JLabel lblNewLabel_1 = new JLabel("Password:");
+        lblNewLabel_1.setBounds(10, 73, 62, 15);
+        login.getContentPane().add(lblNewLabel_1);
 
-		btnLogin = new JButton("Login");
-		btnLogin.setBounds(10, 131, 69, 23);
-		btnLogin.setVerticalAlignment(SwingConstants.BOTTOM);
-		login.getContentPane().add(btnLogin);
+        inputPassword = new JPasswordField();
+        inputPassword.setBounds(77, 73, 80, 21);
+        login.getContentPane().add(inputPassword);
 
-		//actionListener for Login button
-		btnLogin.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				//get user input
-				String inputUN = inputUsername.getText();
-				String inputPW = new String(inputPassword.getPassword());
+        btnLogin = new JButton("Login");
+        btnLogin.setBounds(10, 131, 69, 23);
+        btnLogin.setVerticalAlignment(SwingConstants.BOTTOM);
+        login.getContentPane().add(btnLogin);
 
-				//retrieve user from database
-				UserController uc = new UserController();
-				User u = uc.getUserByUserName(inputUN);
+        //actionListener for Login button
+        btnLogin.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //get user input
+                String inputUN = inputUsername.getText();
+                String inputPW = new String(inputPassword.getPassword());
 
-				//check password if user exists
-				if(u != null){
-					if(u.getPassword().equals(inputPW)){
-						//pop up a message prompt user that login successfully
-						JOptionPane.showMessageDialog(null, "Login successfully!");
+                //retrieve user from database
+                UserController uc = new UserController();
+                User u = uc.getUserByUserName(inputUN);
 
-						//close login window
-						login.dispose();
+                //check password if user exists
+                if (u != null) {
+                    if (u.getPassword().equals(inputPW)) {
+                        //pop up a message prompt user that login successfully
 
-						//store user to currentUser
-						MainDirectWindow.currentUser = u;
+                        //close login window
+                        login.dispose();
 
-						//open main window
-						EventQueue.invokeLater(new Runnable() {
-							public void run() {
-								try {
+                        //store user to currentUser
+                        projectManager.setCurrentUser(u);
+
+                        //open main window
+                        EventQueue.invokeLater(new Runnable() {
+                            public void run() {
+                                try {
 //									MainDirectWindow mainWindow = new MainDirectWindow();
-									MainDirectWindow.frmProjectManagementSystem.setVisible(true);
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-							}
-						});
-					}
-					else{
-						JOptionPane.showMessageDialog(null, "Incorrect Password!");
+                                    MainDirectWindow.frmProjectManagementSystem.setVisible(true);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Incorrect Password!");
 
-					}
-				}
-				//pop up a message if user doesn't exist
-				else{
-					JOptionPane.showMessageDialog(null, "User doesn't exit!");
-				}
-			}
-		});
+                    }
+                }
+                //pop up a message if user doesn't exist
+                else {
+                    JOptionPane.showMessageDialog(null, "User doesn't exit!");
+                }
+            }
+        });
 
-		JButton btnRegister = new JButton("Register");
-		btnRegister.setBounds(85, 131, 91, 23);
-		login.getContentPane().add(btnRegister);
+        JButton btnRegister = new JButton("Register");
+        btnRegister.setBounds(85, 131, 91, 23);
+        login.getContentPane().add(btnRegister);
 
-		//actionListener for Register button
-		btnRegister.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
+        //actionListener for Register button
+        btnRegister.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
 
-				login.dispose();
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						try {
-							Register window = new Register();
-							window.userRegister.setVisible(true);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				});
-			}
-		});
-	}
+                login.dispose();
+                EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                        try {
+                            Register window = new Register(projectManager);
+                            window.userRegister.setVisible(true);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
+    }
 }

@@ -3,8 +3,8 @@ package edu.concordia.comp354.gui;
 import edu.concordia.comp354.controller.CreateDB;
 import edu.concordia.comp354.controller.UserController;
 import edu.concordia.comp354.model.ProjectManager;
-import edu.concordia.comp354.model.User;
 
+import java.awt.*;
 import java.io.File;
 
 /**
@@ -21,21 +21,32 @@ public class Application {
             CreateDB.initializeDB();
             projectManager.createTestUsers();
             try {
-                Login loginWindow = new Login();
-                loginWindow.login.setVisible(true);
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-
         projectManager.initialize();
-        MainWindow.currentUser = new UserController().getUserByUserName("1");
+        MainWindow.currentUser = new UserController().getUserByUserName("John");
         projectManager.setCurrentUser(MainWindow.currentUser);
 
-        MainDirectWindow mainDirectWindow = new MainDirectWindow(projectManager);
+        new MainDirectWindow(projectManager);
 
-        MainWindow.frmProjectManagementSystem.setVisible(true);
+        if (true) {
+            MainWindow.frmProjectManagementSystem.setVisible(true);
+        } else {
+            EventQueue.invokeLater(new Runnable() {
+                public void run() {
+
+                    try {
+                        Login loginWindow = new Login(projectManager);
+                        loginWindow.login.setVisible(true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 }

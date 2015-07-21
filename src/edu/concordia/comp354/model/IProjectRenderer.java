@@ -12,4 +12,6 @@ public interface IProjectRenderer {
     void setCurrentProject(int i);
 
     void populateUsers();
+
+    void setCurrentUser(User currentUser);
 }

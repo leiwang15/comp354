@@ -14,10 +14,12 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 
+import edu.concordia.comp354.model.ProjectManager;
 import edu.concordia.comp354.model.User;
 
 public class Register {
 
+	private final ProjectManager projectManager;
 	protected JDialog userRegister;
 	private JTextField newUsername;
 	private JTextField newLastname;
@@ -26,7 +28,8 @@ public class Register {
 	private JPasswordField newPWConfirm;
 
 
-	public Register() {
+	public Register(ProjectManager projectManager) {
+		this.projectManager = projectManager;
 		initialize();
 	}
 
@@ -123,7 +126,7 @@ public class Register {
 					EventQueue.invokeLater(new Runnable() {
 						public void run() {
 							try {
-								Login loginWindow = new Login();
+								Login loginWindow = new Login(projectManager);
 								loginWindow.login.setVisible(true);
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -149,7 +152,7 @@ public class Register {
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						try {
-							Login loginWindow = new Login();
+							Login loginWindow = new Login(projectManager);
 							loginWindow.login.setVisible(true);
 						} catch (Exception e) {
 							e.printStackTrace();
