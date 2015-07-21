@@ -72,7 +72,7 @@ public class ProjectManager {
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
 
-        if ( projectRenderer != null ) {
+        if (projectRenderer != null) {
             projectRenderer.setCurrentUser(currentUser);
         }
     }
@@ -195,7 +195,7 @@ public class ProjectManager {
             if (p.getProject_name().equals(s)) {
                 setCurrentProject(p);
                 if (projectRenderer != null) {
-                    projectRenderer.setCurrentProject(i);
+                    projectRenderer.projectSelected(p.getProject_name());
                 }
                 if (activityEntryRenderer != null) {
                     activityEntryRenderer.setActivityList();
@@ -210,9 +210,7 @@ public class ProjectManager {
 
         activityList = new ActivityList(activityEntryRenderer, this);
 
-//        if ( currentProject != null ) {
-//            activityList.setActivities(currentProject.getActivities());
-//        }
+        projectRenderer.projectSelected(p.getProject_name());
     }
 
     public List<Project> getProjectList() {
@@ -291,10 +289,10 @@ public class ProjectManager {
         }
     }
 
-    public List<User> getUserList(List<String> list) {
+    public List<User> getUserList(List<String> nameList) {
 
         List<User> userList = new ArrayList<>();
-        for (String name : list) {
+        for (String name : nameList) {
             userList.add(getUser(name));
         }
 
@@ -377,6 +375,9 @@ public class ProjectManager {
 
         if (filterUserName != null && id < getCurrentProject().getActivities().size()) {
             isActive = false;
+
+            assert getCurrentProject() != null : "getCurrentProject() == null";
+            assert getCurrentProject().getActivities() != null : "getCurrentProject().getActivities() == null";
             List<User> users = getCurrentProject().getActivities().get(id).getUsers();
 
             for (User user : users) {

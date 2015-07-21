@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +65,7 @@ public class MainDirectWindow extends MainWindow  {
         if (currentUser.getRole().equals("Project Manager")) {
             //New project
             mntmNewProject = new JMenuItem("New Project");
+            mntmNewProject.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
             mnFile.add(mntmNewProject);
 
             mntmNewProject.addActionListener(new ActionListener() {
@@ -83,6 +85,7 @@ public class MainDirectWindow extends MainWindow  {
 
             //Save project
             mntmSaveProject = new JMenuItem("Save Project");
+            mntmSaveProject.setAccelerator(KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
             mnFile.add(mntmSaveProject);
 
             mntmSaveProject.addActionListener(new ActionListener() {
@@ -162,7 +165,8 @@ public class MainDirectWindow extends MainWindow  {
 
 
         //Exit
-        mntmExit = new JMenuItem("Exit");
+        mntmExit = new JMenuItem("Quit");
+        mntmExit.setAccelerator(KeyStroke.getKeyStroke('Q', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
         mnFile.add(mntmExit);
 
         mntmExit.addActionListener(new ActionListener() {
@@ -204,7 +208,7 @@ public class MainDirectWindow extends MainWindow  {
             JMenu mnAnalysis = new JMenu("Analysis");
             menuBar.add(mnAnalysis);
 
-            mntmGANTTChart = new JMenuItem("GANTT Chart");
+            mntmGANTTChart = new JMenuItem("Gantt Chart");
             mnAnalysis.add(mntmGANTTChart);
 
 
@@ -222,7 +226,7 @@ public class MainDirectWindow extends MainWindow  {
 
     protected void initPanel() {
 
-        JPanel parentContainer = getParentContainer("Direct Entry");
+        JPanel parentContainer = getParentContainer("Gantt Chart");
 
         parentContainer.setLayout(new BorderLayout());
 

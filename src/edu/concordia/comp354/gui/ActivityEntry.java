@@ -292,16 +292,17 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
     }
 
     public void activitySelected(int id) {
-        if (previousID != -1 && previousID < projectManager.getCurrentProject().getActivities().size()) {
-            projectManager.losingDetailFocus(previousID);
-        }
+        if ( projectManager.getCurrentProject() != null ) {
+            if (previousID != -1 && previousID < projectManager.getCurrentProject().getActivities().size()) {
+                projectManager.losingDetailFocus(previousID);
+            }
 
-        if (id < projectManager.getCurrentProject().getActivities().size()) {
-            projectManager.gainingDetailFocus(id);
-        } else {
-            clearActivityDetails();
+            if (id < projectManager.getCurrentProject().getActivities().size()) {
+                projectManager.gainingDetailFocus(id);
+            } else {
+                clearActivityDetails();
+            }
         }
-
         previousID = id;
     }
 
@@ -377,6 +378,11 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
     @Override
     public void fillActivityList() {
         dtm.fillActivityList();
+    }
+
+    public void setEnabled(boolean enabled) {
+        activitiesTable.setEnabled(enabled);
+        panel1.setEnabled(enabled);
     }
 
     class ChartPanel extends mxGraphComponent {

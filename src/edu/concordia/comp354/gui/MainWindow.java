@@ -8,6 +8,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,17 +34,17 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
 
     //  project list
     protected static DefaultListModel lm;
+    protected ProjectManager projectManager;
     static JList projectList;
-    ProjectManager projectManager;
 
     //  activity details
+    JComboBox<String> userFilter;
     private JTextField activityName;
     private JTextArea projectDescription;
     private CheckBoxList users;
     private JSlider progressSlider;
     private JTextField cost;
     private HashMap<String, JCheckBox> checkboxMap;
-    JComboBox<String> userFilter;
     private JTextField login;
 
     public MainWindow(ProjectManager projectManager) {
@@ -90,10 +91,10 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
             initializeLeftPanel();
             updateList();
 
-            //  select first project by default
-            if (pjList.size() != 0) {
-                selectProject(pjList.get(0).getProject_name());
-            }
+//            //  select first project by default
+//            if (pjList.size() != 0) {
+//                selectProject(pjList.get(0).getProject_name());
+//            }
         }
     }
 
@@ -198,7 +199,7 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
 
         userFilter.setBounds(5, 40, 177, 27);
         panelSouth.add(userFilter);
-
+        userFilter.setRenderer(new UserComboBox());
 
         JSeparator separator_1 = new JSeparator();
         separator_1.setBounds(2, 70, 189, 16);
@@ -246,6 +247,7 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
         progressSlider.setPaintTicks(true);
         progressSlider.setPaintLabels(true);
         progressSlider.setBounds(0, 283, 200, 38);
+        progressSlider.setValue(0);
         panelSouth.add(progressSlider);
 
         JLabel label_2 = new JLabel("Users");
@@ -261,9 +263,7 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
 
         populateUsers();
         scrollPane_2.setViewportView(users);
-
-        users.setSelectedIndex(1);
-
+        users.setSelectedIndex(10000);
 
         JLabel lblCost = new JLabel("Value:");
         lblCost.setBounds(5, 540, 40, 16);
@@ -394,16 +394,72 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
     }
 
     @Override
-    public void setCurrentProject(int i) {
+    public void projectSelected(String projectName) {
 
-        if (projectList.getSelectedIndex() != i) {
-            projectList.setSelectedIndex(i);
+        if ( projectName != null ) {
+            for (int i = 0; i < projectList.getVisibleRowCount(); i++) {
+                if (projectList.getModel().getElementAt(i).equals(projectName)) {
+                    if ( projectList.getSelectedIndex() != i) {
+                        projectList.setSelectedIndex(i);
+                    }
+                    break;
+                }
+            }
+            setEnabled(true);
+        } else {
+            setEnabled(false);
         }
+
+//        if (projectList.getSelectedIndex() != i) {
+//            projectList.setSelectedIndex(i);
+//        }
     }
 
     @Override
     public void setCurrentUser(User currentUser) {
         login.setText(currentUser != null ? currentUser.getUserName() : "");
+    }
+
+    public void setEnabled(boolean enabled) {
+        userFilter.setEnabled(enabled);
+        projectDescription.setEnabled(enabled);
+        progressSlider.setEnabled(enabled);
+        users.setEnabled(enabled);
+        cost.setEnabled(enabled);
+
+        activityEntry.setEnabled(enabled);
+    }
+
+    public class UserComboBox extends BasicComboBoxRenderer {
+        protected DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
+
+        private final int pmFont;
+
+        public UserComboBox() {
+            pmFont = Font.BOLD;
+        }
+
+        public UserComboBox(int style) {
+            pmFont = style;
+        }
+
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            JLabel renderer = (JLabel) defaultRenderer.getListCellRendererComponent(list, value, index, isSelected,cellHasFocus);
+
+            User user = MainWindow.this.projectManager.getUser((String)value);
+
+            if (user != null && user.getRole().equals(ProjectManager.ROLE_MANAGER)) {
+                Font oldFont = getFont();
+                Font newFont = new Font(oldFont.getName(), Font.BOLD, oldFont.getSize());
+                renderer.setFont(newFont);
+            } else {
+                Font oldFont = getFont();
+                Font newFont = new Font(oldFont.getName(), Font.PLAIN, oldFont.getSize());
+                renderer.setFont(newFont);
+            }
+
+            return renderer;
+        }
     }
 }
 
