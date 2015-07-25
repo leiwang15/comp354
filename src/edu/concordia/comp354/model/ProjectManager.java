@@ -366,7 +366,9 @@ public class ProjectManager {
 //        System.out.println(userName);
         this.filterUserName = userName.equals(NO_FILTER) ? null : userName;
 
-        activityEntryRenderer.filterByUser(userName);
+        if ( activityEntryRenderer != null ) {
+            activityEntryRenderer.filterByUser(userName);
+        }
     }
 
     public boolean isActiveActivity(int id) {

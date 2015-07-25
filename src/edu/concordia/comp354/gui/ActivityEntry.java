@@ -9,9 +9,7 @@ import de.jollyday.ManagerParameters;
 import edu.concordia.comp354.gui.editors.IntegerEditor;
 import edu.concordia.comp354.gui.editors.PredecessorEditor;
 import edu.concordia.comp354.model.Activity;
-import edu.concordia.comp354.model.IActivityDetailRenderer;
 import edu.concordia.comp354.model.IActivityEntryRenderer;
-import edu.concordia.comp354.model.ProjectManager;
 import net.objectlab.kit.datecalc.common.DateCalculator;
 import net.objectlab.kit.datecalc.common.DefaultHolidayCalendar;
 import net.objectlab.kit.datecalc.common.HolidayCalendar;
@@ -40,13 +38,13 @@ import java.util.List;
 /**
  * Created by joao on 15.06.05.
  */
-public class ActivityEntry extends JPanel implements IActivityEntryRenderer, ActionListener, ItemListener {
+public class ActivityEntry extends BaseTab implements IActivityEntryRenderer, ActionListener, ItemListener {
     protected static final String DATE_FORMAT = "yyyy/MM/dd";
 
     protected static final int X_SCALE = 20;
     protected static final int X_GAP = 0;
 
-    protected JPanel panel1;
+//    protected JPanel panel;
     private JTable activitiesTable;
     private JPanel charts;
     private JScrollPane tablePane;
@@ -56,25 +54,17 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
 
     Object[][] tableRows;
     mxGraphComponent graphComponent;
-    private IActivityDetailRenderer detailRenderer;
     private int previousID = -1;
 
-    private ProjectManager projectManager;
-
-    public ActivityEntry(IActivityDetailRenderer detailRenderer, ProjectManager projectManager) {
-        this.projectManager = projectManager;
+    public ActivityEntry(MainWindow mainWindow) {
+        super(mainWindow);
+        getParentWindow().setActivityEntry(this);
 
         createUIComponents();
 
         graphComponent = new mxGraphComponent(new mxGraph());
 
-        this.detailRenderer = detailRenderer;
-
         previousID = -1;
-    }
-
-    public ProjectManager getProjectManager() {
-        return projectManager;
     }
 
     /*
@@ -85,8 +75,8 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
 
         if (update) {
 
-            if (projectManager.getCurrentProject() != null) {
-                List<Activity> activities = projectManager.getCurrentProject().getActivities();
+            if (getCurrentProject() != null) {
+                List<Activity> activities = getCurrentProject().getActivities();
                 int i;
                 for (i = 0; i < activities.size(); i++) {
                     Activity activity = activities.get(i);
@@ -108,7 +98,7 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
 
                 dtm.setDataVector(tableRows, columnNames);
 
-                projectManager.getActivityList().createGraph();
+                getProjectManager().getActivityList().createGraph();
             }
         }
     }
@@ -121,7 +111,7 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
 
         tableRows = new Object[PMTable.MAX_TABLE_SIZE][];
         columnNames = new String[]{PMTable.ID, PMTable.NAME, PMTable.DURATION, PMTable.START, PMTable.FINISH, PMTable.PREDECESSORS};
-        dtm = new PMTableModel(tableRows, columnNames, projectManager);
+        dtm = new PMTableModelGantt(tableRows, columnNames, getProjectManager());
 
         dtm.clear();
 
@@ -205,10 +195,12 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
         splitPane.setMinimumSize(minimumSize);
         splitPane.setMaximumSize(new Dimension(-1, -1));
 
-        panel1 = new JPanel(new BorderLayout(), false);
-        panel1.setSize(new Dimension(640, 480));
-
-        panel1.add(splitPane);
+//        panel = new JPanel(new BorderLayout(), false);
+//        panel.setSize(new Dimension(640, 480));
+//        panel.add(splitPane);
+        setLayout(new BorderLayout());
+//        setSize(new Dimension(640, 480));
+        add(splitPane);
 
 
         final InputVerifier iv = new InputVerifier() {
@@ -287,18 +279,18 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
     }
 
     public void setCPMData(Object[] nonCriticals, Object[] criticals) {
-        projectManager.getActivityList().graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "lightblue", nonCriticals);
-        projectManager.getActivityList().graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "orange", criticals);
+        getProjectManager().getActivityList().graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "lightblue", nonCriticals);
+        getProjectManager().getActivityList().graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "orange", criticals);
     }
 
     public void activitySelected(int id) {
-        if ( projectManager.getCurrentProject() != null ) {
-            if (previousID != -1 && previousID < projectManager.getCurrentProject().getActivities().size()) {
-                projectManager.losingDetailFocus(previousID);
+        if (getCurrentProject() != null) {
+            if (previousID != -1 && previousID < getCurrentProject().getActivities().size()) {
+                getProjectManager().losingDetailFocus(previousID);
             }
 
-            if (id < projectManager.getCurrentProject().getActivities().size()) {
-                projectManager.gainingDetailFocus(id);
+            if (id < getCurrentProject().getActivities().size()) {
+                getProjectManager().gainingDetailFocus(id);
             } else {
                 clearActivityDetails();
             }
@@ -314,7 +306,7 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
 
     @Override
     public int getProjectID() {
-        return projectManager.getCurrentProject().getProject_id();
+        return getCurrentProject().getProject_id();
     }
 
     @Override
@@ -324,12 +316,12 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
 
     @Override
     public boolean isActiveActivity(int id) {
-        return projectManager.isActiveActivity(id);
+        return getProjectManager().isActiveActivity(id);
     }
 
     @Override
     public void clearActivityDetails() {
-        projectManager.getActivityDetailRenderer().setUIDetailsFromActivity(new Activity());
+        getProjectManager().getActivityDetailRenderer().setUIDetailsFromActivity(new Activity());
 
     }
 
@@ -381,8 +373,9 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
     }
 
     public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
         activitiesTable.setEnabled(enabled);
-        panel1.setEnabled(enabled);
+//        panel.setEnabled(enabled);
     }
 
     class ChartPanel extends mxGraphComponent {
@@ -427,7 +420,7 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
                     .getDateCalculator("Canada", HolidayHandlerType.FORWARD);
 
 
-            LocalDate date = projectManager.getCurrentProject().getStart_date();
+            LocalDate date = getCurrentProject().getStart_date();
 
             dateCalculator.setStartDate(date);
 
@@ -532,17 +525,17 @@ public class ActivityEntry extends JPanel implements IActivityEntryRenderer, Act
     }
 
     public void deleteActivity() {
-        projectManager.deleteActivity(getSelectedActivityRow());
+        getProjectManager().deleteActivity(getSelectedActivityRow());
 
         ((PMTableModel) activitiesTable.getModel()).removeRow(getSelectedActivityRow());
         setActivities(true);
-        projectManager.getActivityList().createGraph();
+        getProjectManager().getActivityList().createGraph();
     }
 
     public boolean isActivitySelected() {
         int row = getSelectedActivityRow();
 
-        return 0 <= row && row <= projectManager.getCurrentProject().getActivities().size();
+        return 0 <= row && row <= getCurrentProject().getActivities().size();
     }
 
     public int getSelectedActivityRow() {

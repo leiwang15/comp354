@@ -1,11 +1,14 @@
 package edu.concordia.comp354.gui;
 
+import com.mxgraph.view.mxGraph;
 import edu.concordia.comp354.model.*;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
@@ -22,7 +25,7 @@ import java.util.List;
 /**
  * Created by joao on 15.07.01.
  */
-public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
+public class MainWindow implements IActivityEntryRenderer, IActivityDetailRenderer, IProjectRenderer {
     protected static User currentUser;
     protected static List<Project> pjList;
     protected static Project selectedProject;
@@ -30,6 +33,18 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
     static JMenuBar menuBar;
     static JTabbedPane tabbedPane;
     protected ActivityEntry activityEntry;
+    protected JMenuItem mntmEditProject;
+    protected JMenuItem mntmLogOut;
+    protected JMenuItem mntmExit;
+    protected JMenuItem mntmDeleteAct;
+    protected JMenuItem mntmGANTTChart;
+    protected JMenuItem mntmPERT;
+    protected JMenuItem mntmCriticalPath;
+    protected JMenuItem mntmEarnedValue;
+    protected JMenuItem mntmNewProject;
+    protected JMenuItem mntmSaveProject;
+    protected JMenuItem mntmDeleteProject;
+    protected JList list;
     JSplitPane splitPane;
 
     //  project list
@@ -52,13 +67,9 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
 
         projectManager.setProjectRenderer(this);
         projectManager.setActivityDetailRenderer(this);
+        projectManager.setActivityEntryRenderer(this);
 
         checkboxMap = new HashMap<>();
-    }
-
-    protected void initialize(ActivityEntry activityEntry) {
-        this.activityEntry = activityEntry;
-        projectManager.setActivityEntryRenderer(this.activityEntry);
 
         if (frmProjectManagementSystem == null) {
             frmProjectManagementSystem = new JFrame();
@@ -81,6 +92,16 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
             frmProjectManagementSystem.add(panel);
 
             tabbedPane = new JTabbedPane();
+            ChangeListener changeListener = new ChangeListener() {
+                public void stateChanged(ChangeEvent changeEvent) {
+                    JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
+                    int index = sourceTabbedPane.getSelectedIndex();
+//                    System.out.println("Tab changed to: " + sourceTabbedPane.getTitleAt(index));
+
+                    tabSelected((ActivityEntry) sourceTabbedPane.getSelectedComponent());
+                }
+            };
+            tabbedPane.addChangeListener(changeListener);
 
             //Add the tabbed pane to this panel.
             splitPane.setRightComponent(tabbedPane);
@@ -91,22 +112,35 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
             initializeLeftPanel();
             updateList();
 
-//            //  select first project by default
-//            if (pjList.size() != 0) {
-//                selectProject(pjList.get(0).getProject_name());
-//            }
+            initMenus();
         }
     }
 
-    protected JPanel getParentContainer(String title) {
-
-        JPanel panel = new JPanel();
-        tabbedPane.addTab(title, null, panel, null);
-
-//        tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-
-        return panel;
+    private void tabSelected(ActivityEntry activityEntry) {
+        setActivityEntry(activityEntry);
+        if (activityEntry.getCurrentProject() != null) {
+            selectProject(activityEntry.getCurrentProject().getProject_name());
+        }
+        activityEntry.gainFocus();
     }
+
+    protected void setActivityEntry(ActivityEntry activityEntry) {
+        this.activityEntry = activityEntry;
+
+//        projectManager.setActivityEntryRenderer(this.activityEntry);
+        projectManager.setActivityEntryRenderer(this);
+    }
+
+    protected JPanel getParentContainer(JPanel panel) {
+
+        JPanel parentPanel = new JPanel();
+        tabbedPane.addTab(panel.getName(), null, parentPanel, null);
+//        tabbedPane.addTab(panel.getName(), null, panel, null);
+//        parentPanel.add(panel);
+
+        return parentPanel;
+    }
+
 
     protected void updateList() {
         pjList = projectManager.loadProjects();
@@ -396,10 +430,10 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
     @Override
     public void projectSelected(String projectName) {
 
-        if ( projectName != null ) {
+        if (projectName != null) {
             for (int i = 0; i < projectList.getVisibleRowCount(); i++) {
                 if (projectList.getModel().getElementAt(i).equals(projectName)) {
-                    if ( projectList.getSelectedIndex() != i) {
+                    if (projectList.getSelectedIndex() != i) {
                         projectList.setSelectedIndex(i);
                     }
                     break;
@@ -427,7 +461,260 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
         users.setEnabled(enabled);
         cost.setEnabled(enabled);
 
+//       if ( activityEntry !=null) {
         activityEntry.setEnabled(enabled);
+//       }
+    }
+
+    protected void initMenus() {
+        JFrame parentJFrame = getParentJFrame();
+
+        //menu file
+        JMenu mnFile = new JMenu("File");
+        menuBar.add(mnFile);
+
+        if (currentUser.getRole().equals("Project Manager")) {
+            //New project
+            mntmNewProject = new JMenuItem("New Project");
+            mntmNewProject.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            mnFile.add(mntmNewProject);
+
+            mntmNewProject.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    EventQueue.invokeLater(new Runnable() {
+                        public void run() {
+                            try {
+                                CreatePJ window = new CreatePJ(projectManager);
+                                window.createPJ.setVisible(true);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            });
+
+            //Save project
+            mntmSaveProject = new JMenuItem("Save Project");
+            mntmSaveProject.setAccelerator(KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            mnFile.add(mntmSaveProject);
+
+            mntmSaveProject.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    EventQueue.invokeLater(new Runnable() {
+                        public void run() {
+                            try {
+                                projectManager.saveProject();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            });
+
+            mntmEditProject = new JMenuItem("Edit Project");
+            mnFile.add(mntmEditProject);
+
+            mntmEditProject.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        EditPJ window = new EditPJ(projectManager);
+                        window.editPJ.setVisible(true);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
+
+            //Delete
+            mntmDeleteProject = new JMenuItem("Delete Project");
+            mnFile.add(mntmDeleteProject);
+
+            mntmDeleteProject.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+
+                    if (projectList.getSelectedValue() != null) {
+
+                        assert (projectManager.getCurrentProject() != null);
+                        int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure to delete the project " + projectManager.getCurrentProject().getProject_name() + "?", "Warning", JOptionPane.YES_NO_OPTION);
+                        if (dialogResult == JOptionPane.YES_OPTION) {
+
+
+                            projectManager.deleteProject();
+//                            JOptionPane.showMessageDialog(null, "Delete successfully!");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Please select a project to delete!");
+                    }
+                }
+            });
+        }
+
+        //Log out
+        mntmLogOut = new JMenuItem("Log Out");
+        mnFile.add(mntmLogOut);
+
+        mntmLogOut.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                currentUser = null;
+                selectedProject = null;
+                parentJFrame.dispose();
+
+                EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                        try {
+                            Login loginWindow = new Login(projectManager);
+                            loginWindow.login.setVisible(true);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
+
+
+        //Exit
+        mntmExit = new JMenuItem("Quit");
+        mntmExit.setAccelerator(KeyStroke.getKeyStroke('Q', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        mnFile.add(mntmExit);
+
+        mntmExit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                parentJFrame.dispose();
+            }
+        });
+
+        //Menu Edit
+        JMenu mnEdit = new JMenu("Edit");
+        menuBar.add(mnEdit);
+
+        if (currentUser.getRole().equals("Project Manager")) {
+
+            mntmDeleteAct = new JMenuItem("Delete Activity");
+            mnEdit.add(mntmDeleteAct);
+
+            mntmDeleteAct.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+
+                    if (projectManager.getCurrentProject() != null) {
+                        if (activityEntry.isActivitySelected()) {
+                            String activityName = projectManager.getCurrentProject().getActivities().get(activityEntry.getSelectedActivityRow()).getActivity_name();
+                            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure to delete the activity " +
+                                    activityName + "?", "Warning", JOptionPane.YES_NO_OPTION);
+                            if (dialogResult == JOptionPane.YES_OPTION) {
+
+                                activityEntry.deleteActivity();
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Please select an activity to delete!");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Please select a project to delete an activity!");
+                    }
+                }
+            });
+
+            JMenu mnAnalysis = new JMenu("Analysis");
+            menuBar.add(mnAnalysis);
+
+            mntmGANTTChart = new JMenuItem("Gantt Chart");
+            mnAnalysis.add(mntmGANTTChart);
+
+
+            mntmPERT = new JMenuItem("PERT Chart");
+            mnAnalysis.add(mntmPERT);
+
+            mntmCriticalPath = new JMenuItem("Critical Path Analysis");
+            mnAnalysis.add(mntmCriticalPath);
+
+            mntmEarnedValue = new JMenuItem("Earned Value Analysis");
+            mnAnalysis.add(mntmEarnedValue);
+
+        }
+    }
+
+    public void addTab(BaseTab baseTab) {
+        baseTab.setParentWindow(this);
+
+        baseTab.initializeTab();
+    }
+
+    @Override
+    public int getRowHeight() {
+        return activityEntry.getRowHeight();
+    }
+
+    @Override
+    public int getXScale() {
+        return activityEntry.getXScale();
+    }
+
+    @Override
+    public int getXGap() {
+        return activityEntry.getXGap();
+    }
+
+    @Override
+    public void setActivityList() {
+        activityEntry.setActivityList();
+    }
+
+    @Override
+    public void fillActivityList() {
+        activityEntry.fillActivityList();
+    }
+
+    @Override
+    public void autoLayout(mxGraph graph) {
+        activityEntry.autoLayout(graph);
+
+    }
+
+    @Override
+    public void setCPMData(Object[] objects, Object[] objects1) {
+        activityEntry.setCPMData(objects, objects1);
+
+    }
+
+    @Override
+    public void activitySelected(int id) {
+        activityEntry.activitySelected(id);
+
+    }
+
+    @Override
+    public void clear() {
+        activityEntry.clear();
+
+    }
+
+    @Override
+    public int getProjectID() {
+        return activityEntry.getProjectID();
+    }
+
+    @Override
+    public void filterByUser(String userName) {
+        if (activityEntry != null) {
+            activityEntry.filterByUser(userName);
+        }
+    }
+
+    @Override
+    public boolean isActiveActivity(int id) {
+        return activityEntry.isActiveActivity(id);
+    }
+
+    @Override
+    public void clearActivityDetails() {
+        activityEntry.clearActivityDetails();
+    }
+
+    public void selectTab(int i) {
+        tabbedPane.setSelectedIndex(i);
+        tabSelected((ActivityEntry) tabbedPane.getSelectedComponent());
     }
 
     public class UserComboBox extends BasicComboBoxRenderer {
@@ -444,9 +731,9 @@ public class MainWindow implements IActivityDetailRenderer, IProjectRenderer {
         }
 
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            JLabel renderer = (JLabel) defaultRenderer.getListCellRendererComponent(list, value, index, isSelected,cellHasFocus);
+            JLabel renderer = (JLabel) defaultRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-            User user = MainWindow.this.projectManager.getUser((String)value);
+            User user = MainWindow.this.projectManager.getUser((String) value);
 
             if (user != null && user.getRole().equals(ProjectManager.ROLE_MANAGER)) {
                 Font oldFont = getFont();

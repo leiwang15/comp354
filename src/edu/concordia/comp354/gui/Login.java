@@ -83,8 +83,7 @@ public class Login {
                         EventQueue.invokeLater(new Runnable() {
                             public void run() {
                                 try {
-//									MainDirectWindow mainWindow = new MainDirectWindow();
-                                    MainDirectWindow.frmProjectManagementSystem.setVisible(true);
+                                    MainWindow.frmProjectManagementSystem.setVisible(true);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }

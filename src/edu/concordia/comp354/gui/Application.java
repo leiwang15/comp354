@@ -31,8 +31,14 @@ public class Application {
         MainWindow.currentUser = new UserController().getUserByUserName("John");
         projectManager.setCurrentUser(MainWindow.currentUser);
 
-        MainDirectWindow mainDirectWindow = new MainDirectWindow(projectManager);
-        mainDirectWindow.setEnabled(false);
+        MainWindow mainWindow = new MainWindow(projectManager);
+
+        mainWindow.addTab(new GanttTab(mainWindow));
+        mainWindow.addTab(new PERTTab(mainWindow));
+//        mainWindow.addTab(new EVATab());
+        mainWindow.selectTab(0);
+
+        mainWindow.setEnabled(false);
 
         if (true) {
             MainWindow.frmProjectManagementSystem.setVisible(true);
