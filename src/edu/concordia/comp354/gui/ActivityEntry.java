@@ -41,19 +41,19 @@ import java.util.List;
 public abstract class ActivityEntry extends BaseTab implements IActivityEntryRenderer, ActionListener, ItemListener {
     protected static final String DATE_FORMAT = "yyyy/MM/dd";
 
-    protected static final int X_SCALE = 20;
+    public static final int X_SCALE = 20;
     protected static final int X_GAP = 0;
 
 //    protected JPanel panel;
 protected JTable activitiesTable;
-    private JPanel charts;
+    protected JPanel charts;
     private JScrollPane tablePane;
     private JScrollPane chartPane;
     public PMTableModel dtm;
-    String[] columnNames;
+    protected String[] columnNames;
 
-    Object[][] tableRows;
-    mxGraphComponent graphComponent;
+    protected Object[][] tableRows;
+    protected mxGraphComponent graphComponent;
     private int previousID = -1;
 
     public ActivityEntry(MainWindow mainWindow) {
@@ -65,42 +65,6 @@ protected JTable activitiesTable;
         graphComponent = new mxGraphComponent(new mxGraph());
 
         previousID = -1;
-    }
-
-    /*
-        Set activities in grid
-    */
-    public void setActivities(boolean update) {
-        dtm.clear();
-
-        if (update) {
-
-            if (getCurrentProject() != null) {
-                List<Activity> activities = getCurrentProject().getActivities();
-                int i;
-                for (i = 0; i < activities.size(); i++) {
-                    Activity activity = activities.get(i);
-
-                    tableRows[i] = new Object[]{
-
-                            Integer.toString(activity.getActivity_id()),
-                            activity.getActivity_name(),
-                            activity.getDuration() != 0 ? activity.getDuration() : null,
-                            "",
-                            "",
-                            activity.getPredecessors() != null ? activity.getPredecessors().toString().replaceAll("\\[|\\]", "") : ""
-                    };
-                }
-
-                for (; i < PMTable.MAX_TABLE_SIZE; i++) {
-                    tableRows[i] = new String[]{""};
-                }
-
-                dtm.setDataVector(tableRows, columnNames);
-
-                getProjectManager().getActivityList().createGraph();
-            }
-        }
     }
 
     public PMTable getActivitiesTable() {
@@ -204,19 +168,6 @@ protected JTable activitiesTable;
 
     protected abstract void createEntryColumns();
 
-    public void autoLayout(mxGraph graph) {
-        charts.remove(graphComponent);
-
-        graphComponent = new ChartPanel(graph);
-//        graphComponent = new mxGraphComponent(graph);
-
-        charts.add(graphComponent, BorderLayout.CENTER);
-
-//        new mxHierarchicalLayout(graph, SwingConstants.WEST).execute(graph.getDefaultParent());
-//        new mxParallelEdgeLayout(graph, SwingConstants.WEST).execute(graph.getDefaultParent());
-        charts.revalidate();
-    }
-
     /*
         Code actions for menus here
      */
@@ -248,12 +199,6 @@ protected JTable activitiesTable;
             }
         }
         previousID = id;
-    }
-
-    @Override
-    public void clear() {
-        setActivities(true);
-        repaint();
     }
 
     @Override
@@ -315,11 +260,6 @@ protected JTable activitiesTable;
     }
 
     @Override
-    public void setActivityList() {
-        setActivities(true);
-    }
-
-    @Override
     public void fillActivityList() {
         dtm.fillActivityList();
     }
@@ -328,118 +268,6 @@ protected JTable activitiesTable;
         super.setEnabled(enabled);
         activitiesTable.setEnabled(enabled);
 //        panel.setEnabled(enabled);
-    }
-
-    class ChartPanel extends mxGraphComponent {
-        public ChartPanel(mxGraph graph) {
-            super(graph);
-        }
-
-        @Override
-        protected void paintBackground(Graphics g) {
-            super.paintBackground(g);
-            Graphics2D g2 = (Graphics2D) g;
-
-            String country = Locale.getDefault().getCountry();
-
-            HolidayManager.setManagerCachingEnabled(true);
-            HolidayManager manager = HolidayManager.getInstance(ManagerParameters.create("Canada"));
-
-
-// create or get the Holidays
-            final Set<Holiday> holidays = manager.getHolidays(2015);
-
-// fill dates into set of LocalDate
-            Set<LocalDate> holidayDates = new HashSet<LocalDate>();
-            for (Holiday h : holidays) {
-                holidayDates.add(h.getDate());
-            }
-
-            DateTimeFormatter localFormatter = DateTimeFormatter.ofLocalizedDate(
-                    FormatStyle.MEDIUM).withLocale(Locale.getDefault());
-
-// create the HolidayCalendar ASSUMING that the set covers 2015!
-            final HolidayCalendar<LocalDate> calendar = new DefaultHolidayCalendar<LocalDate>
-                    (holidayDates, LocalDate.parse("2015-01-01"), LocalDate.parse("2025-12-31"));
-
-// register the holidays, any calculator with name "Canada"
-// asked from now on will receive an IMMUTABLE reference to this calendar
-            LocalDateKitCalculatorsFactory.getDefaultInstance().registerHolidays("Canada", calendar);
-
-// ask for a LocalDate calculator for "Canada"
-// (even if a new set of holidays is registered, this one calculator is not affected
-            DateCalculator<LocalDate> dateCalculator = LocalDateKitCalculatorsFactory.getDefaultInstance()
-                    .getDateCalculator("Canada", HolidayHandlerType.FORWARD);
-
-
-            LocalDate date = getCurrentProject().getStart_date();
-
-            dateCalculator.setStartDate(date);
-
-            if (dateCalculator.getCurrentBusinessDate().equals(date)) {
-                //  set to first work day of  week
-                while (dateCalculator.isCurrentDateNonWorking()) {
-                    dateCalculator.setCurrentBusinessDate(dateCalculator.getCurrentBusinessDate().plusDays(-1));
-                }
-                dateCalculator.setCurrentBusinessDate(dateCalculator.getCurrentBusinessDate().plusDays(1));
-            }
-
-            int x = 0;
-            int y = 0;
-            int zoom = X_SCALE;
-
-            String[] days = "S M T W T F S".split(" ");
-
-            int numOfVisibleDays = getWidth() / X_SCALE;
-
-            final int DAYS_PER_WEEK = 7;
-
-            //  find first Sunday before start date
-
-            LocalDate curDate = dateCalculator.getStartDate();
-            while (curDate.getDayOfWeek() != DayOfWeek.SUNDAY) {
-                curDate = curDate.plusDays(-1);
-            }
-            Color oldColor = g.getColor();
-            g.setColor(new Color(245, 245, 245));
-            g2.fillRect(0, y * zoom - 2 + 1, getWidth(), zoom * 2 - 5);
-            g.setColor(oldColor);
-
-            int numOfVisibleWeeks = numOfVisibleDays / DAYS_PER_WEEK + 1;
-            for (int i = 0; i < numOfVisibleWeeks; i++) {
-                g2.drawString(curDate.format(DateTimeFormatter.ofPattern("dd MMM yy")), i * X_SCALE * DAYS_PER_WEEK + 6, y * zoom + zoom / 2 + 1);
-                curDate = curDate.plusDays(DAYS_PER_WEEK);
-            }
-
-
-            oldColor = g.getColor();
-            g.setColor(new Color(245, 245, 245));
-            g2.fillRect(0, y * zoom + zoom / 2 + 1, X_SCALE, getHeight());
-            for (int i = 1; i < numOfVisibleWeeks; i++) {
-                g2.fillRect(i * X_SCALE * DAYS_PER_WEEK - X_SCALE, y * zoom + zoom / 2 + 4 + 1, 2 * X_SCALE, getHeight());
-                g.setColor(Color.LIGHT_GRAY);
-                g2.drawLine(i * X_SCALE * DAYS_PER_WEEK, y * zoom + zoom / 2 + 4 + 1, i * X_SCALE * DAYS_PER_WEEK + 1, getHeight());
-                g.setColor(new Color(245, 245, 245));
-            }
-            g.setColor(oldColor);
-
-            g.setColor(Color.LIGHT_GRAY);
-            g2.drawLine(x * zoom + 6, y * zoom + zoom / 2 + 3 + 1, getWidth(), y * zoom + zoom / 2 + 3 + 1);
-            g.setColor(Color.GRAY);
-
-
-            for (int i = 0; i < numOfVisibleDays; i++) {
-
-                g2.drawString(days[i % days.length], i * X_SCALE + 6, y * zoom + zoom / 2 + 19 + 1);
-            }
-            g2.drawLine(x * zoom + 6, y * zoom + zoom / 2 + 3 + 20 + 1, getWidth(), y * zoom + zoom / 2 + 3 + 20 + 1);
-        }
-
-        @Override
-        public void paint(Graphics g) {
-
-            super.paint(g);
-        }
     }
 
     class PopUpDeleteActivity extends JPopupMenu {
@@ -452,7 +280,7 @@ protected JTable activitiesTable;
         }
     }
 
-    class PopClickListener extends MouseAdapter {
+    public class PopClickListener extends MouseAdapter {
         public void mousePressed(MouseEvent e) {
             if (e.isPopupTrigger()) {
                 doPop(e);
@@ -476,14 +304,6 @@ protected JTable activitiesTable;
         }
     }
 
-    public void deleteActivity() {
-        getProjectManager().deleteActivity(getSelectedActivityRow());
-
-        ((PMTableModel) activitiesTable.getModel()).removeRow(getSelectedActivityRow());
-        setActivities(true);
-        getProjectManager().getActivityList().createGraph();
-    }
-
     public boolean isActivitySelected() {
         int row = getSelectedActivityRow();
 
@@ -493,4 +313,5 @@ protected JTable activitiesTable;
     public int getSelectedActivityRow() {
         return activitiesTable.getSelectedRow();
     }
+    public abstract void deleteActivity();
 }

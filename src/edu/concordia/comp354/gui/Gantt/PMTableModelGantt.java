@@ -1,5 +1,6 @@
-package edu.concordia.comp354.gui;
+package edu.concordia.comp354.gui.Gantt;
 
+import edu.concordia.comp354.gui.PMTableModel;
 import edu.concordia.comp354.model.Activity;
 import edu.concordia.comp354.model.ProjectManager;
 import org.apache.commons.lang3.StringUtils;

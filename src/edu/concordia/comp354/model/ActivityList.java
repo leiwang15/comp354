@@ -10,6 +10,8 @@ import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxEdgeStyle;
 import com.mxgraph.view.mxGraph;
 import edu.concordia.comp354.model.AON.ActivityOnNode;
+import edu.concordia.comp354.model.PERT.EventLeg;
+import edu.concordia.comp354.model.PERT.PERTNetwork;
 import net.objectlab.kit.datecalc.common.DateCalculator;
 import net.objectlab.kit.datecalc.jdk8.LocalDateKitCalculatorsFactory;
 
@@ -44,7 +46,7 @@ public class ActivityList {
 //        this.activities = activities;
 //    }
 
-    public mxGraph createGraph() {
+    public mxGraph createGanttChart() {
 
         Map<String, Object> style = graph.getStylesheet().getDefaultEdgeStyle();
         style.put(mxConstants.STYLE_EDGE, mxEdgeStyle.SideToSide);
@@ -117,6 +119,59 @@ public class ActivityList {
 //
 //        graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "lightblue", activityID2mxCell.values().toArray());
 //        graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "orange", criticalNodes.toArray());
+    }
+
+    public mxGraph createPERTChart() {
+
+        Map<String, Object> style = graph.getStylesheet().getDefaultEdgeStyle();
+        style.put(mxConstants.STYLE_EDGE, mxEdgeStyle.SideToSide);
+        style.put(mxConstants.STYLE_FILLCOLOR, "default");
+        style.put(mxConstants.STYLE_STROKECOLOR, "default");
+
+        graph.removeCells(graph.getChildCells(parent, true, true));
+        graph.removeCells();
+
+        graph.setCellsSelectable(false);
+        graph.setCellsMovable(false);
+        graph.setCellsEditable(false);
+        graph.setCellsLocked(true);
+
+        createPERTNetwork();
+
+        graph.setMaximumGraphBounds(new mxRectangle(0, 0, 800, 800));
+        renderer.autoLayout(graph);
+
+        return graph;
+    }
+
+
+    public void createPERTNetwork() {
+
+        List<Activity> activities = projectManager.getCurrentProject().getActivities();
+
+        PERTNetwork network = new PERTNetwork();
+        HashMap<Integer, EventLeg> eventTable = network.createNetwork(activities);
+
+        List<mxCell> events = new ArrayList<>();
+        for (int i = 0; i <= network.getNextEventID(); i++) {
+            events.add((mxCell) graph.insertVertex(parent,
+                    null,
+                    null,
+                    0,  //	x
+                    0,  //	y
+                    60,  //	width
+                    60,  //	height
+                    "rounded=0"));
+        }
+
+
+        for (Activity activity : activities) {
+
+            EventLeg leg = eventTable.get(activity.getActivity_id());
+
+            String label = activity.getActivity_name()+"\nt="+activity.getExpectedDate()+"\ns="+activity.getStdev();
+            graph.insertEdge(parent, null, label, events.get(leg.getOrgEvent()), events.get(leg.getDestEvent()));
+        }
     }
 
     private void computeActualCalendarDuration(int projectDuration) {

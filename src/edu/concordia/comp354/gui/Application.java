@@ -2,6 +2,8 @@ package edu.concordia.comp354.gui;
 
 import edu.concordia.comp354.controller.CreateDB;
 import edu.concordia.comp354.controller.UserController;
+import edu.concordia.comp354.gui.Gantt.GanttTab;
+import edu.concordia.comp354.gui.PERT.PERTTab;
 import edu.concordia.comp354.model.ProjectManager;
 
 import java.awt.*;

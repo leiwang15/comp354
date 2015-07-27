@@ -1,7 +1,15 @@
-package edu.concordia.comp354.gui;
+package edu.concordia.comp354.gui.PERT;
 
+import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+import com.mxgraph.layout.mxParallelEdgeLayout;
+import com.mxgraph.view.mxGraph;
+import edu.concordia.comp354.gui.ActivityEntry;
+import edu.concordia.comp354.gui.MainWindow;
+import edu.concordia.comp354.gui.PMTable;
+import edu.concordia.comp354.gui.PMTableModel;
 import edu.concordia.comp354.gui.editors.IntegerEditor;
 import edu.concordia.comp354.gui.editors.PredecessorEditor;
+import edu.concordia.comp354.model.Activity;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
 import sun.swing.table.DefaultTableCellHeaderRenderer;
 
@@ -66,7 +74,7 @@ public class PERTTab extends ActivityEntry {
                 PMTable.PREDECESSORS,
                 EXPECTED,
                 STDEV};
-        dtm = new PMTableModelGantt(tableRows, columnNames, getProjectManager());
+        dtm = new PMTableModelPERT(tableRows, columnNames, getProjectManager());
 
         dtm.clear();
 
@@ -121,5 +129,77 @@ public class PERTTab extends ActivityEntry {
 
         activitiesTable.getColumn(PMTable.START).setCellRenderer(tableCellRenderer);
         activitiesTable.getColumn(PMTable.FINISH).setCellRenderer(tableCellRenderer);
+    }
+
+    /*
+            Set activities in grid
+        */
+    public void setActivities(boolean update) {
+        dtm.clear();
+
+        if (update) {
+
+            if (getCurrentProject() != null) {
+                java.util.List<Activity> activities = getCurrentProject().getActivities();
+                int i;
+                for (i = 0; i < activities.size(); i++) {
+                    Activity activity = activities.get(i);
+
+                    tableRows[i] = new Object[]{
+
+                            Integer.toString(activity.getActivity_id()),
+                            activity.getActivity_name(),
+                            activity.getOptimistic() != 0 ? activity.getOptimistic() : null,
+                            activity.getDuration() != 0 ? activity.getDuration() : null,
+                            activity.getPessimistic() != 0 ? activity.getPessimistic() : null,
+                            "",
+                            "",
+                            activity.getPredecessors() != null ? activity.getPredecessors().toString().replaceAll("\\[|\\]", "") : "",
+                            activity.getExpectedDate(),
+                            activity.getStdev()
+                    };
+                }
+
+                for (; i < PMTable.MAX_TABLE_SIZE; i++) {
+                    tableRows[i] = new String[]{""};
+                }
+
+                dtm.setDataVector(tableRows, columnNames);
+
+                getProjectManager().getActivityList().createPERTChart();
+            }
+        }
+    }
+
+    @Override
+    public void clear() {
+        setActivities(true);
+        repaint();
+    }
+
+    @Override
+    public void setActivityList() {
+        setActivities(true);
+    }
+
+    public void deleteActivity() {
+        getProjectManager().deleteActivity(getSelectedActivityRow());
+
+        ((PMTableModel) activitiesTable.getModel()).removeRow(getSelectedActivityRow());
+        setActivities(true);
+        getProjectManager().getActivityList().createGanttChart();
+    }
+
+    public void autoLayout(mxGraph graph) {
+        charts.remove(graphComponent);
+
+        graphComponent = new PERTPanel(this, graph);
+//        graphComponent = new mxGraphComponent(graph);
+
+        charts.add(graphComponent, BorderLayout.CENTER);
+
+        new mxHierarchicalLayout(graph, SwingConstants.WEST).execute(graph.getDefaultParent());
+        new mxParallelEdgeLayout(graph, SwingConstants.WEST).execute(graph.getDefaultParent());
+        charts.revalidate();
     }
 }

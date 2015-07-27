@@ -31,7 +31,7 @@ public class MainWindow implements IActivityEntryRenderer, IActivityDetailRender
     protected static Project selectedProject;
     protected static JFrame frmProjectManagementSystem;
     static JMenuBar menuBar;
-    static JTabbedPane tabbedPane;
+    public static JTabbedPane tabbedPane;
     protected ActivityEntry activityEntry;
     protected JMenuItem mntmEditProject;
     protected JMenuItem mntmLogOut;

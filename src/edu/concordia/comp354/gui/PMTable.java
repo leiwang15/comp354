@@ -16,11 +16,11 @@ public class PMTable extends JTable {
 
     public static final String START = "Start";
     public static final String FINISH = "Finish";
-    protected static final String PREDECESSORS = "Predecessors";
-    protected static final String DURATION = "Duration";
-    protected static final String NAME = "Name";
-    protected static final String ID = "ID";
-    protected static final int MAX_TABLE_SIZE = 1024;
+    public static final String PREDECESSORS = "Predecessors";
+    public static final String DURATION = "Duration";
+    public static final String NAME = "Name";
+    public static final String ID = "ID";
+    public static final int MAX_TABLE_SIZE = 1024;
     private IActivityEntryRenderer renderer;
     private int maxPredID;
 

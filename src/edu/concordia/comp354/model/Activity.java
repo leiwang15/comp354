@@ -36,16 +36,6 @@ public class Activity extends DirtyAware {
         this.optimistic = optimistic;
         this.value = value;
 
-//        	todo: confirm id can be uninitialized here
-//    	ActivityController ac = new ActivityController();
-//    	this.setActivity_id(ac.addActivity(this));
-
-        // let ProjectManager handle persistence
-//    	for(Integer i : predecessors){
-//    		ActivityController ac1 = new ActivityController();
-//    		ac1.setActPredecessor(this.getActivity_id(), i);
-//    	}
-
         users = new ArrayList<>();
     }
 
@@ -54,7 +44,6 @@ public class Activity extends DirtyAware {
         super(DirtyLevels.UNTOUCHED);
 
         this.dbID = dbID;
-//        this.activity_id = activity_id;
         this.project_id = project_id;
         this.activity_name = name;
         this.activity_desc = desc;
@@ -234,10 +223,18 @@ public class Activity extends DirtyAware {
         }
     }
 
+    public float getExpectedDate() {
+        return (optimistic + 4 * duration + pessimistic) / 6f;
+    }
+
+    public float getStdev() {
+        return (pessimistic - optimistic) / 6f;
+    }
+
     @Override
     public boolean equals(Object obj) {
-        Activity a = (Activity)obj;
-        return  dbID == a.dbID &&
+        Activity a = (Activity) obj;
+        return dbID == a.dbID &&
                 activity_id == a.activity_id &&
                 project_id == a.project_id &&
                 activity_name.equals(a.activity_name) &&
@@ -262,8 +259,12 @@ public class Activity extends DirtyAware {
                 + this.getActivity_name()
                 + " Project Desc: "
                 + this.getActivity_desc()
+                + " Optimistic: "
+                + this.getOptimistic()
                 + " Duration: "
                 + this.getDuration()
+                + " Pessimistic: "
+                + this.getPessimistic()
                 + " Value: "
                 + this.getValue()
                 + " Progress: "

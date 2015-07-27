@@ -28,7 +28,7 @@ public class BaseTab extends JPanel {
         return getParentWindow().projectManager;
     }
 
-    protected Project getCurrentProject() {
+    public Project getCurrentProject() {
         return getProjectManager().getCurrentProject();
     }
 

@@ -12,7 +12,7 @@ public abstract class PMTableModel extends DefaultTableModel {
 
     protected static final int ID_COL = 0;
     protected final Object[] columnNames;
-    final ProjectManager projectManager;
+    protected final ProjectManager projectManager;
 
     public PMTableModel(Object[][] data, Object[] columnNames, ProjectManager projectManager) {
         super(data, columnNames);

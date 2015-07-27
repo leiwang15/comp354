@@ -227,7 +227,7 @@ public class ProjectManager {
 
     public void activityChanged() {
         getActivityEntryRenderer().fillActivityList();
-        getActivityList().createGraph();
+        getActivityList().createGanttChart();
     }
 
     public void losingDetailFocus(int id) {
