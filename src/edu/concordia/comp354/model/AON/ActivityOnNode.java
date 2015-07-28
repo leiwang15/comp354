@@ -81,7 +81,7 @@ public class ActivityOnNode {
 		return LF;
 	}
 
-	public mxCell getCell() {
+	public mxCell getMxCell() {
 		return mxCell;
 	}
 
@@ -166,7 +166,7 @@ public class ActivityOnNode {
 
 					if (activityOnNode.getFloat() == 0) {
 
-						critical.add(activityOnNode.getCell());
+						critical.add(activityOnNode.getMxCell());
 					}
 
 					activityOnNode.findCriticalPathCells(graph, critical);

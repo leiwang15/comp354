@@ -10,6 +10,7 @@ import edu.concordia.comp354.gui.PMTableModel;
 import edu.concordia.comp354.gui.editors.IntegerEditor;
 import edu.concordia.comp354.gui.editors.PredecessorEditor;
 import edu.concordia.comp354.model.Activity;
+import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
 import sun.swing.table.DefaultTableCellHeaderRenderer;
 
@@ -88,7 +89,7 @@ public class PERTTab extends ActivityEntry {
 
         activitiesTable.getColumn(OPTIMISTIC).setCellEditor(new IntegerEditor(1, PMTable.MAX_TABLE_SIZE, this));
         activitiesTable.getColumn(PMTable.DURATION).setCellEditor(new IntegerEditor(1, PMTable.MAX_TABLE_SIZE, this));
-        activitiesTable.getColumn(PESSIMISTIC).setCellEditor(new IntegerEditor(1, PMTable.MAX_TABLE_SIZE, this));
+        activitiesTable.getColumn(PESSIMISTIC).setCellEditor(new JXTable.NumberEditor());
         activitiesTable.getColumn(PMTable.START).setCellEditor(new DatePickerCellEditor(new SimpleDateFormat(DATE_FORMAT)));
         activitiesTable.getColumn(PMTable.FINISH).setCellEditor(new DatePickerCellEditor(new SimpleDateFormat(DATE_FORMAT)));
         activitiesTable.getColumn(PMTable.PREDECESSORS).setCellEditor(new PredecessorEditor(this));

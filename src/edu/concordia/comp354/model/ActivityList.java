@@ -12,6 +12,8 @@ import com.mxgraph.view.mxGraph;
 import edu.concordia.comp354.gui.PERT.PERTBoxShape;
 import edu.concordia.comp354.model.AON.ActivityOnNode;
 import edu.concordia.comp354.model.PERT.EventLeg;
+import edu.concordia.comp354.model.PERT.PERTEdge;
+import edu.concordia.comp354.model.PERT.PERTEvent;
 import edu.concordia.comp354.model.PERT.PERTNetwork;
 import net.objectlab.kit.datecalc.common.DateCalculator;
 import net.objectlab.kit.datecalc.jdk8.LocalDateKitCalculatorsFactory;
@@ -117,9 +119,6 @@ public class ActivityList {
         positionGANTTNodes(activityID2mxCell);
 
         renderer.setCPMData(activityID2mxCell.values().toArray(), criticalNodes.toArray());
-//
-//        graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "lightblue", activityID2mxCell.values().toArray());
-//        graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "orange", criticalNodes.toArray());
     }
 
     public mxGraph createPERTChart() {
@@ -155,18 +154,18 @@ public class ActivityList {
 
         List<mxCell> events = new ArrayList<>();
         for (int i = 0; i <= network.getNextEventID(); i++) {
-            events.add((mxCell) graph.insertVertex(parent,
+            mxCell v = (mxCell) graph.insertVertex(
+                    parent,
                     null,
-                    new PERTEvent(i),
+                    null,
                     0,  //	x
                     0,  //	y
                     PERTBoxShape.PERT_BOX_LENGTH,  //	width
                     PERTBoxShape.PERT_BOX_LENGTH,  //	height
-//                    "rounded=1"
-                    "rounded=1;shape=" + PERTBoxShape.SHAPE_PERTBOX //+ ";" +
-//                            mxConstants.STYLE_VERTICAL_LABEL_POSITION + "=" + mxConstants.ALIGN_MIDDLE + ";" +
-//                            mxConstants.STYLE_LABEL_POSITION + "=" + mxConstants.ALIGN_LEFT
-            ));
+                    "rounded=1;fillColor=white;strokeColor=black;shape=" + PERTBoxShape.SHAPE_PERTBOX);
+
+            v.setValue(new PERTEvent(v, i));
+            events.add(v);
         }
 
 
@@ -174,10 +173,17 @@ public class ActivityList {
 
             EventLeg leg = eventTable.get(activity.getActivity_id());
 
-            String label = activity.getActivity_name() + "\nt=" + activity.getExpectedDate() + "\ns=" + activity.getStdev();
-            graph.insertEdge(parent, null, label, events.get(leg.getOrgEvent()), events.get(leg.getDestEvent()));
+            graph.insertEdge(parent,
+                    null,
+                    new PERTEdge(activity),
+                    events.get(leg.getOrgEvent()),
+                    events.get(leg.getDestEvent()),
+                    "connector;edgeStyle=" + PERTEdge.SHAPE_PERTEDGE);
         }
+
+        ((PERTEvent)(events.get(0).getValue())).forwardPass(graph);
     }
+
 
     private void computeActualCalendarDuration(int projectDuration) {
         DateCalculator<LocalDate> dateCalculator = LocalDateKitCalculatorsFactory.forwardCalculator("Canada");
@@ -226,7 +232,7 @@ public class ActivityList {
             lastActivity.setLF(lastActivity.getEF());
             lastActivity.backwardPass(graph);
 
-            criticalNodes.add(activityOnNode.getCell());    //  critical path starts at root
+            criticalNodes.add(activityOnNode.getMxCell());    //  critical path starts at root
             activityOnNode.findCriticalPathCells(graph, criticalNodes);
         }
 
