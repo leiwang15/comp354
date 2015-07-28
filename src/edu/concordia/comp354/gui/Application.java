@@ -1,8 +1,11 @@
 package edu.concordia.comp354.gui;
 
+import com.mxgraph.canvas.mxGraphics2DCanvas;
+import com.mxgraph.util.mxCellRenderer;
 import edu.concordia.comp354.controller.CreateDB;
 import edu.concordia.comp354.controller.UserController;
 import edu.concordia.comp354.gui.Gantt.GanttTab;
+import edu.concordia.comp354.gui.PERT.PERTBoxShape;
 import edu.concordia.comp354.gui.PERT.PERTTab;
 import edu.concordia.comp354.model.ProjectManager;
 
@@ -28,6 +31,7 @@ public class Application {
                 e.printStackTrace();
             }
         }
+        mxGraphics2DCanvas.putShape(PERTBoxShape.SHAPE_PERTBOX, new PERTBoxShape());
 
         projectManager.initialize();
         MainWindow.currentUser = new UserController().getUserByUserName("John");

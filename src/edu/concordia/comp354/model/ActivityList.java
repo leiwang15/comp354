@@ -9,6 +9,7 @@ import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxEdgeStyle;
 import com.mxgraph.view.mxGraph;
+import edu.concordia.comp354.gui.PERT.PERTBoxShape;
 import edu.concordia.comp354.model.AON.ActivityOnNode;
 import edu.concordia.comp354.model.PERT.EventLeg;
 import edu.concordia.comp354.model.PERT.PERTNetwork;
@@ -156,12 +157,16 @@ public class ActivityList {
         for (int i = 0; i <= network.getNextEventID(); i++) {
             events.add((mxCell) graph.insertVertex(parent,
                     null,
-                    null,
+                    new PERTEvent(i),
                     0,  //	x
                     0,  //	y
-                    60,  //	width
-                    60,  //	height
-                    "rounded=0"));
+                    PERTBoxShape.PERT_BOX_LENGTH,  //	width
+                    PERTBoxShape.PERT_BOX_LENGTH,  //	height
+//                    "rounded=1"
+                    "rounded=1;shape=" + PERTBoxShape.SHAPE_PERTBOX //+ ";" +
+//                            mxConstants.STYLE_VERTICAL_LABEL_POSITION + "=" + mxConstants.ALIGN_MIDDLE + ";" +
+//                            mxConstants.STYLE_LABEL_POSITION + "=" + mxConstants.ALIGN_LEFT
+            ));
         }
 
 
@@ -169,7 +174,7 @@ public class ActivityList {
 
             EventLeg leg = eventTable.get(activity.getActivity_id());
 
-            String label = activity.getActivity_name()+"\nt="+activity.getExpectedDate()+"\ns="+activity.getStdev();
+            String label = activity.getActivity_name() + "\nt=" + activity.getExpectedDate() + "\ns=" + activity.getStdev();
             graph.insertEdge(parent, null, label, events.get(leg.getOrgEvent()), events.get(leg.getDestEvent()));
         }
     }
