@@ -89,11 +89,7 @@ public class GanttTab extends ActivityEntry {
         activitiesTable.getColumn(PMTable.FINISH).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
         activitiesTable.getColumn(PMTable.PREDECESSORS).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
 
-        activitiesTable.getColumn(PMTable.ID).sizeWidthToFit();
-        activitiesTable.getColumn(PMTable.DURATION).sizeWidthToFit();
-        activitiesTable.getColumn(PMTable.START).sizeWidthToFit();
-        activitiesTable.getColumn(PMTable.FINISH).sizeWidthToFit();
-        activitiesTable.getColumn(PMTable.PREDECESSORS).sizeWidthToFit();
+        autoResizeColumns();
 
         TableCellRenderer tableCellRenderer = new DefaultTableCellRenderer() {
 
@@ -112,6 +108,14 @@ public class GanttTab extends ActivityEntry {
 
         activitiesTable.getColumn(PMTable.START).setCellRenderer(tableCellRenderer);
         activitiesTable.getColumn(PMTable.FINISH).setCellRenderer(tableCellRenderer);
+    }
+
+    public void autoResizeColumns() {
+        activitiesTable.getColumn(PMTable.ID).sizeWidthToFit();
+        activitiesTable.getColumn(PMTable.DURATION).sizeWidthToFit();
+        activitiesTable.getColumn(PMTable.START).sizeWidthToFit();
+        activitiesTable.getColumn(PMTable.FINISH).sizeWidthToFit();
+        activitiesTable.getColumn(PMTable.PREDECESSORS).sizeWidthToFit();
     }
 
     /*

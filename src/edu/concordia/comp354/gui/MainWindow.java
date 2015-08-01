@@ -122,6 +122,8 @@ public class MainWindow implements IActivityEntryRenderer, IActivityDetailRender
             selectProject(activityEntry.getCurrentProject().getProject_name());
         }
         activityEntry.gainFocus();
+
+        activityEntry.autoResizeColumns();
     }
 
     protected void setActivityEntry(ActivityEntry activityEntry) {

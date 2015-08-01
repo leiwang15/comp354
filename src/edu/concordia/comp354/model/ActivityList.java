@@ -24,8 +24,8 @@ import java.util.*;
 public class ActivityList {
 
     private final ProjectManager projectManager;
-    public mxGraph graph;
-    public Object parent;
+    public mxGraph ganttGraph;
+    public mxGraph pertGraph;
     private ActivityOnNode lastActivity;
     private int[] actualCalendarDayOffsets;
     public boolean hasCycles;
@@ -34,8 +34,8 @@ public class ActivityList {
 
     public ActivityList(IActivityEntryRenderer renderer, ProjectManager projectManager) {
         this.projectManager = projectManager;
-        graph = new mxGraph();
-        parent = graph.getDefaultParent();
+        ganttGraph = new mxGraph();
+        pertGraph = new mxGraph();
 
         assert renderer != null : "ActivityList: renderer is null";
         this.renderer = renderer;
@@ -51,25 +51,25 @@ public class ActivityList {
 
     public mxGraph createGanttChart() {
 
-        Map<String, Object> style = graph.getStylesheet().getDefaultEdgeStyle();
+        Map<String, Object> style = ganttGraph.getStylesheet().getDefaultEdgeStyle();
         style.put(mxConstants.STYLE_EDGE, mxEdgeStyle.SideToSide);
         style.put(mxConstants.STYLE_FILLCOLOR, "default");
         style.put(mxConstants.STYLE_STROKECOLOR, "default");
 
-        graph.removeCells(graph.getChildCells(parent, true, true));
-        graph.removeCells();
+        ganttGraph.removeCells(ganttGraph.getChildCells(ganttGraph.getDefaultParent(), true, true));
+        ganttGraph.removeCells();
 
-        graph.setCellsSelectable(false);
-        graph.setCellsMovable(false);
-        graph.setCellsEditable(false);
-        graph.setCellsLocked(true);
+        ganttGraph.setCellsSelectable(false);
+        ganttGraph.setCellsMovable(false);
+        ganttGraph.setCellsEditable(false);
+        ganttGraph.setCellsLocked(true);
 
         linkNodes();
 
-        graph.setMaximumGraphBounds(new mxRectangle(0, 0, 800, 800));
-        renderer.autoLayout(graph);
+        ganttGraph.setMaximumGraphBounds(new mxRectangle(0, 0, 800, 800));
+        renderer.autoLayout(ganttGraph);
 
-        return graph;
+        return ganttGraph;
     }
 
     public void linkNodes() {
@@ -79,7 +79,7 @@ public class ActivityList {
         List<Activity> activities = projectManager.getCurrentProject().getActivities();
         for (int i = 0; i < activities.size(); i++) {
 
-            mxCell v = (mxCell) graph.insertVertex(parent,
+            mxCell v = (mxCell) ganttGraph.insertVertex(ganttGraph.getDefaultParent(),
                     null,
                     null,
                     0,                                              //	x
@@ -104,7 +104,7 @@ public class ActivityList {
                     }
                     mxCell parentCell = activityID2mxCell.get(parentActivity.getActivity_id());
                     if (parentCell != v2) {
-                        graph.insertEdge(parentCell, null, "", parentCell, v2);
+                        ganttGraph.insertEdge(parentCell, null, "", parentCell, v2);
                     }
                 }
             }
@@ -123,25 +123,25 @@ public class ActivityList {
 
     public mxGraph createPERTChart() {
 
-        Map<String, Object> style = graph.getStylesheet().getDefaultEdgeStyle();
+        Map<String, Object> style = pertGraph.getStylesheet().getDefaultEdgeStyle();
         style.put(mxConstants.STYLE_EDGE, mxEdgeStyle.SideToSide);
         style.put(mxConstants.STYLE_FILLCOLOR, "default");
         style.put(mxConstants.STYLE_STROKECOLOR, "default");
 
-        graph.removeCells(graph.getChildCells(parent, true, true));
-        graph.removeCells();
+        pertGraph.removeCells(pertGraph.getChildCells(pertGraph.getDefaultParent(), true, true));
+        pertGraph.removeCells();
 
-        graph.setCellsSelectable(false);
-        graph.setCellsMovable(false);
-        graph.setCellsEditable(false);
-        graph.setCellsLocked(true);
+        pertGraph.setCellsSelectable(false);
+        pertGraph.setCellsMovable(false);
+//        graph.setCellsEditable(false);
+//        graph.setCellsLocked(true);
 
         createPERTNetwork();
 
-        graph.setMaximumGraphBounds(new mxRectangle(0, 0, 800, 800));
-        renderer.autoLayout(graph);
+        pertGraph.setMaximumGraphBounds(new mxRectangle(0, 0, 800, 800));
+        renderer.autoLayout(pertGraph);
 
-        return graph;
+        return pertGraph;
     }
 
 
@@ -154,17 +154,17 @@ public class ActivityList {
 
         List<mxCell> events = new ArrayList<>();
         for (int i = 0; i <= network.getNextEventID(); i++) {
-            mxCell v = (mxCell) graph.insertVertex(
-                    parent,
+            mxCell v = (mxCell) pertGraph.insertVertex(
+                    pertGraph.getDefaultParent(),
                     null,
                     null,
                     0,  //	x
                     0,  //	y
                     PERTBoxShape.PERT_BOX_LENGTH,  //	width
                     PERTBoxShape.PERT_BOX_LENGTH,  //	height
-                    "rounded=1;fillColor=white;strokeColor=black;shape=" + PERTBoxShape.SHAPE_PERTBOX);
+                    "rounded=1;editable=1;fillColor=white;strokeColor=black;shape=" + PERTBoxShape.SHAPE_PERTBOX);
 
-            v.setValue(new PERTEvent(v, i));
+            v.setValue(new PERTEvent(v, i + 1));
             events.add(v);
         }
 
@@ -173,7 +173,7 @@ public class ActivityList {
 
             EventLeg leg = eventTable.get(activity.getActivity_id());
 
-            graph.insertEdge(parent,
+            pertGraph.insertEdge(pertGraph.getDefaultParent(),
                     null,
                     new PERTEdge(activity),
                     events.get(leg.getOrgEvent()),
@@ -181,7 +181,7 @@ public class ActivityList {
                     "connector;edgeStyle=" + PERTEdge.SHAPE_PERTEDGE);
         }
 
-        ((PERTEvent)(events.get(0).getValue())).forwardPass(graph);
+        ((PERTEvent) (events.get(0).getValue())).forwardPass(pertGraph);
     }
 
 
@@ -217,7 +217,7 @@ public class ActivityList {
             }
         });
 
-        mxCell root = (mxCell) graph.getDefaultParent();
+        mxCell root = (mxCell) ganttGraph.getDefaultParent();
 
         if (root != null && root.getChildCount() != 0) {
 //			System.out.println("root.getChildCount()=" + root.getChildCount());
@@ -225,15 +225,15 @@ public class ActivityList {
 
             activityOnNode.setES(0);
 
-            activityOnNode.forwardPass(graph);
+            activityOnNode.forwardPass(ganttGraph);
 
-            lastActivity = activityOnNode.findLatestActivity(graph);
+            lastActivity = activityOnNode.findLatestActivity(ganttGraph);
 
             lastActivity.setLF(lastActivity.getEF());
-            lastActivity.backwardPass(graph);
+            lastActivity.backwardPass(ganttGraph);
 
             criticalNodes.add(activityOnNode.getMxCell());    //  critical path starts at root
-            activityOnNode.findCriticalPathCells(graph, criticalNodes);
+            activityOnNode.findCriticalPathCells(ganttGraph, criticalNodes);
         }
 
         return criticalNodes;
@@ -268,7 +268,7 @@ public class ActivityList {
 
         projectManager.activityChanged();
 
-        return hasCycles(projectManager.getActivityList().graph) || hasCycles;
+        return hasCycles(projectManager.getActivityList().ganttGraph) || hasCycles;
     }
 
     public boolean hasCycles(mxGraph graph) {

@@ -228,6 +228,7 @@ public class ProjectManager {
     public void activityChanged() {
         getActivityEntryRenderer().fillActivityList();
         getActivityList().createGanttChart();
+        getActivityList().createPERTChart();
     }
 
     public void losingDetailFocus(int id) {

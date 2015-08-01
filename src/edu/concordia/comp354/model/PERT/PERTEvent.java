@@ -2,6 +2,8 @@ package edu.concordia.comp354.model.PERT;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraph;
+import edu.concordia.comp354.gui.PERT.PERTTab;
+import org.apache.commons.math3.distribution.NormalDistribution;
 
 /**
  * Created by joao on 15.07.27.
@@ -10,7 +12,7 @@ public class PERTEvent {
     private final mxCell mxCell;
 
     private final int eventNo;
-    private float T;
+    private float T = PERTNetwork.UNDEFINED;
     private float s;
     private float t;
 
@@ -79,11 +81,13 @@ public class PERTEvent {
         }
     }
 
+    public double getProbability() {
+        return new NormalDistribution().cumulativeProbability((T-t)/s);
+    }
+
     @Override
     public String toString() {
         return "";
-//        final StringBuilder sb = new StringBuilder();
-//        sb.append(eventNo);
-//        return sb.toString();
+//        return (T != PERTNetwork.UNDEFINED) ? PERTTab.df.format(T) : "";
     }
 }

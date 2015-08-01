@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class PERTNetwork {
 
-    private static final int UNDEFINED = -1;
+    public static final int UNDEFINED = -1;
     HashMap<Integer, EventLeg> activityID2EventLeg;
     int nextEventID;
 
@@ -46,18 +46,12 @@ public class PERTNetwork {
             activityID2EventLeg.get(activity.getActivity_id()).orgEvent = n;
         }
 
-//        printNetwork(activities);
-
         nextEventID++;
         for (EventLeg leg : activityID2EventLeg.values()) {
             if (leg.destEvent == UNDEFINED) {
                 leg.destEvent = nextEventID;
             }
         }
-
-        System.out.println();
-
-//        printNetwork(activities);
 
         return activityID2EventLeg;
     }

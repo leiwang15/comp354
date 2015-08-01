@@ -1,7 +1,7 @@
 package edu.concordia.comp354.model.PERT;
 
 import com.mxgraph.shape.mxArrowShape;
-import edu.concordia.comp354.gui.PERT.PERTBoxShape;
+import edu.concordia.comp354.gui.PERT.PERTTab;
 import edu.concordia.comp354.model.Activity;
 
 /**
@@ -32,7 +32,7 @@ public class PERTEdge extends mxArrowShape {
     @Override
     public String toString() {
         return activity.getActivity_name() +
-                "\nt=" + PERTBoxShape.df.format(activity.getExpectedDate()) +
-                "\ns=" + PERTBoxShape.df.format(activity.getStdev());
+                "\nt=" + PERTTab.df.format(activity.getExpectedDate()) +
+                "\ns=" + PERTTab.df.format(activity.getStdev());
     }
 }
