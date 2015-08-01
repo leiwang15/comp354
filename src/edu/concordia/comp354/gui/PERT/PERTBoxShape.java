@@ -50,11 +50,11 @@ public class PERTBoxShape extends mxRectangleShape {
                     Color oldColor = graphics.getColor();
                     graphics.setColor(new Color(210, 255, 199));
 
-                    int radius = getArcSize((int)rect.getWidth(), (int)rect.getHeight());
-                    graphics.fillRoundRect(rect.x + rect.width / 2 + 2, (int) rect.getY() + 1, fillWidth - 2, rect.height / 2 - 1, radius,radius);
+                    int radius = getArcSize((int) rect.getWidth(), (int) rect.getHeight());
+                    graphics.fillRoundRect(rect.x + rect.width / 2 + 1, (int) rect.getY() + 1, fillWidth, rect.height / 2 - 1, radius,radius);
 
                     graphics.setColor(new Color(255, 222, 211));
-                    graphics.fillRoundRect(rect.x + rect.width / 2 + fillWidth, (int) rect.getY() + 1, (int)rect.getWidth() - fillWidth - 2, rect.height / 2 - 1, radius,radius);
+                    graphics.fillRoundRect(rect.x + rect.width / 2 + fillWidth, (int) rect.getY() + 1, (int)rect.getWidth()/2 - fillWidth , rect.height / 2 - 1, radius,radius);
 
                     graphics.setColor(oldColor);
 
