@@ -11,14 +11,14 @@ import java.util.List;
 public class PERTNetwork {
 
     public static final int UNDEFINED = -1;
-    HashMap<Integer, EventLeg> activityID2EventLeg;
+    HashMap<Integer, EventEdge> activityID2EventLeg;
     int nextEventID;
 
-    public HashMap<Integer, EventLeg> createNetwork(List<Activity> activities) {
+    public HashMap<Integer, EventEdge> createNetwork(List<Activity> activities) {
         activityID2EventLeg = new HashMap<>();
 
         for (Activity activity : activities) {
-            activityID2EventLeg.put(activity.getActivity_id(), new EventLeg());
+            activityID2EventLeg.put(activity.getActivity_id(), new EventEdge());
         }
 
         nextEventID = 0;
@@ -28,12 +28,12 @@ public class PERTNetwork {
             if (activity.getPredecessors() != null) {
                 for (Integer pred : activity.getPredecessors()) {
 
-                    EventLeg eventLeg = activityID2EventLeg.get(pred);
-                    if (eventLeg.destEvent == UNDEFINED) {
+                    EventEdge eventEdge = activityID2EventLeg.get(pred);
+                    if (eventEdge.destEvent == UNDEFINED) {
                         if (n == UNDEFINED) {
                             n = ++nextEventID;
                         }
-                        eventLeg.destEvent = n;
+                        eventEdge.destEvent = n;
                     }
                     else {
                         n = nextEventID;
@@ -47,7 +47,7 @@ public class PERTNetwork {
         }
 
         nextEventID++;
-        for (EventLeg leg : activityID2EventLeg.values()) {
+        for (EventEdge leg : activityID2EventLeg.values()) {
             if (leg.destEvent == UNDEFINED) {
                 leg.destEvent = nextEventID;
             }
@@ -63,7 +63,7 @@ public class PERTNetwork {
     public void printNetwork(List<Activity> activities) {
 
         for (Activity activity : activities) {
-            EventLeg leg = activityID2EventLeg.get(activity.getActivity_id());
+            EventEdge leg = activityID2EventLeg.get(activity.getActivity_id());
             System.out.println(activity.getActivity_name() + "," + leg.getOrgEvent() + "," + leg.getDestEvent());
         }
     }

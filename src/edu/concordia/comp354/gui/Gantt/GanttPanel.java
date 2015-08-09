@@ -1,11 +1,11 @@
 package edu.concordia.comp354.gui.Gantt;
 
+import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
 import de.jollyday.ManagerParameters;
 import edu.concordia.comp354.gui.ActivityEntry;
-import edu.concordia.comp354.gui.ChartPanel;
 import net.objectlab.kit.datecalc.common.DateCalculator;
 import net.objectlab.kit.datecalc.common.DefaultHolidayCalendar;
 import net.objectlab.kit.datecalc.common.HolidayCalendar;
@@ -24,7 +24,7 @@ import java.util.Set;
 /**
  * Created by joao on 15.07.26.
  */
-public class GanttPanel extends ChartPanel {
+public class GanttPanel extends mxGraphComponent {
     private final ActivityEntry activityEntry;
 
     public GanttPanel(ActivityEntry activityEntry, mxGraph graph) {

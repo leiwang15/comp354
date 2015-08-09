@@ -165,7 +165,7 @@ public class PredecessorEditor extends DefaultCellEditor {
         }
         boolean stop = super.stopCellEditing();
 
-        if (valid && activityEntry.getProjectManager().getActivityList().hasCycles()) {
+        if (valid && activityEntry.getProjectManager().getActivityNetwork().hasCycles()) {
             stop = userSaysRevert();
 //            System.out.println("Has cycles");
         }

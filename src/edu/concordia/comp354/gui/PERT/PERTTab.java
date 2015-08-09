@@ -4,7 +4,7 @@ import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.layout.mxParallelEdgeLayout;
 import com.mxgraph.view.mxGraph;
 import edu.concordia.comp354.gui.ActivityEntry;
-import edu.concordia.comp354.gui.MainWindow;
+import edu.concordia.comp354.gui.MainRenderer;
 import edu.concordia.comp354.gui.PMTable;
 import edu.concordia.comp354.gui.PMTableModel;
 import edu.concordia.comp354.gui.editors.PredecessorEditor;
@@ -34,8 +34,8 @@ public class PERTTab extends ActivityEntry {
     private static final String STDEV = "Stdev (s)";
     public static DecimalFormat df = new DecimalFormat("##.##");
 
-    public PERTTab(MainWindow mainWindow) {
-        super(mainWindow);
+    public PERTTab(MainRenderer mainRenderer) {
+        super(mainRenderer);
     }
 
     protected void initializeTab() {
@@ -82,29 +82,29 @@ public class PERTTab extends ActivityEntry {
 
         DefaultTableColumnModel scm = new DefaultTableColumnModel();
 
-        activitiesTable = new PMTable(dtm, scm, this);
-        activitiesTable.setCellSelectionEnabled(true);
-        activitiesTable.addMouseListener(new PopClickListener());
+        table = new PMTable(dtm, scm, this);
+        table.setCellSelectionEnabled(true);
+        table.addMouseListener(new PopClickListener());
 
-        activitiesTable.createDefaultColumnsFromModel();
+        table.createDefaultColumnsFromModel();
 
-        activitiesTable.getColumn(OPTIMISTIC).setCellEditor(new JXTable.NumberEditor());
-        activitiesTable.getColumn(PMTable.DURATION).setCellEditor(new JXTable.NumberEditor());
-        activitiesTable.getColumn(PESSIMISTIC).setCellEditor(new JXTable.NumberEditor());
-        activitiesTable.getColumn(PMTable.START).setCellEditor(new DatePickerCellEditor(new SimpleDateFormat(DATE_FORMAT)));
-        activitiesTable.getColumn(PMTable.FINISH).setCellEditor(new DatePickerCellEditor(new SimpleDateFormat(DATE_FORMAT)));
-        activitiesTable.getColumn(PMTable.PREDECESSORS).setCellEditor(new PredecessorEditor(this));
+        table.getColumn(OPTIMISTIC).setCellEditor(new JXTable.NumberEditor());
+        table.getColumn(PMTable.DURATION).setCellEditor(new JXTable.NumberEditor());
+        table.getColumn(PESSIMISTIC).setCellEditor(new JXTable.NumberEditor());
+        table.getColumn(PMTable.START).setCellEditor(new DatePickerCellEditor(new SimpleDateFormat(DATE_FORMAT)));
+        table.getColumn(PMTable.FINISH).setCellEditor(new DatePickerCellEditor(new SimpleDateFormat(DATE_FORMAT)));
+        table.getColumn(PMTable.PREDECESSORS).setCellEditor(new PredecessorEditor(this));
 
-        JTableHeader header = activitiesTable.getTableHeader();
+        JTableHeader header = table.getTableHeader();
         header.setPreferredSize(new Dimension(10, 38));
 
-        activitiesTable.getColumn(PMTable.ID).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
-        activitiesTable.getColumn(OPTIMISTIC).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
-        activitiesTable.getColumn(PMTable.DURATION).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
-        activitiesTable.getColumn(PESSIMISTIC).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
-        activitiesTable.getColumn(PMTable.START).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
-        activitiesTable.getColumn(PMTable.FINISH).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
-        activitiesTable.getColumn(PMTable.PREDECESSORS).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
+        table.getColumn(PMTable.ID).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
+        table.getColumn(OPTIMISTIC).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
+        table.getColumn(PMTable.DURATION).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
+        table.getColumn(PESSIMISTIC).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
+        table.getColumn(PMTable.START).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
+        table.getColumn(PMTable.FINISH).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
+        table.getColumn(PMTable.PREDECESSORS).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
 
         autoResizeColumns();
 
@@ -123,19 +123,19 @@ public class PERTTab extends ActivityEntry {
             }
         };
 
-        activitiesTable.getColumn(PMTable.START).setCellRenderer(tableCellRenderer);
-        activitiesTable.getColumn(PMTable.FINISH).setCellRenderer(tableCellRenderer);
+        table.getColumn(PMTable.START).setCellRenderer(tableCellRenderer);
+        table.getColumn(PMTable.FINISH).setCellRenderer(tableCellRenderer);
     }
 
-    public void autoResizeColumns() {
-        activitiesTable.getColumn(PMTable.ID).sizeWidthToFit();
-        activitiesTable.getColumn(OPTIMISTIC).sizeWidthToFit();
-        activitiesTable.getColumn(PMTable.DURATION).sizeWidthToFit();
-        activitiesTable.getColumn(PESSIMISTIC).sizeWidthToFit();
-        activitiesTable.getColumn(PMTable.START).sizeWidthToFit();
-        activitiesTable.getColumn(PMTable.FINISH).sizeWidthToFit();
-        activitiesTable.getColumn(PMTable.PREDECESSORS).sizeWidthToFit();
-    }
+//    public void autoResizeColumns() {
+//        table.getColumn(PMTable.ID).sizeWidthToFit();
+//        table.getColumn(OPTIMISTIC).sizeWidthToFit();
+//        table.getColumn(PMTable.DURATION).sizeWidthToFit();
+//        table.getColumn(PESSIMISTIC).sizeWidthToFit();
+//        table.getColumn(PMTable.START).sizeWidthToFit();
+//        table.getColumn(PMTable.FINISH).sizeWidthToFit();
+//        table.getColumn(PMTable.PREDECESSORS).sizeWidthToFit();
+//    }
 
     /*
             Set activities in grid
@@ -172,7 +172,7 @@ public class PERTTab extends ActivityEntry {
 
                 dtm.setDataVector(tableRows, columnNames);
 
-                getProjectManager().getActivityList().createPERTChart();
+                getProjectManager().getActivityNetwork().createPERTChart();
             }
         }
     }
@@ -191,9 +191,9 @@ public class PERTTab extends ActivityEntry {
     public void deleteActivity() {
         getProjectManager().deleteActivity(getSelectedActivityRow());
 
-        ((PMTableModel) activitiesTable.getModel()).removeRow(getSelectedActivityRow());
+        ((PMTableModel) table.getModel()).removeRow(getSelectedActivityRow());
         setActivities(true);
-        getProjectManager().getActivityList().createPERTChart();
+        getProjectManager().getActivityNetwork().createPERTChart();
     }
 
     public void autoLayout(mxGraph graph) {

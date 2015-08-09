@@ -27,7 +27,7 @@ public class ActivityController extends DB_Controller {
 				+ "VALUES('" + activity.getProject_id() + "', '"
 				+ activity.getActivity_name() + "', '"
 				+ activity.getActivity_desc() + "', '" + activity.getDuration() + "', '" + activity.getPessimistic() +"', '"
-				+ activity.getOptimistic() +"', '"  + activity.getValue()
+				+ activity.getOptimistic() +"', '"  + activity.getCost()
 				+ "');";
 
 		String sql2 = "SELECT last_insert_rowid() FROM Activity;";
@@ -51,7 +51,7 @@ public class ActivityController extends DB_Controller {
 		String sql = "update Activity set Name = '" + activity.getActivity_name() +
 				"',Desc = '" + activity.getActivity_desc() + "',Duration = " +
 				activity.getDuration() + ",Pessimistic = " + activity.getPessimistic() +
-				",Optimistic = " + activity.getOptimistic() + ",Value = " + activity.getValue() +
+				",Optimistic = " + activity.getOptimistic() + ",Value = " + activity.getCost() +
 				" where ActivityID = "+ activity.getDBID() + ";";
 
 		try {

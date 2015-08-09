@@ -16,13 +16,14 @@ import java.awt.event.*;
  * Created by joao on 15.06.05.
  */
 public abstract class ActivityEntry extends BaseTab implements IActivityEntryRenderer, ActionListener, ItemListener {
-	protected static final String DATE_FORMAT = "yyyy/MM/dd";
+//	protected static final String DATE_FORMAT = "yyyy/MM/dd";
+	protected static final String DATE_FORMAT = "d MMM, yyyy";
 
 	public static final int X_SCALE = 20;
 	protected static final int X_GAP = 0;
 
 	//    protected JPanel panel;
-	protected JTable activitiesTable;
+	protected JTable table;
 	protected JPanel charts;
 	private JScrollPane tablePane;
 	private JScrollPane chartPane;
@@ -33,8 +34,8 @@ public abstract class ActivityEntry extends BaseTab implements IActivityEntryRen
 	protected mxGraphComponent graphComponent;
 	private int previousID = -1;
 
-	public ActivityEntry(MainWindow mainWindow) {
-		super(mainWindow);
+	public ActivityEntry(MainRenderer mainRenderer) {
+		super(mainRenderer);
 		getParentWindow().setActivityEntry(this);
 
 		createUIComponents();
@@ -44,28 +45,28 @@ public abstract class ActivityEntry extends BaseTab implements IActivityEntryRen
 		previousID = -1;
 	}
 
-	public PMTable getActivitiesTable() {
-		return (PMTable) activitiesTable;
+	public PMTable getTable() {
+		return (PMTable) table;
 	}
 
 	private void createUIComponents() {
 
 		createEntryColumns();
 
-		activitiesTable.setGridColor(new Color(211, 211, 211));
-		activitiesTable.setPreferredScrollableViewportSize(new Dimension(450, 400));
-		activitiesTable.setEnabled(true);
-		activitiesTable.setDropMode(DropMode.USE_SELECTION);
-		activitiesTable.setForeground(new Color(0, 0, 0));
-		activitiesTable.setBackground(new Color(255, 255, 255));
-		activitiesTable.setIntercellSpacing(new Dimension(1, 1));
-		activitiesTable.setSelectionBackground(new Color(202, 202, 202));
-		activitiesTable.setSelectionForeground(new Color(0, 0, 0));
-		activitiesTable.setShowHorizontalLines(true);
-		activitiesTable.setShowVerticalLines(true);
-		activitiesTable.setUpdateSelectionOnSort(true);
+		table.setGridColor(new Color(211, 211, 211));
+		table.setPreferredScrollableViewportSize(new Dimension(450, 400));
+		table.setEnabled(true);
+		table.setDropMode(DropMode.USE_SELECTION);
+		table.setForeground(new Color(0, 0, 0));
+		table.setBackground(new Color(255, 255, 255));
+		table.setIntercellSpacing(new Dimension(1, 1));
+		table.setSelectionBackground(new Color(202, 202, 202));
+		table.setSelectionForeground(new Color(0, 0, 0));
+		table.setShowHorizontalLines(true);
+		table.setShowVerticalLines(true);
+		table.setUpdateSelectionOnSort(true);
 
-		tablePane = new JScrollPane(activitiesTable);
+		tablePane = new JScrollPane(table);
 
 		charts = new JPanel(new BorderLayout());
 
@@ -104,7 +105,7 @@ public abstract class ActivityEntry extends BaseTab implements IActivityEntryRen
 					if (StringUtils.isNumericSpace(tmp)) {
 						for (String s : tmp.split(" ")) {
 							int pred = Integer.parseInt(s);
-							if (pred < 1 || pred > ((PMTable) activitiesTable).getMaxPredID()) {
+							if (pred < 1 || pred > ((PMTable) table).getMaxPredID()) {
 								return false;
 							}
 						}
@@ -117,7 +118,7 @@ public abstract class ActivityEntry extends BaseTab implements IActivityEntryRen
 			public boolean shouldYieldFocus(JComponent input) {
 				boolean valid = verify(input);
 				if (!valid) {
-					String errorMsg = "Invalid entry: ID must be between 1 and " + ((PMTable) activitiesTable).getMaxPredID();
+					String errorMsg = "Invalid entry: ID must be between 1 and " + ((PMTable) table).getMaxPredID();
 					JOptionPane.showMessageDialog(ActivityEntry.this, errorMsg);
 				}
 				return valid;
@@ -144,7 +145,13 @@ public abstract class ActivityEntry extends BaseTab implements IActivityEntryRen
 	}
 
 	protected abstract void createEntryColumns();
-	public abstract void autoResizeColumns();
+
+	public void autoResizeColumns() {
+		table.getTableHeader().setResizingAllowed(true);
+		for (int i = 0; i < table.getColumnCount();i++) {
+			table.getColumn(table.getColumnName(i)).sizeWidthToFit();
+		}
+	}
 
 	/*
 		Code actions for menus here
@@ -160,8 +167,8 @@ public abstract class ActivityEntry extends BaseTab implements IActivityEntryRen
 	}
 
 	public void setCPMData(Object[] nonCriticals, Object[] criticals) {
-		getProjectManager().getActivityList().ganttGraph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "lightblue", nonCriticals);
-		getProjectManager().getActivityList().ganttGraph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "orange", criticals);
+		getProjectManager().getActivityNetwork().ganttGraph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "lightblue", nonCriticals);
+		getProjectManager().getActivityNetwork().ganttGraph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "orange", criticals);
 	}
 
 	public void activitySelected(int id) {
@@ -186,7 +193,7 @@ public abstract class ActivityEntry extends BaseTab implements IActivityEntryRen
 
 	@Override
 	public void filterByUser(String userName) {
-		activitiesTable.repaint();
+		table.repaint();
 	}
 
 	@Override
@@ -197,7 +204,6 @@ public abstract class ActivityEntry extends BaseTab implements IActivityEntryRen
 	@Override
 	public void clearActivityDetails() {
 		getProjectManager().getActivityDetailRenderer().setUIDetailsFromActivity(new Activity());
-
 	}
 
 	@Override
@@ -224,7 +230,7 @@ public abstract class ActivityEntry extends BaseTab implements IActivityEntryRen
 
 	@Override
 	public int getRowHeight() {
-		return activitiesTable.getRowHeight();
+		return table.getRowHeight();
 	}
 
 	@Override
@@ -239,13 +245,12 @@ public abstract class ActivityEntry extends BaseTab implements IActivityEntryRen
 
 	@Override
 	public void fillActivityList() {
-		dtm.fillActivityList();
+		dtm.readForm();
 	}
 
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
-		activitiesTable.setEnabled(enabled);
-//        panel.setEnabled(enabled);
+		table.setEnabled(enabled);
 	}
 
 	class PopUpDeleteActivity extends JPopupMenu {
@@ -273,9 +278,9 @@ public abstract class ActivityEntry extends BaseTab implements IActivityEntryRen
 		private void doPop(MouseEvent e) {
 			PopUpDeleteActivity menu = new PopUpDeleteActivity();
 
-			int row = activitiesTable.rowAtPoint(e.getPoint());
-			if (!activitiesTable.isRowSelected(row)) {
-				activitiesTable.setRowSelectionInterval(row, row);
+			int row = table.rowAtPoint(e.getPoint());
+			if (!table.isRowSelected(row)) {
+				table.setRowSelectionInterval(row, row);
 			}
 
 			menu.show(e.getComponent(), e.getX(), e.getY());
@@ -289,7 +294,7 @@ public abstract class ActivityEntry extends BaseTab implements IActivityEntryRen
 	}
 
 	public int getSelectedActivityRow() {
-		return activitiesTable.getSelectedRow();
+		return table.getSelectedRow();
 	}
 
 	public abstract void deleteActivity();

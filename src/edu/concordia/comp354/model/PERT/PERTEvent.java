@@ -2,7 +2,7 @@ package edu.concordia.comp354.model.PERT;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraph;
-import edu.concordia.comp354.gui.PERT.PERTTab;
+import edu.concordia.comp354.gui.PERT.PERTEdge;
 import org.apache.commons.math3.distribution.NormalDistribution;
 
 /**

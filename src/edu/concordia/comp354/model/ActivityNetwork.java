@@ -10,9 +10,9 @@ import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxEdgeStyle;
 import com.mxgraph.view.mxGraph;
 import edu.concordia.comp354.gui.PERT.PERTBoxShape;
+import edu.concordia.comp354.gui.PERT.PERTEdge;
 import edu.concordia.comp354.model.AON.ActivityOnNode;
-import edu.concordia.comp354.model.PERT.EventLeg;
-import edu.concordia.comp354.model.PERT.PERTEdge;
+import edu.concordia.comp354.model.PERT.EventEdge;
 import edu.concordia.comp354.model.PERT.PERTEvent;
 import edu.concordia.comp354.model.PERT.PERTNetwork;
 import net.objectlab.kit.datecalc.common.DateCalculator;
@@ -21,7 +21,7 @@ import net.objectlab.kit.datecalc.jdk8.LocalDateKitCalculatorsFactory;
 import java.time.LocalDate;
 import java.util.*;
 
-public class ActivityList {
+public class ActivityNetwork {
 
     private final ProjectManager projectManager;
     public mxGraph ganttGraph;
@@ -31,13 +31,14 @@ public class ActivityList {
     public boolean hasCycles;
 
     IActivityEntryRenderer renderer;
+    HashMap<Integer, mxCell> activityID2mxCell;
 
-    public ActivityList(IActivityEntryRenderer renderer, ProjectManager projectManager) {
+    public ActivityNetwork(IActivityEntryRenderer renderer, ProjectManager projectManager) {
         this.projectManager = projectManager;
         ganttGraph = new mxGraph();
         pertGraph = new mxGraph();
 
-        assert renderer != null : "ActivityList: renderer is null";
+        assert renderer != null : "ActivityNetwork: renderer is null";
         this.renderer = renderer;
     }
 
@@ -45,11 +46,11 @@ public class ActivityList {
         renderer.fillActivityList();
     }
 
-//    public void setActivities(List<Activity> activities) {
+//    public void fillTable(List<Activity> activities) {
 //        this.activities = activities;
 //    }
 
-    public mxGraph createGanttChart() {
+    public mxGraph createAONNetwork() {
 
         Map<String, Object> style = ganttGraph.getStylesheet().getDefaultEdgeStyle();
         style.put(mxConstants.STYLE_EDGE, mxEdgeStyle.SideToSide);
@@ -64,7 +65,7 @@ public class ActivityList {
         ganttGraph.setCellsEditable(false);
         ganttGraph.setCellsLocked(true);
 
-        linkNodes();
+        linkAONNodes();
 
         ganttGraph.setMaximumGraphBounds(new mxRectangle(0, 0, 800, 800));
         renderer.autoLayout(ganttGraph);
@@ -72,9 +73,13 @@ public class ActivityList {
         return ganttGraph;
     }
 
-    public void linkNodes() {
+    public Collection<mxCell> getActivityNodes() {
+        return activityID2mxCell.values();
+    }
 
-        HashMap<Integer, mxCell> activityID2mxCell = new HashMap<Integer, mxCell>();
+    public void linkAONNodes() {
+
+        activityID2mxCell = new HashMap<Integer, mxCell>();
 
         List<Activity> activities = projectManager.getCurrentProject().getActivities();
         for (int i = 0; i < activities.size(); i++) {
@@ -116,7 +121,7 @@ public class ActivityList {
 
         computeActualCalendarDuration((int) projectDuration);
 
-        positionGANTTNodes(activityID2mxCell);
+        positionGANTTNodes();
 
         renderer.setCPMData(activityID2mxCell.values().toArray(), criticalNodes.toArray());
     }
@@ -150,7 +155,7 @@ public class ActivityList {
         List<Activity> activities = projectManager.getCurrentProject().getActivities();
 
         PERTNetwork network = new PERTNetwork();
-        HashMap<Integer, EventLeg> eventTable = network.createNetwork(activities);
+        HashMap<Integer, EventEdge> eventTable = network.createNetwork(activities);
 
         List<mxCell> events = new ArrayList<>();
         for (int i = 0; i <= network.getNextEventID(); i++) {
@@ -171,7 +176,7 @@ public class ActivityList {
 
         for (Activity activity : activities) {
 
-            EventLeg leg = eventTable.get(activity.getActivity_id());
+            EventEdge leg = eventTable.get(activity.getActivity_id());
 
             pertGraph.insertEdge(pertGraph.getDefaultParent(),
                     null,
@@ -240,12 +245,17 @@ public class ActivityList {
     }
 
     public float getProjectDuration() {
+
+        if ( lastActivity == null ) {
+            createAONNetwork();
+        }
+
         return lastActivity != null ? lastActivity.getLF() : 0;
     }
 
-    private void positionGANTTNodes(HashMap<Integer, mxCell> activityID2mxCell) {
+    private void positionGANTTNodes() {
 
-        for (mxICell cell : activityID2mxCell.values()) {
+        for (mxICell cell : getActivityNodes()) {
             mxGeometry geometry = cell.getGeometry();
 
             final int es = (int) ((ActivityOnNode) cell.getValue()).getES();
@@ -268,7 +278,7 @@ public class ActivityList {
 
         projectManager.activityChanged();
 
-        return hasCycles(projectManager.getActivityList().ganttGraph) || hasCycles;
+        return hasCycles(projectManager.getActivityNetwork().ganttGraph) || hasCycles;
     }
 
     public boolean hasCycles(mxGraph graph) {
@@ -292,10 +302,14 @@ public class ActivityList {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("ActivityList{");
+        final StringBuilder sb = new StringBuilder("ActivityNetwork{");
         sb.append(", lastActivity=").append(lastActivity);
         sb.append(", hasCycles=").append(hasCycles);
         sb.append('}');
         return sb.toString();
+    }
+
+    public LocalDate getCalendarDate(int date) {
+        return getStartDate().plusDays(actualCalendarDayOffsets[date]);
     }
 }

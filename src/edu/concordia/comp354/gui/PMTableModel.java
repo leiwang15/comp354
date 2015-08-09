@@ -80,16 +80,9 @@ public abstract class PMTableModel extends DefaultTableModel {
         }
     }
 
-    public void deleteActivity(int activityID) {
-        projectManager.getCurrentProject().deleteActivity(activityID);
-    }
-
     public void clear() {
 
-//		setNumRows(1024);
-
         Object[][] tableRows = new Object[PMTable.MAX_TABLE_SIZE][];
-//        tableRows[0] = new String[]{"1"}; //  may be incompatible with maxPredID at startup
         tableRows[0] = new String[]{""};
         for (int i = 1; i < PMTable.MAX_TABLE_SIZE; i++) {
             tableRows[i] = new String[]{""};
@@ -98,5 +91,5 @@ public abstract class PMTableModel extends DefaultTableModel {
         setDataVector(tableRows, columnNames);
     }
 
-    public abstract void fillActivityList();
+    public abstract void readForm();
 }

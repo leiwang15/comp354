@@ -16,7 +16,6 @@ import edu.concordia.comp354.model.Project;
 import edu.concordia.comp354.model.User;
 
 public class ProjectController extends DB_Controller {
-	DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	public ProjectController() {
 		super();
@@ -108,7 +107,6 @@ public class ProjectController extends DB_Controller {
 				id = res.getInt("ProjectID");
 				name = res.getString("Name");
 				desc = res.getString("Desc");
-				DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 				LocalDate d =  LocalDate.parse(res.getString("StartDate"));
 
 				//System.out.println(df.format(d));

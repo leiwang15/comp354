@@ -3,15 +3,15 @@ package edu.concordia.comp354.model.PERT;
 /**
  * Created by joao on 15.07.26.
  */
-public class EventLeg {
+public class EventEdge {
     int orgEvent;
     int destEvent;
 
-    public EventLeg() {
+    public EventEdge() {
         orgEvent = destEvent = -1;
     }
 
-    public EventLeg(int orgEvent, int destEvent) {
+    public EventEdge(int orgEvent, int destEvent) {
         this.orgEvent = orgEvent;
         this.destEvent = destEvent;
     }

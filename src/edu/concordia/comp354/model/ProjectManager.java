@@ -1,8 +1,10 @@
 package edu.concordia.comp354.model;
 
 import edu.concordia.comp354.controller.ActivityController;
+import edu.concordia.comp354.controller.EVAController;
 import edu.concordia.comp354.controller.ProjectController;
 import edu.concordia.comp354.controller.UserController;
+import edu.concordia.comp354.model.EVA.EarnedValuePoint;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -15,11 +17,11 @@ public class ProjectManager {
     public static final String ROLE_MANAGER = "Project Manager";
     public static final String ROLE_MEMBER = "Project Member";
     public static final String NO_FILTER = "-";
+    private static final int PERIOD = 7;
     protected List<Project> projectList;
     private User currentUser;
     Project currentProject;
-
-    ActivityList activityList;
+    ActivityNetwork activityNetwork;
 
     IProjectRenderer projectRenderer;
     IActivityDetailRenderer activityDetailRenderer;
@@ -33,8 +35,8 @@ public class ProjectManager {
         filterUserName = null;
     }
 
-    public ActivityList getActivityList() {
-        return activityList;
+    public ActivityNetwork getActivityNetwork() {
+        return activityNetwork;
     }
 
     public IActivityDetailRenderer getActivityDetailRenderer() {
@@ -57,8 +59,8 @@ public class ProjectManager {
         return projectRenderer;
     }
 
-    public void setActivityList(ActivityList activityList) {
-        this.activityList = activityList;
+    public void setActivityNetwork(ActivityNetwork activityNetwork) {
+        this.activityNetwork = activityNetwork;
     }
 
     public void setProjectRenderer(IProjectRenderer projectRenderer) {
@@ -110,6 +112,8 @@ public class ProjectManager {
             activity.setUsers(getUsersByID(userIDs));
             activity.setDirty(DirtyAware.DirtyLevels.UNTOUCHED);
         }
+
+        project.setEVAPoints(new EVAController().getPoints(project.getProject_id()));
 
         project.setDirty(DirtyAware.DirtyLevels.UNTOUCHED);
     }
@@ -163,6 +167,18 @@ public class ProjectManager {
             }
         }
 
+        if (currentProject.getEVAPoints() != null) {
+            for (EarnedValuePoint point : currentProject.getEVAPoints()) {
+                if (point.isNew()) {
+                    point.setDBID(new EVAController().add(point));
+                    point.written();
+                } else if (point.isModified()) {
+                    new EVAController().update(point);
+                    point.written();
+                }
+            }
+        }
+
         //  delete flagged activities
 
         for (int dbID : currentProject.getActivityDeleteList()) {
@@ -208,9 +224,11 @@ public class ProjectManager {
     private void setCurrentProject(Project p) {
         currentProject = p;
 
-        activityList = new ActivityList(activityEntryRenderer, this);
+        activityNetwork = new ActivityNetwork(activityEntryRenderer, this);
 
-        projectRenderer.projectSelected(p.getProject_name());
+        if (p != null) {
+            projectRenderer.projectSelected(p.getProject_name());
+        }
     }
 
     public List<Project> getProjectList() {
@@ -227,8 +245,8 @@ public class ProjectManager {
 
     public void activityChanged() {
         getActivityEntryRenderer().fillActivityList();
-        getActivityList().createGanttChart();
-        getActivityList().createPERTChart();
+        getActivityNetwork().createAONNetwork();
+        getActivityNetwork().createPERTChart();
     }
 
     public void losingDetailFocus(int id) {
@@ -367,7 +385,7 @@ public class ProjectManager {
 //        System.out.println(userName);
         this.filterUserName = userName.equals(NO_FILTER) ? null : userName;
 
-        if ( activityEntryRenderer != null ) {
+        if (activityEntryRenderer != null) {
             activityEntryRenderer.filterByUser(userName);
         }
     }
@@ -392,5 +410,15 @@ public class ProjectManager {
         }
 
         return isActive;
+    }
+
+    public void performEarnedValueAnalysis() {
+        if (currentProject != null) {
+            currentProject.generateEVAList(activityNetwork, PERIOD);
+        }
+    }
+
+    public void EVASelected() {
+        performEarnedValueAnalysis();
     }
 }

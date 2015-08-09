@@ -9,18 +9,18 @@ import javax.swing.*;
  * Created by joao on 15.07.25.
  */
 public class BaseTab extends JPanel {
-    private MainWindow parentWindow;
+    private MainRenderer parentWindow;
 
-    public BaseTab(MainWindow parentWindow) {
+    public BaseTab(MainRenderer parentWindow) {
         super();
         this.parentWindow = parentWindow;
     }
 
-    public void setParentWindow(MainWindow parentWindow) {
+    public void setParentWindow(MainRenderer parentWindow) {
         this.parentWindow = parentWindow;
     }
 
-    public MainWindow getParentWindow() {
+    public MainRenderer getParentWindow() {
         return parentWindow;
     }
 

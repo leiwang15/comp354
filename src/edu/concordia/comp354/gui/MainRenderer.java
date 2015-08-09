@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Created by joao on 15.07.01.
  */
-public class MainWindow implements IActivityEntryRenderer, IActivityDetailRenderer, IProjectRenderer {
+public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRenderer, IProjectRenderer {
     protected static User currentUser;
     protected static List<Project> pjList;
     protected static Project selectedProject;
@@ -61,8 +61,9 @@ public class MainWindow implements IActivityEntryRenderer, IActivityDetailRender
     private JTextField cost;
     private HashMap<String, JCheckBox> checkboxMap;
     private JTextField login;
+    public static DecimalFormat DF = new DecimalFormat("#,###");
 
-    public MainWindow(ProjectManager projectManager) {
+    public MainRenderer(ProjectManager projectManager) {
         this.projectManager = projectManager;
 
         projectManager.setProjectRenderer(this);
@@ -403,8 +404,7 @@ public class MainWindow implements IActivityEntryRenderer, IActivityDetailRender
         }
 
         progressSlider.setValue(activity.getProgress());
-        DecimalFormat df = new DecimalFormat("#,###");
-        cost.setText(df.format(activity.getValue()));
+        cost.setText(DF.format(activity.getCost()));
 //        users.setSelectionInterval(-1,-1);
         users.repaint();
     }
@@ -457,15 +457,19 @@ public class MainWindow implements IActivityEntryRenderer, IActivityDetailRender
     }
 
     public void setEnabled(boolean enabled) {
+        setDetailEnabled(enabled);
+
+//       if ( activityEntry !=null) {
+        activityEntry.setEnabled(enabled);
+//       }
+    }
+
+    public void setDetailEnabled(boolean enabled) {
         userFilter.setEnabled(enabled);
         projectDescription.setEnabled(enabled);
         progressSlider.setEnabled(enabled);
         users.setEnabled(enabled);
         cost.setEnabled(enabled);
-
-//       if ( activityEntry !=null) {
-        activityEntry.setEnabled(enabled);
-//       }
     }
 
     protected void initMenus() {
@@ -683,13 +687,11 @@ public class MainWindow implements IActivityEntryRenderer, IActivityDetailRender
     @Override
     public void activitySelected(int id) {
         activityEntry.activitySelected(id);
-
     }
 
     @Override
     public void clear() {
         activityEntry.clear();
-
     }
 
     @Override
@@ -735,7 +737,7 @@ public class MainWindow implements IActivityEntryRenderer, IActivityDetailRender
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             JLabel renderer = (JLabel) defaultRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-            User user = MainWindow.this.projectManager.getUser((String) value);
+            User user = MainRenderer.this.projectManager.getUser((String) value);
 
             if (user != null && user.getRole().equals(ProjectManager.ROLE_MANAGER)) {
                 Font oldFont = getFont();

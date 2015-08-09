@@ -88,7 +88,7 @@ public class Activity extends DirtyAware {
         }
     }
 
-    public int getValue() {
+    public int getCost() {
         return value;
     }
 
@@ -266,7 +266,7 @@ public class Activity extends DirtyAware {
                 + " Pessimistic: "
                 + this.getPessimistic()
                 + " Value: "
-                + this.getValue()
+                + this.getCost()
                 + " Progress: "
                 + this.getProgress()
                 + " predecessors: "

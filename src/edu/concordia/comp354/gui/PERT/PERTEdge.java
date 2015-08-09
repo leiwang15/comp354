@@ -1,4 +1,4 @@
-package edu.concordia.comp354.model.PERT;
+package edu.concordia.comp354.gui.PERT;
 
 import com.mxgraph.shape.mxArrowShape;
 import edu.concordia.comp354.gui.PERT.PERTTab;

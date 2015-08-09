@@ -7,9 +7,9 @@ import java.sql.Statement;
 
 public class CreateDB {
 
-	private static String databasePath = "project.db";
+    private static String databasePath = "project.db";
 
-	public static void initializeDB() {
+    public static void initializeDB() {
 
         Connection c = null;
         Statement stmt = null;
@@ -41,8 +41,8 @@ public class CreateDB {
                             + " FirstName	TEXT    NOT NULL, "
                             + " LastName	TEXT	NOT NULL, "
                             + " Role	    TEXT	NOT NULL, "
-					+ " UserName	TEXT	NOT NULL, "
-					+ " Password	TEXT	NOT NULL )";
+                            + " UserName	TEXT	NOT NULL, "
+                            + " Password	TEXT	NOT NULL )";
             stmt.executeUpdate(sql);
             stmt.close();
 
@@ -67,12 +67,12 @@ public class CreateDB {
                             + " Name		TEXT    NOT NULL, "
                             + " Desc		TEXT	NOT NULL, "
                             + " Duration	INT		NOT NULL, "
-					+ " Pessimistic	INT		NOT NULL, "
-					+ " Optimistic	INT		NOT NULL, "
-					+ " Value		INT		NOT NULL, "
+                            + " Pessimistic	INT		NOT NULL, "
+                            + " Optimistic	INT		NOT NULL, "
+                            + " Value		INT		NOT NULL, "
                             + " Progress	INT		DEFAULT 0, 	"
                             + " Finished	INT		DEFAULT 0,	"
-					+ " FOREIGN KEY(Project_ID) 		REFERENCES Project(ProjectID) ON DELETE CASCADE);";
+                            + " FOREIGN KEY(Project_ID) 		REFERENCES Project(ProjectID) ON DELETE CASCADE);";
 
 
             stmt.executeUpdate(sql);
@@ -84,8 +84,8 @@ public class CreateDB {
                             + "	PA_ID		INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
                             + " Project_ID	INTEGER		NOT NULL, "
                             + " User_ID		INTEGER		NOT NULL, "
-					+ " FOREIGN KEY(Project_ID) 		REFERENCES Project(ProjectID) ON DELETE CASCADE,"
-					+ " FOREIGN KEY(User_ID) 			REFERENCES User(UserID) ON DELETE CASCADE)";
+                            + " FOREIGN KEY(Project_ID) 		REFERENCES Project(ProjectID) ON DELETE CASCADE,"
+                            + " FOREIGN KEY(User_ID) 			REFERENCES User(UserID) ON DELETE CASCADE)";
 
 
             stmt.executeUpdate(sql);
@@ -98,8 +98,8 @@ public class CreateDB {
                             + "	AA_ID		INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
                             + " Activity_ID	INTEGER		NOT NULL, "
                             + " User_ID		INTEGER		NOT NULL, "
-					+ " FOREIGN KEY(Activity_ID) 	REFERENCES Activity(ActivityID) ON DELETE CASCADE,"
-					+ " FOREIGN KEY(User_ID) 		REFERENCES User(UserID) ON DELETE CASCADE)";
+                            + " FOREIGN KEY(Activity_ID) 	REFERENCES Activity(ActivityID) ON DELETE CASCADE,"
+                            + " FOREIGN KEY(User_ID) 		REFERENCES User(UserID) ON DELETE CASCADE)";
 
 
             stmt.executeUpdate(sql);
@@ -125,9 +125,20 @@ public class CreateDB {
                             + "	AP_ID				INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
                             + " Activity_ID1		INTEGER		NOT NULL, "
                             + " Activity_ID2		INTEGER		NOT NULL, "
-					+ " FOREIGN KEY(Activity_ID1) 	REFERENCES Activity(ActivityID) ON DELETE CASCADE,"
-					+ " FOREIGN KEY(Activity_ID2) 	REFERENCES Activity(ActivityID) ON DELETE CASCADE)";
+                            + " FOREIGN KEY(Activity_ID1) 	REFERENCES Activity(ActivityID) ON DELETE CASCADE,"
+                            + " FOREIGN KEY(Activity_ID2) 	REFERENCES Activity(ActivityID) ON DELETE CASCADE)";
 
+            stmt.executeUpdate(sql);
+
+            //Create table EVAPoints
+            stmt = c.createStatement();
+            sql = "CREATE TABLE EVAPoints ("
+                    + "	DBID	    INTEGER 	PRIMARY KEY     AUTOINCREMENT,"
+                    + " Project_ID	INTEGER		NOT NULL, "
+                    + " Date	    INTEGER	    NOT NULL, "
+                    + " PV		    INTEGER		NOT NULL, "
+                    + " EV		    INTEGER		NOT NULL, "
+                    + " AC		    INTEGER		NOT NULL)";
 
             stmt.executeUpdate(sql);
 
@@ -137,6 +148,5 @@ public class CreateDB {
             System.exit(0);
         }
         System.out.println("Table created successfully");
-
     }
 }

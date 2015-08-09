@@ -3,9 +3,10 @@ package edu.concordia.comp354.gui;
 import com.mxgraph.canvas.mxGraphics2DCanvas;
 import edu.concordia.comp354.controller.CreateDB;
 import edu.concordia.comp354.controller.UserController;
+import edu.concordia.comp354.gui.EVA.EVATab;
 import edu.concordia.comp354.gui.Gantt.GanttTab;
 import edu.concordia.comp354.gui.PERT.PERTBoxShape;
-import edu.concordia.comp354.model.PERT.PERTEdge;
+import edu.concordia.comp354.gui.PERT.PERTEdge;
 import edu.concordia.comp354.gui.PERT.PERTTab;
 import edu.concordia.comp354.model.ProjectManager;
 
@@ -35,20 +36,20 @@ public class Application {
         mxGraphics2DCanvas.putShape(PERTEdge.SHAPE_PERTEDGE, new PERTEdge());
 
         projectManager.initialize();
-        MainWindow.currentUser = new UserController().getUserByUserName("John");
-        projectManager.setCurrentUser(MainWindow.currentUser);
+        MainRenderer.currentUser = new UserController().getUserByUserName("John");
+        projectManager.setCurrentUser(MainRenderer.currentUser);
 
-        MainWindow mainWindow = new MainWindow(projectManager);
+        MainRenderer mainRenderer = new MainRenderer(projectManager);
 
-        mainWindow.addTab(new GanttTab(mainWindow));
-        mainWindow.addTab(new PERTTab(mainWindow));
-//        mainWindow.addTab(new EVATab());
-        mainWindow.selectTab(0);
+        mainRenderer.addTab(new GanttTab(mainRenderer));
+        mainRenderer.addTab(new PERTTab(mainRenderer));
+        mainRenderer.addTab(new EVATab(mainRenderer));
+        mainRenderer.selectTab(0);
 
-        mainWindow.setEnabled(false);
+        mainRenderer.setEnabled(false);
 
         if (true) {
-            MainWindow.frmProjectManagementSystem.setVisible(true);
+            MainRenderer.frmProjectManagementSystem.setVisible(true);
         } else {
             EventQueue.invokeLater(new Runnable() {
                 public void run() {

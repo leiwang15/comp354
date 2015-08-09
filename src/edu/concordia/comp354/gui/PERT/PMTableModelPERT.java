@@ -28,7 +28,7 @@ public class PMTableModelPERT extends PMTableModel {
         super(data, columnNames, projectManager);
     }
 
-    public void fillActivityList() {
+    public void readForm() {
 
         List<Activity> activityList = projectManager.getCurrentProject().getActivities();
 
