@@ -33,6 +33,7 @@ public abstract class ActivityEntry extends BaseTab implements IActivityEntryRen
 	protected Object[][] tableRows;
 	protected mxGraphComponent graphComponent;
 	private int previousID = -1;
+	protected JSplitPane splitPane;
 
 	public ActivityEntry(MainRenderer mainRenderer) {
 		super(mainRenderer);
@@ -77,7 +78,7 @@ public abstract class ActivityEntry extends BaseTab implements IActivityEntryRen
 
 		chartPane = new JScrollPane(charts);
 		chartPane.setEnabled(true);
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePane, chartPane);
+		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePane, chartPane);
 		splitPane.setResizeWeight(0);
 		splitPane.setOneTouchExpandable(true);
 		splitPane.setDividerLocation(330);

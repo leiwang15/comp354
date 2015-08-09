@@ -12,7 +12,6 @@ public class EarnedValuePoint extends DirtyAware {
     private float earnedValue;
     private float actualCost;
     private int projectID;
-    private int DBID;
 
     public EarnedValuePoint() {
         super(DirtyLevels.NEW);
@@ -129,7 +128,7 @@ public class EarnedValuePoint extends DirtyAware {
         return result;
     }
 
-    public void setDBID(int DBID) {
-        this.DBID = DBID;
+    public void setDBID(int dbID) {
+        this.dbID = dbID;
     }
 }

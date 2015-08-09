@@ -246,9 +246,9 @@ public class ActivityNetwork {
 
     public float getProjectDuration() {
 
-        if ( lastActivity == null ) {
-            createAONNetwork();
-        }
+//        if ( lastActivity == null ) {
+//            createAONNetwork();
+//        }
 
         return lastActivity != null ? lastActivity.getLF() : 0;
     }

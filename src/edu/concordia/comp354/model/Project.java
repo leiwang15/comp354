@@ -247,15 +247,18 @@ public class Project extends DirtyAware {
 
     public void generateEVAList(ActivityNetwork activityNetwork, int period) {
 
-        EVAPoints = new ArrayList<>();
+        if (EVAPoints == null) {
 
-        float duration = activityNetwork.getProjectDuration();
+            EVAPoints = new ArrayList<>();
 
-        for (int date = period + 1; date < duration; date += period) {
-            EVAPoints.add(new EarnedValuePoint(new EarnedValueAnalysis(activityNetwork, date, 0)));
+            float duration = activityNetwork.getProjectDuration();
+
+            for (int date = period + 1; date < duration; date += period) {
+                EVAPoints.add(new EarnedValuePoint(new EarnedValueAnalysis(activityNetwork, date, 0)));
+            }
+
+            setDirty(DirtyLevels.NEW);
         }
-
-        setDirty(DirtyLevels.NEW);
     }
 
     public void setEVAPoints(List<EarnedValuePoint> EVAPoints) {

@@ -4,6 +4,7 @@ import com.mxgraph.view.mxGraph;
 import edu.concordia.comp354.gui.ActivityEntry;
 import edu.concordia.comp354.gui.MainRenderer;
 import edu.concordia.comp354.gui.PMTable;
+import edu.concordia.comp354.gui.editors.IntegerEditor;
 import edu.concordia.comp354.model.EVA.EarnedValuePoint;
 import sun.swing.table.DefaultTableCellHeaderRenderer;
 
@@ -38,10 +39,12 @@ public class EVATab extends ActivityEntry {
 
         parentContainer.setLayout(new BorderLayout());
 
-        Dimension dimension = new Dimension(400, 600);
+        Dimension dimension = new Dimension(600, 600);
         parentContainer.setMaximumSize(dimension);
         parentContainer.setMinimumSize(dimension);
         parentContainer.setPreferredSize(dimension);
+
+        splitPane.setDividerLocation(430);
     }
 
     @Override
@@ -59,8 +62,8 @@ public class EVATab extends ActivityEntry {
 
         DefaultTableColumnModel scm = new DefaultTableColumnModel();
 
-//        table = new PMTable(dtm, scm, this);
-        table = new JTable(dtm, scm);
+        table = new EVATable(dtm, scm,this);
+//        table = new JTable(dtm, scm);
         table.setCellSelectionEnabled(true);
         table.addMouseListener(new PopClickListener());
 
@@ -76,6 +79,7 @@ public class EVATab extends ActivityEntry {
 //        table.getColumn(AC).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
 //        table.getColumn(DATE).setPreferredWidth(200);
 
+//        table.getColumn(AC).setCellEditor(new IntegerEditor(1, PMTable.MAX_TABLE_SIZE, this));
 
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(JLabel.RIGHT);

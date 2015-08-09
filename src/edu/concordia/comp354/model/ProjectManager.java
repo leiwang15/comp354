@@ -170,6 +170,7 @@ public class ProjectManager {
         if (currentProject.getEVAPoints() != null) {
             for (EarnedValuePoint point : currentProject.getEVAPoints()) {
                 if (point.isNew()) {
+                    point.setProjectID(currentProject.getProject_id());
                     point.setDBID(new EVAController().add(point));
                     point.written();
                 } else if (point.isModified()) {
@@ -206,8 +207,7 @@ public class ProjectManager {
 
     public void setCurrentProject(String s) {
 
-        for (int i = 0; i < projectList.size(); i++) {
-            Project p = projectList.get(i);
+        for (Project p : projectList) {
             if (p.getProject_name().equals(s)) {
                 setCurrentProject(p);
                 if (projectRenderer != null) {
