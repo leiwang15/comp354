@@ -7,7 +7,7 @@ import com.mxgraph.util.mxRectangle;
 import com.mxgraph.util.mxUtils;
 import com.mxgraph.view.mxCellState;
 import edu.concordia.comp354.model.PERT.PERTEvent;
-import edu.concordia.comp354.model.PERT.PERTNetwork;
+import edu.concordia.comp354.model.ProjectManager;
 
 import java.awt.*;
 import java.text.DecimalFormat;
@@ -41,7 +41,7 @@ public class PERTBoxShape extends mxRectangleShape {
 
                 Graphics2D graphics = canvas.getGraphics();
 
-                if (event.getT() != PERTNetwork.UNDEFINED) {
+                if (event.getT() != ProjectManager.UNDEFINED) {
 //                    System.out.println(rect);
 
                     double probability = event.getProbability();

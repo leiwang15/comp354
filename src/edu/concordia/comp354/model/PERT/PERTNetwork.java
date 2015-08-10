@@ -1,6 +1,7 @@
 package edu.concordia.comp354.model.PERT;
 
 import edu.concordia.comp354.model.Activity;
+import edu.concordia.comp354.model.ProjectManager;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +11,6 @@ import java.util.List;
  */
 public class PERTNetwork {
 
-    public static final int UNDEFINED = -1;
     HashMap<Integer, EventEdge> activityID2EventLeg;
     int nextEventID;
 
@@ -23,14 +23,14 @@ public class PERTNetwork {
 
         nextEventID = 0;
         for (Activity activity : activities) {
-            int n = UNDEFINED;
+            int n = ProjectManager.UNDEFINED;
 
             if (activity.getPredecessors() != null) {
                 for (Integer pred : activity.getPredecessors()) {
 
                     EventEdge eventEdge = activityID2EventLeg.get(pred);
-                    if (eventEdge.destEvent == UNDEFINED) {
-                        if (n == UNDEFINED) {
+                    if (eventEdge.destEvent == ProjectManager.UNDEFINED) {
+                        if (n == ProjectManager.UNDEFINED) {
                             n = ++nextEventID;
                         }
                         eventEdge.destEvent = n;
@@ -48,7 +48,7 @@ public class PERTNetwork {
 
         nextEventID++;
         for (EventEdge leg : activityID2EventLeg.values()) {
-            if (leg.destEvent == UNDEFINED) {
+            if (leg.destEvent == ProjectManager.UNDEFINED) {
                 leg.destEvent = nextEventID;
             }
         }

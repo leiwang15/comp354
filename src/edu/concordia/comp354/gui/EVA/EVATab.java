@@ -22,79 +22,89 @@ import java.util.List;
 
 public class EVATab extends ActivityEntry implements EVARenderer {
 
-	protected static final String DATE = "Date";
-	protected static final String PV = "Planned Value";
-	protected static final String EV = "Earned Value";
-	protected static final String AC = "Actual Cost";
-	public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern(ActivityEntry.DATE_FORMAT);
-	private EVAPanel evaPanel;
+    protected static final String DATE = "Date";
+    protected static final String PV = "Planned Value";
+    protected static final String EV = "Earned Value";
+    protected static final String AC = "Actual Cost";
+    public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern(ActivityEntry.DATE_FORMAT);
+    private EVAPanel evaPanel;
 
-	public EVATab(MainRenderer mainRenderer) {
-		super(mainRenderer);
-	}
+    public EVATab(MainRenderer mainRenderer) {
+        super(mainRenderer);
+    }
 
-	protected void initializeTab() {
+    protected void initializeTab() {
 
-		setName("EVA");
+        setName("EVA");
 
-		JPanel parentContainer = new JPanel();
-		getMainRenderer().tabbedPane.addTab(getName(), null, this, null);
+        JPanel parentContainer = new JPanel();
+        getMainRenderer().tabbedPane.addTab(getName(), null, this, null);
 
-		parentContainer.setLayout(new BorderLayout());
+        parentContainer.setLayout(new BorderLayout());
 
-		Dimension dimension = new Dimension(600, 600);
-		parentContainer.setMaximumSize(dimension);
-		parentContainer.setMinimumSize(dimension);
-		parentContainer.setPreferredSize(dimension);
+        Dimension dimension = new Dimension(600, 600);
+        parentContainer.setMaximumSize(dimension);
+        parentContainer.setMinimumSize(dimension);
+        parentContainer.setPreferredSize(dimension);
 
-		splitPane.setDividerLocation(430);
+        splitPane.setDividerLocation(430);
 
-		getMainRenderer().evaDateSelector.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				getProjectManager().evaDateSelected(((JComboBox<String>) e.getSource()).getSelectedItem().toString());
-			}
-		});
+        getMainRenderer().evaDateSelector.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (e != null && e.getSource() != null && ((JComboBox<String>) e.getSource()).getSelectedItem() != null) {
+                    getProjectManager().evaDateSelected(((JComboBox<String>) e.getSource()).getSelectedItem().toString());
+                }
+            }
+        });
 
-		getProjectManager().setEvaRenderer(this);
-	}
+        getProjectManager().setEvaRenderer(this);
+    }
 
-	@Override
-	public void gainFocus() {
-		MainRenderer getMainRenderer = getMainRenderer();
-		getMainRenderer.setDetailEnabled(false);
-		getProjectManager().EVASelected();
+    @Override
+    public void gainFocus() {
+        MainRenderer getMainRenderer = getMainRenderer();
+        getMainRenderer.setDetailEnabled(false);
+        getProjectManager().EVASelected();
 
-		if (getCurrentProject() != null) {
-//			getMainRenderer.evaDateSelector.removeAll();
-			LocalDate startDate = getCurrentProject().getStart_date();
-			for (EarnedValuePoint point : getCurrentProject().getEVAPoints()) {
-				getMainRenderer.evaDateSelector.addItem(startDate.plusDays(point.getDate()).format(DATE_FORMAT));
-			}
-		}
+        if (getCurrentProject() != null) {
+            JComboBox<String> selector = getMainRenderer.evaDateSelector;
 
-		getMainRenderer.activityPanel.setVisible(false);
-		getMainRenderer.evaPanel.setVisible(true);
+            String selectedItem = (String) selector.getSelectedItem();
+            selector.removeAllItems();
+            LocalDate startDate = getCurrentProject().getStart_date();
+            for (EarnedValuePoint point : getCurrentProject().getEvaPoints()) {
+                selector.addItem(startDate.plusDays(point.getDate()).format(DATE_FORMAT));
+            }
+            if ( selectedItem != null ) {
+                selector.setSelectedItem(selectedItem);
+            }else {
+                selector.setSelectedIndex(0);
+            }
+        }
 
-	}
+        getMainRenderer.activityPanel.setVisible(false);
+        getMainRenderer.evaPanel.setVisible(true);
 
-	protected void createEntryColumns() {
-		tableRows = new Object[PMTable.MAX_TABLE_SIZE][];
-		columnNames = new String[]{PMTable.ID, DATE, PV, EV, AC};
-		dtm = new PMTableModelEVA(tableRows, columnNames, getProjectManager());
+    }
 
-		dtm.clear();
+    protected void createEntryColumns() {
+        tableRows = new Object[PMTable.MAX_TABLE_SIZE][];
+        columnNames = new String[]{PMTable.ID, DATE, PV, EV, AC};
+        dtm = new PMTableModelEVA(tableRows, columnNames, getProjectManager());
 
-		DefaultTableColumnModel scm = new DefaultTableColumnModel();
+        dtm.clear();
 
-		table = new EVATable(dtm, scm, this);
+        DefaultTableColumnModel scm = new DefaultTableColumnModel();
+
+        table = new EVATable(dtm, scm, this);
 //        table = new JTable(dtm, scm);
-		table.setCellSelectionEnabled(true);
-		table.addMouseListener(new PopClickListener());
+        table.setCellSelectionEnabled(true);
+        table.addMouseListener(new PopClickListener());
 
-		table.createDefaultColumnsFromModel();
+        table.createDefaultColumnsFromModel();
 
-		JTableHeader header = table.getTableHeader();
-		header.setPreferredSize(new Dimension(100, 38));
+        JTableHeader header = table.getTableHeader();
+        header.setPreferredSize(new Dimension(100, 38));
 
 //        table.getColumn(PMTable.ID).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
 //        table.getColumn(DATE).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
@@ -105,99 +115,104 @@ public class EVATab extends ActivityEntry implements EVARenderer {
 
 //        table.getColumn(AC).setCellEditor(new IntegerEditor(1, PMTable.MAX_TABLE_SIZE, this));
 
-		DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
-		rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
 
-		table.getColumn(DATE).setCellRenderer(rightRenderer);
-		table.getColumn(PV).setCellRenderer(rightRenderer);
-		table.getColumn(EV).setCellRenderer(rightRenderer);
-		table.getColumn(AC).setCellRenderer(rightRenderer);
+        table.getColumn(DATE).setCellRenderer(rightRenderer);
+        table.getColumn(PV).setCellRenderer(rightRenderer);
+        table.getColumn(EV).setCellRenderer(rightRenderer);
+        table.getColumn(AC).setCellRenderer(rightRenderer);
 
 
-		TableColumn column = table.getColumn(PMTable.ID);
-		column.setMinWidth(0);
-		column.setMaxWidth(0);
-		column.setWidth(0);
-		column.setPreferredWidth(0);
+        TableColumn column = table.getColumn(PMTable.ID);
+        column.setMinWidth(0);
+        column.setMaxWidth(0);
+        column.setWidth(0);
+        column.setPreferredWidth(0);
 
-		autoResizeColumns();
-	}
+        autoResizeColumns();
+    }
 
-	@Override
-	public void deleteActivity() {
-	}
+    @Override
+    public void deleteActivity() {
+    }
 
-	public void fillTable(boolean update) {
-		dtm.clear();
+    public void fillTable(boolean update) {
+        dtm.clear();
 
-		if (update) {
-			getProjectManager().getActivityNetwork().createAONNetwork();
+        if (update) {
+            getProjectManager().getActivityNetwork().createAONNetwork();
 
-			if (getCurrentProject() != null) {
-				LocalDate start_date = getCurrentProject().getStart_date();
-				List<EarnedValuePoint> points = getCurrentProject().getEVAPoints();
-				int i;
-				for (i = 0; i < points.size(); i++) {
-					EarnedValuePoint point = points.get(i);
+            if (getCurrentProject() != null) {
+                LocalDate start_date = getCurrentProject().getStart_date();
+                List<EarnedValuePoint> points = getCurrentProject().getEvaPoints();
+                int i;
+                for (i = 0; i < points.size(); i++) {
+                    EarnedValuePoint point = points.get(i);
 
-					tableRows[i] = new Object[]{
-							point.getDBID(),
-							start_date.plusDays(point.getDate()).format(DateTimeFormatter.ofPattern(ActivityEntry.DATE_FORMAT)),
-							MainRenderer.DF.format(point.getPlannedValue()),
-							MainRenderer.DF.format(point.getEarnedValue()),
-							MainRenderer.DF.format(point.getActualCost())
-					};
-				}
+                    tableRows[i] = new Object[]{
+                            point.getDBID(),
+                            start_date.plusDays(point.getDate()).format(DateTimeFormatter.ofPattern(ActivityEntry.DATE_FORMAT)),
+                            MainRenderer.DF.format(point.getPlannedValue()),
+                            MainRenderer.DF.format(point.getEarnedValue()),
+                            MainRenderer.DF.format(point.getActualCost())
+                    };
+                }
 
-				for (; i < PMTable.MAX_TABLE_SIZE; i++) {
-					tableRows[i] = new String[]{""};
-				}
+                for (; i < PMTable.MAX_TABLE_SIZE; i++) {
+                    tableRows[i] = new String[]{""};
+                }
 
-				dtm.setDataVector(tableRows, columnNames);
-			}
-		}
-	}
+                dtm.setDataVector(tableRows, columnNames);
+            }
+        }
+    }
 
-	@Override
-	public void clear() {
-		fillTable(true);
-		repaint();
-	}
+    @Override
+    public void clear() {
+        fillTable(true);
+        repaint();
+    }
 
-	@Override
-	public void populateEVA(EarnedValueAnalysis eva) {
-		MainRenderer mainRenderer = getMainRenderer();
+    @Override
+    public void populateEVA(EarnedValueAnalysis eva) {
+        MainRenderer mainRenderer = getMainRenderer();
 
-		mainRenderer.pvFld.setText(Integer.toString((int)eva.getPV()));
-		mainRenderer.evFld.setText(Integer.toString((int)eva.getEV()));
-		mainRenderer.acFld.setText(Integer.toString((int) eva.getAC()));
-		mainRenderer.bacFld.setText(Integer.toString((int)eva.getBAC()));
+        mainRenderer.pvFld.setText(Integer.toString((int) eva.getPV()));
+        mainRenderer.evFld.setText(Integer.toString((int) eva.getEV()));
+        mainRenderer.acFld.setText(Integer.toString((int) eva.getAC()));
+        mainRenderer.bacFld.setText(Integer.toString((int) eva.getBAC()));
 
-		mainRenderer.svFld.setText(Integer.toString((int) eva.getScheduleVariance()));
-		mainRenderer.cvFld.setText(Integer.toString((int) eva.getCostVariance()));
-		mainRenderer.cpiFld.setText(Integer.toString((int) eva.getCostPerformanceIndex()));
-		mainRenderer.spiFld.setText(Integer.toString((int) eva.getSchedulePerformanceIndex()));
-		mainRenderer.eacFld.setText(Integer.toString((int) eva.getEstimateAtCompletion()));
-		mainRenderer.etcFld.setText(Integer.toString((int)eva.getEstimateToComplete()));
-		mainRenderer.vacFld.setText(Integer.toString((int)eva.getVarianceAtCompletion()));
-		mainRenderer.completedFld.setText(Integer.toString((int)eva.getPercentComplete()));
-	}
+        mainRenderer.svFld.setText(Integer.toString((int) eva.getScheduleVariance()));
+        mainRenderer.cvFld.setText(Integer.toString((int) eva.getCostVariance()));
+        mainRenderer.cpiFld.setText(Integer.toString((int) eva.getCostPerformanceIndex()));
+        mainRenderer.spiFld.setText(Integer.toString((int) eva.getSchedulePerformanceIndex()));
+        mainRenderer.eacFld.setText(Integer.toString((int) eva.getEstimateAtCompletion()));
+        mainRenderer.etcFld.setText(Integer.toString((int) eva.getEstimateToComplete()));
+        mainRenderer.vacFld.setText(Integer.toString((int) eva.getVarianceAtCompletion()));
+        mainRenderer.completedFld.setText(Integer.toString((int) eva.getPercentComplete()));
+    }
 
-	@Override
-	public void setActivityList() {
-		fillTable(true);
-	}
+    @Override
+    public void selectEVADate(String dateStr) {
+        getMainRenderer().selectEVADate(dateStr);
+    }
 
-	@Override
-	public void autoLayout(mxGraph graph) {
-		if (evaPanel != null) {
-			charts.remove(evaPanel);
-		}
+    @Override
+    public void setActivityList() {
+        fillTable(true);
+    }
 
-		evaPanel = new EVAPanel(this, graph);
+    @Override
+    public void autoLayout(mxGraph graph) {
+        if (evaPanel != null) {
+            charts.remove(evaPanel);
+        }
 
-		charts.add(evaPanel, BorderLayout.CENTER);
+        evaPanel = new EVAPanel(this, graph);
 
-		charts.revalidate();
-	}
+        charts.add(evaPanel, BorderLayout.CENTER);
+
+        charts.revalidate();
+    }
 }

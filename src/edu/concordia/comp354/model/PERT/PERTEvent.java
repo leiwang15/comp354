@@ -3,6 +3,7 @@ package edu.concordia.comp354.model.PERT;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraph;
 import edu.concordia.comp354.gui.PERT.PERTEdge;
+import edu.concordia.comp354.model.ProjectManager;
 import org.apache.commons.math3.distribution.NormalDistribution;
 
 /**
@@ -12,7 +13,7 @@ public class PERTEvent {
     private final mxCell mxCell;
 
     private final int eventNo;
-    private float T = PERTNetwork.UNDEFINED;
+    private float T = ProjectManager.UNDEFINED;
     private float s;
     private float t;
 

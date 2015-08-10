@@ -20,6 +20,17 @@ public class EVATable extends JTable {
     }
 
     @Override
+    public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend) {
+        super.changeSelection(rowIndex, columnIndex, toggle, extend);
+
+        String dateStr = (String) getValueAt(rowIndex, 1);
+        if (dateStr != null) {
+            evaTab.getProjectManager().selectEVADate(dateStr);
+            evaTab.getProjectManager().evaDateSelected(dateStr);
+        }
+    }
+
+    @Override
     public void tableChanged(TableModelEvent e) {
         super.tableChanged(e);
 
@@ -27,8 +38,7 @@ public class EVATable extends JTable {
         int row = e.getFirstRow();
         if (col == 4 && StringUtils.isNotEmpty((String) getValueAt(row, col))) {
             int ac = Integer.parseInt(((String) getValueAt(row, col)).replace(",", ""));
-            evaTab.getProjectManager().getCurrentProject().getEVAPoints().get(row).setActualCost(ac);
-//            setValueAt(MainRenderer.DF.format(ac), row, col);
+            evaTab.getProjectManager().getCurrentProject().getEvaPoints().get(row).setActualCost(ac);
         }
     }
 }

@@ -10,14 +10,12 @@ import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
 import edu.concordia.comp354.gui.ActivityEntry;
 import edu.concordia.comp354.model.PERT.PERTEvent;
-import edu.concordia.comp354.model.PERT.PERTNetwork;
+import edu.concordia.comp354.model.ProjectManager;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.EventObject;
 import java.util.Map;
 
@@ -81,7 +79,7 @@ class cellEditor extends mxCellEditor {
             trigger = evt;
 
             PERTEvent event = (PERTEvent) ((mxCell) cell).getValue();
-            event.setT(PERTNetwork.UNDEFINED);
+            event.setT(ProjectManager.UNDEFINED);
             double scale = Math.max(minimumEditorScale, graphComponent
                     .getGraph().getView().getScale());
             Rectangle bounds = getEditorBounds(state, scale);

@@ -2,7 +2,7 @@ package edu.concordia.comp354.gui;
 
 import com.mxgraph.view.mxGraph;
 import edu.concordia.comp354.model.*;
-import edu.concordia.comp354.model.EVA.EarnedValueAnalysis;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -79,6 +79,7 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
     public JTextField completedFld;
     JPanel leftPanel;
     public JPanel activityPanel;
+    JButton btnSetEV;
 
     public MainRenderer(ProjectManager projectManager) {
         this.projectManager = projectManager;
@@ -305,6 +306,18 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
         progressSlider.setPaintLabels(true);
         progressSlider.setBounds(0, 283, 200, 38);
         progressSlider.setValue(0);
+
+
+        progressSlider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JSlider source = (JSlider) e.getSource();
+                if (!source.getValueIsAdjusting()) {
+                    projectManager.losingDetailFocus(activityEntry.getSelectedActivityRow());
+                }
+            }
+        });
+
         activityPanel.add(progressSlider);
 
         JLabel label_2 = new JLabel("Users");
@@ -479,6 +492,16 @@ EVAPanel
         evaPanel.add(completedFld);
         completedFld.setColumns(10);
 
+        btnSetEV = new JButton("Set EV");
+        btnSetEV.setBounds(21, 524, 117, 29);
+        evaPanel.add(btnSetEV);
+
+        btnSetEV.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                projectManager.computeEVAforDate((String) evaDateSelector.getSelectedItem());
+            }
+        });
+
         activityPanel.setVisible(false);
         evaPanel.setVisible(true);
     }
@@ -581,7 +604,7 @@ EVAPanel
 
         activity.setUsers(projectManager.getUserList(actUsers));
         activity.setProgress(progressSlider.getValue());
-        activity.setValue(Integer.parseInt(cost.getText().replaceAll(",", "")));
+        activity.setValue(Integer.parseInt(StringUtils.defaultIfEmpty(cost.getText().replaceAll(",", ""), "0")));
     }
 
     @Override
@@ -874,6 +897,10 @@ EVAPanel
     public void selectTab(int i) {
         tabbedPane.setSelectedIndex(i);
         tabSelected((ActivityEntry) tabbedPane.getSelectedComponent());
+    }
+
+    public void selectEVADate(String dateStr) {
+        evaDateSelector.setSelectedItem(dateStr);
     }
 
     public class UserComboBox extends BasicComboBoxRenderer {

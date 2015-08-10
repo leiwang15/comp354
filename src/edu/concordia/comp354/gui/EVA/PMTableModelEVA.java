@@ -30,7 +30,7 @@ public class PMTableModelEVA extends PMTableModel {
 
     public void readForm() {
 
-        List<EarnedValuePoint> points = projectManager.getCurrentProject().getEVAPoints();
+        List<EarnedValuePoint> points = projectManager.getCurrentProject().getEvaPoints();
 
         for (int i = 0; i < points.size(); i++) {
             points.get(i).setActualCost((Integer) getValueAt(i, AC_COL));

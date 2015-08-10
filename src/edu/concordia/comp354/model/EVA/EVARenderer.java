@@ -6,4 +6,6 @@ package edu.concordia.comp354.model.EVA;
 public interface EVARenderer {
 
 	void populateEVA(EarnedValueAnalysis eva);
+
+	void selectEVADate(String dateStr);
 }

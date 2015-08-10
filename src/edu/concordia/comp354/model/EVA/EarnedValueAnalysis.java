@@ -90,7 +90,7 @@ public class EarnedValueAnalysis {
     }
 
     public float getPercentComplete() {
-        return EV / BAC;
+        return EV * 100 / BAC;
     }
 
     public float getCostVariance() {
