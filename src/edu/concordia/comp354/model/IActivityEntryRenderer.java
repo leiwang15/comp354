@@ -1,6 +1,7 @@
 package edu.concordia.comp354.model;
 
 import com.mxgraph.view.mxGraph;
+import edu.concordia.comp354.model.EVA.EarnedValueAnalysis;
 
 import java.util.ArrayList;
 import java.util.List;

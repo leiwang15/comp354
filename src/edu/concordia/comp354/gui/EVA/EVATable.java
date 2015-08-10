@@ -1,6 +1,5 @@
 package edu.concordia.comp354.gui.EVA;
 
-import edu.concordia.comp354.gui.MainRenderer;
 import edu.concordia.comp354.gui.PMTableModel;
 import org.apache.commons.lang3.StringUtils;
 
@@ -27,7 +26,7 @@ public class EVATable extends JTable {
         int col = e.getColumn();
         int row = e.getFirstRow();
         if (col == 4 && StringUtils.isNotEmpty((String) getValueAt(row, col))) {
-            int ac = Integer.parseInt(((String) getValueAt(row, col)).replace(",",""));
+            int ac = Integer.parseInt(((String) getValueAt(row, col)).replace(",", ""));
             evaTab.getProjectManager().getCurrentProject().getEVAPoints().get(row).setActualCost(ac);
 //            setValueAt(MainRenderer.DF.format(ac), row, col);
         }

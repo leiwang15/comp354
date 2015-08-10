@@ -8,6 +8,7 @@ import edu.concordia.comp354.gui.PMTableModel;
 import edu.concordia.comp354.gui.editors.IntegerEditor;
 import edu.concordia.comp354.gui.editors.PredecessorEditor;
 import edu.concordia.comp354.model.Activity;
+import edu.concordia.comp354.model.EVA.EarnedValueAnalysis;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
 import sun.swing.table.DefaultTableCellHeaderRenderer;
 
@@ -31,10 +32,10 @@ public class GanttTab extends ActivityEntry {
         setName("Gantt");
 //        setLayout(new BorderLayout());
 
-//        JPanel parentContainer = getParentWindow().getParentContainer(this);
+//        JPanel parentContainer = getMainRenderer().getParentContainer(this);
 
         JPanel parentContainer = new JPanel();
-        getParentWindow().tabbedPane.addTab(getName(), null, this, null);
+        getMainRenderer().tabbedPane.addTab(getName(), null, this, null);
 //        tabbedPane.addTab(panel.getName(), null, panel, null);
 //        parentPanel.add(panel);
 
@@ -58,6 +59,9 @@ public class GanttTab extends ActivityEntry {
 
     @Override
     public void gainFocus() {
+
+        getMainRenderer().activityPanel.setVisible(true);
+        getMainRenderer().evaPanel.setVisible(false);
     }
 
     protected void createEntryColumns() {

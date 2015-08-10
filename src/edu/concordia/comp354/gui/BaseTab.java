@@ -20,12 +20,12 @@ public class BaseTab extends JPanel {
         this.parentWindow = parentWindow;
     }
 
-    public MainRenderer getParentWindow() {
+    public MainRenderer getMainRenderer() {
         return parentWindow;
     }
 
     public ProjectManager getProjectManager() {
-        return getParentWindow().projectManager;
+        return getMainRenderer().projectManager;
     }
 
     public Project getCurrentProject() {

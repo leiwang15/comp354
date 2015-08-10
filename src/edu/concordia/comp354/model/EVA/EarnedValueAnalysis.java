@@ -97,6 +97,10 @@ public class EarnedValueAnalysis {
         return EV - AC;
     }
 
+    public float getVarianceAtCompletion() {
+        return BAC - getEstimateAtCompletion();
+    }
+
     public float getScheduleVariance() {
         return EV - PV;
     }

@@ -17,7 +17,7 @@ import java.awt.event.*;
  */
 public abstract class ActivityEntry extends BaseTab implements IActivityEntryRenderer, ActionListener, ItemListener {
 //	protected static final String DATE_FORMAT = "yyyy/MM/dd";
-	protected static final String DATE_FORMAT = "d MMM, yyyy";
+	public static final String DATE_FORMAT = "d MMM, yyyy";
 
 	public static final int X_SCALE = 20;
 	protected static final int X_GAP = 0;
@@ -37,7 +37,7 @@ public abstract class ActivityEntry extends BaseTab implements IActivityEntryRen
 
 	public ActivityEntry(MainRenderer mainRenderer) {
 		super(mainRenderer);
-		getParentWindow().setActivityEntry(this);
+		getMainRenderer().setActivityEntry(this);
 
 		createUIComponents();
 

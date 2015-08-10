@@ -9,6 +9,7 @@ import edu.concordia.comp354.gui.PMTable;
 import edu.concordia.comp354.gui.PMTableModel;
 import edu.concordia.comp354.gui.editors.PredecessorEditor;
 import edu.concordia.comp354.model.Activity;
+import edu.concordia.comp354.model.EVA.EarnedValueAnalysis;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
 import sun.swing.table.DefaultTableCellHeaderRenderer;
@@ -43,9 +44,9 @@ public class PERTTab extends ActivityEntry {
         setName("PERT");
 //        setLayout(new BorderLayout());
 
-//        JPanel parentContainer = getParentWindow().getParentContainer(this);
+//        JPanel parentContainer = getMainRenderer().getParentContainer(this);
         JPanel parentContainer = new JPanel();
-        getParentWindow().tabbedPane.addTab(getName(), null, this, null);
+        getMainRenderer().tabbedPane.addTab(getName(), null, this, null);
 
         parentContainer.setLayout(new BorderLayout());
 
@@ -175,6 +176,13 @@ public class PERTTab extends ActivityEntry {
                 getProjectManager().getActivityNetwork().createPERTChart();
             }
         }
+    }
+
+    @Override
+    public void gainFocus() {
+
+        getMainRenderer().activityPanel.setVisible(true);
+        getMainRenderer().evaPanel.setVisible(false);
     }
 
     @Override

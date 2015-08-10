@@ -2,6 +2,7 @@ package edu.concordia.comp354.gui;
 
 import com.mxgraph.view.mxGraph;
 import edu.concordia.comp354.model.*;
+import edu.concordia.comp354.model.EVA.EarnedValueAnalysis;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -62,6 +63,22 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
     private HashMap<String, JCheckBox> checkboxMap;
     private JTextField login;
     public static DecimalFormat DF = new DecimalFormat("#,###");
+    public JPanel evaPanel;
+    public JComboBox<String> evaDateSelector;
+    public JTextField pvFld;
+    public JTextField evFld;
+    public JTextField acFld;
+    public JTextField bacFld;
+    public JTextField svFld;
+    public JTextField cvFld;
+    public JTextField cpiFld;
+    public JTextField spiFld;
+    public JTextField eacFld;
+    public JTextField etcFld;
+    public JTextField vacFld;
+    public JTextField completedFld;
+    JPanel leftPanel;
+    public JPanel activityPanel;
 
     public MainRenderer(ProjectManager projectManager) {
         this.projectManager = projectManager;
@@ -155,16 +172,16 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
 
     protected void initializeLeftPanel() {
 
-        JPanel panel = new JPanel();
-        splitPane.setLeftComponent(panel);
-        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+        leftPanel = new JPanel();
+        splitPane.setLeftComponent(leftPanel);
+        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.PAGE_AXIS));
         JLabel lblProjects = new JLabel("Projects");
         lblProjects.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(lblProjects, BorderLayout.NORTH);
+        leftPanel.add(lblProjects, BorderLayout.NORTH);
 
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setMaximumSize(new Dimension(32767, 4000));
-        panel.add(scrollPane);
+        leftPanel.add(scrollPane);
 
         lm = new DefaultListModel();
 
@@ -213,18 +230,18 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
             }
         });
 
-        JPanel panelSouth = new JPanel();
-        panel.setPreferredSize(new Dimension(200, 400));
-        panel.add(panelSouth, BorderLayout.SOUTH);
-        panelSouth.setLayout(null);
+        activityPanel = new JPanel();
+        leftPanel.setPreferredSize(new Dimension(200, 400));
+        leftPanel.add(activityPanel, BorderLayout.SOUTH);
+        activityPanel.setLayout(null);
 
         JSeparator separator = new JSeparator();
         separator.setBounds(5, 6, 189, 16);
-        panelSouth.add(separator);
+        activityPanel.add(separator);
 
         JLabel lblUserFilter = new JLabel("User Filter");
         lblUserFilter.setBounds(12, 20, 90, 16);
-        panelSouth.add(lblUserFilter);
+        activityPanel.add(lblUserFilter);
 
         userFilter = new JComboBox<>();
 
@@ -235,36 +252,39 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
         });
 
         userFilter.setBounds(5, 40, 177, 27);
-        panelSouth.add(userFilter);
+        activityPanel.add(userFilter);
         userFilter.setRenderer(new UserComboBox());
 
         JSeparator separator_1 = new JSeparator();
         separator_1.setBounds(2, 70, 189, 16);
-        panelSouth.add(separator_1);
+        activityPanel.add(separator_1);
 
+        /*
+            Activity panel
+         */
         JLabel lblNewLabel = new JLabel("Activity Details");
         lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
         lblNewLabel.setBounds(43, 80, 109, 16);
-        panelSouth.add(lblNewLabel);
+        activityPanel.add(lblNewLabel);
 
         JLabel label = new JLabel("Name:");
         label.setBounds(5, 105, 40, 16);
-        panelSouth.add(label);
+        activityPanel.add(label);
 
         activityName = new JTextField();
         activityName.setBounds(43, 99, 134, 28);
         activityName.setColumns(10);
         activityName.setEnabled(false);
-        panelSouth.add(activityName);
+        activityPanel.add(activityName);
 
         JLabel label_1 = new JLabel("Description:");
         label_1.setBounds(5, 131, 83, 16);
-        panelSouth.add(label_1);
+        activityPanel.add(label_1);
 
         JScrollPane scrollPane_1 = new JScrollPane();
         scrollPane_1.setViewportBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
         scrollPane_1.setBounds(15, 159, 179, 93);
-        panelSouth.add(scrollPane_1);
+        activityPanel.add(scrollPane_1);
 
         projectDescription = new JTextArea();
         projectDescription.setLineWrap(true);
@@ -273,7 +293,7 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
 
         JLabel lblProgress = new JLabel("Progress:");
         lblProgress.setBounds(70, 260, 61, 16);
-        panelSouth.add(lblProgress);
+        activityPanel.add(lblProgress);
 
         progressSlider = new JSlider();
         progressSlider.setFont(new Font("Lucida Grande", Font.PLAIN, 9));
@@ -285,16 +305,16 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
         progressSlider.setPaintLabels(true);
         progressSlider.setBounds(0, 283, 200, 38);
         progressSlider.setValue(0);
-        panelSouth.add(progressSlider);
+        activityPanel.add(progressSlider);
 
         JLabel label_2 = new JLabel("Users");
         label_2.setAlignmentX(0.5f);
         label_2.setBounds(81, 352, 50, 16);
-        panelSouth.add(label_2);
+        activityPanel.add(label_2);
 
         JScrollPane scrollPane_2 = new JScrollPane();
         scrollPane_2.setBounds(21, 377, 161, 144);
-        panelSouth.add(scrollPane_2);
+        activityPanel.add(scrollPane_2);
 
         users = new CheckBoxList();
 
@@ -304,28 +324,163 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
 
         JLabel lblCost = new JLabel("Value:");
         lblCost.setBounds(5, 540, 40, 16);
-        panelSouth.add(lblCost);
+        activityPanel.add(lblCost);
 
         cost = new JTextField();
         cost.setBounds(45, 536, 134, 28);
         cost.setColumns(10);
-        panelSouth.add(cost);
+        activityPanel.add(cost);
 
         separator = new JSeparator();
         separator.setBounds(5, 580, 189, 16);
-        panelSouth.add(separator);
+        activityPanel.add(separator);
 
         label = new JLabel("Login:");
         label.setBounds(5, 605, 40, 16);
-        panelSouth.add(label);
+        activityPanel.add(label);
 
         login = new JTextField();
         login.setBounds(45, 600, 134, 28);
         login.setColumns(10);
         login.setEnabled(false);
-        panelSouth.add(login);
+        activityPanel.add(login);
 
         setCurrentUser(projectManager.getCurrentUser());
+
+/*
+EVAPanel
+ */
+        evaPanel = new JPanel();
+        evaPanel.setBounds(5, 12, 195, 570);
+        leftPanel.add(evaPanel);
+        evaPanel.setLayout(null);
+
+        evaDateSelector = new JComboBox<>();
+        evaDateSelector.setBounds(21, 33, 155, 27);
+        evaPanel.add(evaDateSelector);
+
+        JLabel lblNewLabel_1 = new JLabel("Earned Value Analysis for:");
+        lblNewLabel_1.setBounds(11, 5, 178, 16);
+        evaPanel.add(lblNewLabel_1);
+
+        JLabel lblProgressReview = new JLabel("Progress Review");
+        lblProgressReview.setBounds(6, 61, 111, 16);
+        evaPanel.add(lblProgressReview);
+
+        JLabel lblPlannedValue = new JLabel("PV:");
+        lblPlannedValue.setBounds(29, 95, 31, 16);
+        evaPanel.add(lblPlannedValue);
+
+        pvFld = new JTextField();
+        pvFld.setBounds(51, 89, 87, 28);
+        evaPanel.add(pvFld);
+        pvFld.setColumns(10);
+
+        JLabel lblEv = new JLabel("EV:");
+        lblEv.setBounds(29, 129, 31, 16);
+        evaPanel.add(lblEv);
+
+        evFld = new JTextField();
+        evFld.setBounds(51, 123, 87, 28);
+        evaPanel.add(evFld);
+        evFld.setColumns(10);
+
+        JLabel lblAc = new JLabel("AC:");
+        lblAc.setBounds(29, 161, 31, 16);
+        evaPanel.add(lblAc);
+
+        acFld = new JTextField();
+        acFld.setBounds(51, 155, 87, 28);
+        evaPanel.add(acFld);
+        acFld.setColumns(10);
+
+        JLabel lblBac = new JLabel("BAC:");
+        lblBac.setBounds(21, 195, 39, 16);
+        evaPanel.add(lblBac);
+
+        bacFld = new JTextField();
+        bacFld.setBounds(51, 189, 87, 28);
+        evaPanel.add(bacFld);
+        bacFld.setColumns(10);
+
+        JLabel lblPerformanceIndicators = new JLabel("Performance Indicators");
+        lblPerformanceIndicators.setBounds(21, 223, 160, 16);
+        evaPanel.add(lblPerformanceIndicators);
+
+        JLabel lblSv = new JLabel("SV:");
+        lblSv.setBounds(29, 257, 31, 16);
+        evaPanel.add(lblSv);
+
+        svFld = new JTextField();
+        svFld.setBounds(51, 251, 87, 28);
+        evaPanel.add(svFld);
+        svFld.setColumns(10);
+
+        JLabel lblCv = new JLabel("CV:");
+        lblCv.setBounds(29, 291, 31, 16);
+        evaPanel.add(lblCv);
+
+        cvFld = new JTextField();
+        cvFld.setBounds(51, 285, 87, 28);
+        evaPanel.add(cvFld);
+        cvFld.setColumns(10);
+
+        JLabel lblCpi = new JLabel("CPI:");
+        lblCpi.setBounds(29, 323, 31, 16);
+        evaPanel.add(lblCpi);
+
+        cpiFld = new JTextField();
+        cpiFld.setBounds(51, 317, 87, 28);
+        evaPanel.add(cpiFld);
+        cpiFld.setColumns(10);
+
+        JLabel lblSpi = new JLabel("SPI:");
+        lblSpi.setBounds(29, 357, 31, 16);
+        evaPanel.add(lblSpi);
+
+        spiFld = new JTextField();
+        spiFld.setBounds(51, 351, 87, 28);
+        evaPanel.add(spiFld);
+        spiFld.setColumns(10);
+
+        JLabel lblEac = new JLabel("EAC:");
+        lblEac.setBounds(16, 390, 31, 16);
+        evaPanel.add(lblEac);
+
+        eacFld = new JTextField();
+        eacFld.setBounds(51, 385, 87, 28);
+        evaPanel.add(eacFld);
+        eacFld.setColumns(10);
+
+        JLabel lblEtc = new JLabel("ETC:");
+        lblEtc.setBounds(16, 424, 31, 16);
+        evaPanel.add(lblEtc);
+
+        etcFld = new JTextField();
+        etcFld.setBounds(51, 419, 87, 28);
+        evaPanel.add(etcFld);
+        etcFld.setColumns(10);
+
+        JLabel lblVac = new JLabel("VAC:");
+        lblVac.setBounds(16, 456, 31, 16);
+        evaPanel.add(lblVac);
+
+        vacFld = new JTextField();
+        vacFld.setBounds(51, 451, 87, 28);
+        evaPanel.add(vacFld);
+        vacFld.setColumns(10);
+
+        JLabel lblCompleted = new JLabel("Completed:");
+        lblCompleted.setBounds(0, 490, 77, 16);
+        evaPanel.add(lblCompleted);
+
+        completedFld = new JTextField();
+        completedFld.setBounds(77, 484, 53, 28);
+        evaPanel.add(completedFld);
+        completedFld.setColumns(10);
+
+        activityPanel.setVisible(false);
+        evaPanel.setVisible(true);
     }
 
     @Override
