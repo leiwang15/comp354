@@ -14,7 +14,7 @@ public class Activity extends DirtyAware {
     private int duration; //in days
     private int pessimistic;
     private int optimistic;
-    private int value;
+    private float value;
     private List<Integer> predecessors;
     private List<User> users;
 
@@ -88,7 +88,7 @@ public class Activity extends DirtyAware {
         }
     }
 
-    public int getCost() {
+    public float getValue() {
         return value;
     }
 
@@ -266,7 +266,7 @@ public class Activity extends DirtyAware {
                 + " Pessimistic: "
                 + this.getPessimistic()
                 + " Value: "
-                + this.getCost()
+                + this.getValue()
                 + " Progress: "
                 + this.getProgress()
                 + " predecessors: "

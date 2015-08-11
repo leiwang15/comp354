@@ -73,16 +73,16 @@ public class EarnedValuePoint extends DirtyAware {
         return date;
     }
 
-    public int getPlannedValue() {
-        return (int) plannedValue;
+    public float getPlannedValue() {
+        return plannedValue;
     }
 
-    public int getEarnedValue() {
-        return (int) earnedValue;
+    public float getEarnedValue() {
+        return earnedValue;
     }
 
-    public int getActualCost() {
-        return (int) actualCost;
+    public float getActualCost() {
+        return  actualCost;
     }
 
     public int getProjectID() {

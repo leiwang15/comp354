@@ -7,6 +7,11 @@ import edu.concordia.comp354.gui.PMTable;
 import edu.concordia.comp354.model.EVA.EVARenderer;
 import edu.concordia.comp354.model.EVA.EarnedValueAnalysis;
 import edu.concordia.comp354.model.EVA.EarnedValuePoint;
+import net.objectlab.kit.datecalc.common.DateCalculator;
+import net.objectlab.kit.datecalc.common.HolidayHandlerType;
+import net.objectlab.kit.datecalc.jdk8.LocalDateKitCalculatorsFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.data.xy.XYSeriesCollection;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -27,7 +32,7 @@ public class EVATab extends ActivityEntry implements EVARenderer {
     protected static final String EV = "Earned Value";
     protected static final String AC = "Actual Cost";
     public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern(ActivityEntry.DATE_FORMAT);
-    private EVAPanel evaPanel;
+    private ChartPanel chartPanel;
 
     public EVATab(MainRenderer mainRenderer) {
         super(mainRenderer);
@@ -72,8 +77,13 @@ public class EVATab extends ActivityEntry implements EVARenderer {
             String selectedItem = (String) selector.getSelectedItem();
             selector.removeAllItems();
             LocalDate startDate = getCurrentProject().getStart_date();
+
+            DateCalculator<LocalDate> dateCalculator = LocalDateKitCalculatorsFactory.getDefaultInstance()
+                    .getDateCalculator("Canada", HolidayHandlerType.FORWARD);
             for (EarnedValuePoint point : getCurrentProject().getEvaPoints()) {
-                selector.addItem(startDate.plusDays(point.getDate()).format(DATE_FORMAT));
+                dateCalculator.setStartDate(startDate);
+                dateCalculator.moveByBusinessDays(point.getDate());
+                selector.addItem(dateCalculator.getCurrentBusinessDate().format(DATE_FORMAT));
             }
             if ( selectedItem != null ) {
                 selector.setSelectedItem(selectedItem);
@@ -84,7 +94,6 @@ public class EVATab extends ActivityEntry implements EVARenderer {
 
         getMainRenderer.activityPanel.setVisible(false);
         getMainRenderer.evaPanel.setVisible(true);
-
     }
 
     protected void createEntryColumns() {
@@ -143,6 +152,9 @@ public class EVATab extends ActivityEntry implements EVARenderer {
         if (update) {
             getProjectManager().getActivityNetwork().createAONNetwork();
 
+            DateCalculator<LocalDate> dateCalculator = LocalDateKitCalculatorsFactory.getDefaultInstance()
+                    .getDateCalculator("Canada", HolidayHandlerType.FORWARD);
+
             if (getCurrentProject() != null) {
                 LocalDate start_date = getCurrentProject().getStart_date();
                 List<EarnedValuePoint> points = getCurrentProject().getEvaPoints();
@@ -150,12 +162,15 @@ public class EVATab extends ActivityEntry implements EVARenderer {
                 for (i = 0; i < points.size(); i++) {
                     EarnedValuePoint point = points.get(i);
 
+                    dateCalculator.setStartDate(start_date);
+                    dateCalculator.moveByBusinessDays(point.getDate());
+
                     tableRows[i] = new Object[]{
                             point.getDBID(),
-                            start_date.plusDays(point.getDate()).format(DateTimeFormatter.ofPattern(ActivityEntry.DATE_FORMAT)),
-                            MainRenderer.DF.format(point.getPlannedValue()),
-                            MainRenderer.DF.format(point.getEarnedValue()),
-                            MainRenderer.DF.format(point.getActualCost())
+                            dateCalculator.getCurrentBusinessDate().format(DATE_FORMAT),
+                            MainRenderer.DOLLAR_FORMAT.format(point.getPlannedValue()),
+                            MainRenderer.DOLLAR_FORMAT.format(point.getEarnedValue()),
+                            MainRenderer.DOLLAR_FORMAT.format(point.getActualCost())
                     };
                 }
 
@@ -178,19 +193,19 @@ public class EVATab extends ActivityEntry implements EVARenderer {
     public void populateEVA(EarnedValueAnalysis eva) {
         MainRenderer mainRenderer = getMainRenderer();
 
-        mainRenderer.pvFld.setText(Integer.toString((int) eva.getPV()));
-        mainRenderer.evFld.setText(Integer.toString((int) eva.getEV()));
-        mainRenderer.acFld.setText(Integer.toString((int) eva.getAC()));
-        mainRenderer.bacFld.setText(Integer.toString((int) eva.getBAC()));
+        mainRenderer.pvFld.setText(MainRenderer.DOLLAR_FORMAT.format(eva.getPV()));
+        mainRenderer.evFld.setText(MainRenderer.DOLLAR_FORMAT.format(eva.getEV()));
+        mainRenderer.acFld.setText(MainRenderer.DOLLAR_FORMAT.format(eva.getAC()));
+        mainRenderer.bacFld.setText(MainRenderer.DOLLAR_FORMAT.format(eva.getBAC()));
 
-        mainRenderer.svFld.setText(Integer.toString((int) eva.getScheduleVariance()));
-        mainRenderer.cvFld.setText(Integer.toString((int) eva.getCostVariance()));
-        mainRenderer.cpiFld.setText(Integer.toString((int) eva.getCostPerformanceIndex()));
-        mainRenderer.spiFld.setText(Integer.toString((int) eva.getSchedulePerformanceIndex()));
-        mainRenderer.eacFld.setText(Integer.toString((int) eva.getEstimateAtCompletion()));
-        mainRenderer.etcFld.setText(Integer.toString((int) eva.getEstimateToComplete()));
-        mainRenderer.vacFld.setText(Integer.toString((int) eva.getVarianceAtCompletion()));
-        mainRenderer.completedFld.setText(Integer.toString((int) eva.getPercentComplete()));
+        mainRenderer.svFld.setText(MainRenderer.DOLLAR_FORMAT.format(eva.getScheduleVariance()));
+        mainRenderer.cvFld.setText(MainRenderer.DOLLAR_FORMAT.format(eva.getCostVariance()));
+        mainRenderer.cpiFld.setText(MainRenderer.DECIMAL_FORMAT.format(eva.getCostPerformanceIndex()));
+        mainRenderer.spiFld.setText(MainRenderer.DECIMAL_FORMAT.format(eva.getSchedulePerformanceIndex()));
+        mainRenderer.eacFld.setText(MainRenderer.DOLLAR_FORMAT.format(eva.getEstimateAtCompletion()));
+        mainRenderer.etcFld.setText(MainRenderer.DOLLAR_FORMAT.format(eva.getEstimateToComplete()));
+        mainRenderer.vacFld.setText(MainRenderer.DOLLAR_FORMAT.format(eva.getVarianceAtCompletion()));
+        mainRenderer.completedFld.setText(MainRenderer.PERCENT_FORMAT.format(eva.getPercentComplete()));
     }
 
     @Override
@@ -205,13 +220,20 @@ public class EVATab extends ActivityEntry implements EVARenderer {
 
     @Override
     public void autoLayout(mxGraph graph) {
-        if (evaPanel != null) {
-            charts.remove(evaPanel);
+
+        List<EarnedValuePoint> points = getCurrentProject().getEvaPoints();
+
+        Charts chart = new Charts("Earned Value Analysis",DATE, "Value",points,getCurrentProject().getStart_date());
+
+        if (chartPanel == null) {
+            chartPanel = new ChartPanel(chart.chart);
+            chartPanel.setPreferredSize(new Dimension(500, 270));
+            charts.add(chartPanel, BorderLayout.CENTER);
+
+        } else {
+            chartPanel.setChart(chart.chart);
         }
-
-        evaPanel = new EVAPanel(this, graph);
-
-        charts.add(evaPanel, BorderLayout.CENTER);
+        chartPanel.setVisible(true);
 
         charts.revalidate();
     }

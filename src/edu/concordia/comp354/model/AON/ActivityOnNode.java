@@ -190,11 +190,11 @@ public class ActivityOnNode {
 
     public float getPV(int date) {
         return date < getES() ? 0 :
-                date < getEF() ? (date - getES()) / (float) activity.getDuration() * activity.getCost() :
-                        activity.getCost();
+                date < getEF() ? (date - getES()) / (float) activity.getDuration() * activity.getValue() :
+                        activity.getValue();
     }
 
     public float getEV() {
-        return (float) activity.getProgress() * activity.getCost() / 100f;
+        return (float) activity.getProgress() * activity.getValue() / 100f;
     }
 }

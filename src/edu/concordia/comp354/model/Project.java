@@ -4,14 +4,13 @@ import edu.concordia.comp354.controller.ActivityController;
 import edu.concordia.comp354.controller.ProjectController;
 import edu.concordia.comp354.model.EVA.EarnedValueAnalysis;
 import edu.concordia.comp354.model.EVA.EarnedValuePoint;
-import org.joda.time.DateTime;
-import org.joda.time.Days;
+import net.objectlab.kit.datecalc.common.DateCalculator;
+import net.objectlab.kit.datecalc.common.HolidayHandlerType;
+import net.objectlab.kit.datecalc.jdk8.LocalDateKitCalculatorsFactory;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Project extends DirtyAware {
@@ -262,13 +261,13 @@ public class Project extends DirtyAware {
 
     public void generateEVAList(ActivityNetwork activityNetwork, int period) {
 
-        if (evaPoints == null) {
+        if (evaPoints == null || evaPoints.size() == 0) {
 
             evaPoints = new ArrayList<>();
 
             float duration = activityNetwork.getProjectDuration();
+            for (int date = period; date < duration; date += period) {
 
-            for (int date = period + 1; date < duration; date += period) {
                 evaPoints.add(new EarnedValuePoint(new EarnedValueAnalysis(activityNetwork, date, 0)));
             }
 
@@ -295,9 +294,25 @@ public class Project extends DirtyAware {
     }
 
     public int date2day(LocalDate date) {
+        DateCalculator<LocalDate> dateCalculator = LocalDateKitCalculatorsFactory.getDefaultInstance()
+                .getDateCalculator("Canada", HolidayHandlerType.BACKWARD);
 
-        return Days.daysBetween(new DateTime(Date.from(start_date.atStartOfDay(ZoneId.systemDefault()).toInstant())),
-                new DateTime(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()))).getDays();
+        DateCalculator<LocalDate> targetDateCalculator = LocalDateKitCalculatorsFactory.getDefaultInstance()
+                .getDateCalculator("Canada", HolidayHandlerType.BACKWARD);
+
+        targetDateCalculator.setCurrentBusinessDate(start_date);    //  guarantees to be a working day
+        LocalDate targetDate = targetDateCalculator.getCurrentBusinessDate();
+        dateCalculator.setCurrentBusinessDate(date);    //  guarantees to be a working day
+
+        int days = 0;
+        while (!dateCalculator.getCurrentBusinessDate().equals(targetDate)) {
+            dateCalculator.moveByBusinessDays(-1);
+            days++;
+        }
+
+        return days;
+//        return Days.daysBetween(new DateTime(Date.from(start_date.atStartOfDay(ZoneId.systemDefault()).toInstant())),
+//                new DateTime(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()))).getDays();
     }
 
     public EarnedValuePoint findEVAPoint(int date) {

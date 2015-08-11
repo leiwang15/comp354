@@ -39,7 +39,7 @@ public class EarnedValueAnalysis {
 
         BAC = 0;
         for (Activity activity : activityNetwork.getActivities()) {
-            BAC += activity.getCost();
+            BAC += activity.getValue();
         }
     }
 
@@ -90,7 +90,7 @@ public class EarnedValueAnalysis {
     }
 
     public float getPercentComplete() {
-        return EV * 100 / BAC;
+        return EV / BAC;
     }
 
     public float getCostVariance() {

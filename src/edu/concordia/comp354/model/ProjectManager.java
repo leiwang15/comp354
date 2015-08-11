@@ -21,7 +21,7 @@ public class ProjectManager {
     public static final String ROLE_MEMBER = "Project Member";
     public static final String NO_FILTER = "-";
     public static final int UNDEFINED = -1;
-    private static final int PERIOD = 7;
+    private static final int PERIOD = 5;
     protected List<Project> projectList;
     private User currentUser;
     Project currentProject;
@@ -255,7 +255,7 @@ public class ProjectManager {
     }
 
     public void losingDetailFocus(int id) {
-        if (id < currentProject.getActivities().size()) {
+        if (id!= UNDEFINED && id < currentProject.getActivities().size()) {
             Activity activity = currentProject.getActivities().get(id);
 
             activityDetailRenderer.getActivityDetailsFromUI(activity);

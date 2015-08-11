@@ -16,6 +16,7 @@ import edu.concordia.comp354.model.PERT.EventEdge;
 import edu.concordia.comp354.model.PERT.PERTEvent;
 import edu.concordia.comp354.model.PERT.PERTNetwork;
 import net.objectlab.kit.datecalc.common.DateCalculator;
+import net.objectlab.kit.datecalc.common.HolidayHandlerType;
 import net.objectlab.kit.datecalc.jdk8.LocalDateKitCalculatorsFactory;
 
 import java.time.LocalDate;
@@ -245,10 +246,6 @@ public class ActivityNetwork {
     }
 
     public float getProjectDuration() {
-
-//        if ( lastActivity == null ) {
-//            createAONNetwork();
-//        }
 
         return lastActivity != null ? lastActivity.getLF() : 0;
     }

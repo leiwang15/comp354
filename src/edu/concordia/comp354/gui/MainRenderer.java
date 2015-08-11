@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,10 +60,13 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
     private JTextArea projectDescription;
     private CheckBoxList users;
     private JSlider progressSlider;
-    private JTextField cost;
+    private JTextField value;
     private HashMap<String, JCheckBox> checkboxMap;
     private JTextField login;
     public static DecimalFormat DF = new DecimalFormat("#,###");
+    public static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,###.##");
+    public static DecimalFormat DOLLAR_FORMAT = new DecimalFormat("'$'#,###");
+    public static DecimalFormat PERCENT_FORMAT = new DecimalFormat("#%");
     public JPanel evaPanel;
     public JComboBox<String> evaDateSelector;
     public JTextField pvFld;
@@ -81,8 +85,17 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
     public JPanel activityPanel;
     JButton btnSetEV;
 
+    {
+        DF.setRoundingMode(RoundingMode.UP);
+        DECIMAL_FORMAT.setRoundingMode(RoundingMode.UP);
+        DOLLAR_FORMAT.setRoundingMode(RoundingMode.UP);
+    }
     public MainRenderer(ProjectManager projectManager) {
         this.projectManager = projectManager;
+
+//        DF.setRoundingMode(RoundingMode.UP);
+//        DECIMAL_FORMAT.setRoundingMode(RoundingMode.UP);
+//        DOLLAR_FORMAT.setRoundingMode(RoundingMode.UP);
 
         projectManager.setProjectRenderer(this);
         projectManager.setActivityDetailRenderer(this);
@@ -339,10 +352,16 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
         lblCost.setBounds(5, 540, 40, 16);
         activityPanel.add(lblCost);
 
-        cost = new JTextField();
-        cost.setBounds(45, 536, 134, 28);
-        cost.setColumns(10);
-        activityPanel.add(cost);
+        value = new JTextField();
+        value.setBounds(45, 536, 134, 28);
+        value.setColumns(10);
+        activityPanel.add(value);
+
+        value.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                projectManager.losingDetailFocus(activityEntry.getSelectedActivityRow());
+            }
+        });
 
         separator = new JSeparator();
         separator.setBounds(5, 580, 189, 16);
@@ -385,7 +404,7 @@ EVAPanel
         evaPanel.add(lblPlannedValue);
 
         pvFld = new JTextField();
-        pvFld.setBounds(51, 89, 87, 28);
+        pvFld.setBounds(51, 89, 100, 28);
         evaPanel.add(pvFld);
         pvFld.setColumns(10);
 
@@ -394,7 +413,7 @@ EVAPanel
         evaPanel.add(lblEv);
 
         evFld = new JTextField();
-        evFld.setBounds(51, 123, 87, 28);
+        evFld.setBounds(51, 123, 100, 28);
         evaPanel.add(evFld);
         evFld.setColumns(10);
 
@@ -403,7 +422,7 @@ EVAPanel
         evaPanel.add(lblAc);
 
         acFld = new JTextField();
-        acFld.setBounds(51, 155, 87, 28);
+        acFld.setBounds(51, 155, 100, 28);
         evaPanel.add(acFld);
         acFld.setColumns(10);
 
@@ -412,7 +431,7 @@ EVAPanel
         evaPanel.add(lblBac);
 
         bacFld = new JTextField();
-        bacFld.setBounds(51, 189, 87, 28);
+        bacFld.setBounds(51, 189, 100, 28);
         evaPanel.add(bacFld);
         bacFld.setColumns(10);
 
@@ -425,7 +444,7 @@ EVAPanel
         evaPanel.add(lblSv);
 
         svFld = new JTextField();
-        svFld.setBounds(51, 251, 87, 28);
+        svFld.setBounds(51, 251, 100, 28);
         evaPanel.add(svFld);
         svFld.setColumns(10);
 
@@ -434,7 +453,7 @@ EVAPanel
         evaPanel.add(lblCv);
 
         cvFld = new JTextField();
-        cvFld.setBounds(51, 285, 87, 28);
+        cvFld.setBounds(51, 285, 100, 28);
         evaPanel.add(cvFld);
         cvFld.setColumns(10);
 
@@ -443,7 +462,7 @@ EVAPanel
         evaPanel.add(lblCpi);
 
         cpiFld = new JTextField();
-        cpiFld.setBounds(51, 317, 87, 28);
+        cpiFld.setBounds(51, 317, 100, 28);
         evaPanel.add(cpiFld);
         cpiFld.setColumns(10);
 
@@ -452,7 +471,7 @@ EVAPanel
         evaPanel.add(lblSpi);
 
         spiFld = new JTextField();
-        spiFld.setBounds(51, 351, 87, 28);
+        spiFld.setBounds(51, 351, 100, 28);
         evaPanel.add(spiFld);
         spiFld.setColumns(10);
 
@@ -461,7 +480,7 @@ EVAPanel
         evaPanel.add(lblEac);
 
         eacFld = new JTextField();
-        eacFld.setBounds(51, 385, 87, 28);
+        eacFld.setBounds(51, 385, 100, 28);
         evaPanel.add(eacFld);
         eacFld.setColumns(10);
 
@@ -470,7 +489,7 @@ EVAPanel
         evaPanel.add(lblEtc);
 
         etcFld = new JTextField();
-        etcFld.setBounds(51, 419, 87, 28);
+        etcFld.setBounds(51, 419, 100, 28);
         evaPanel.add(etcFld);
         etcFld.setColumns(10);
 
@@ -479,7 +498,7 @@ EVAPanel
         evaPanel.add(lblVac);
 
         vacFld = new JTextField();
-        vacFld.setBounds(51, 451, 87, 28);
+        vacFld.setBounds(51, 451, 100, 28);
         evaPanel.add(vacFld);
         vacFld.setColumns(10);
 
@@ -582,7 +601,7 @@ EVAPanel
         }
 
         progressSlider.setValue(activity.getProgress());
-        cost.setText(DF.format(activity.getCost()));
+        value.setText(DF.format(activity.getValue()));
 //        users.setSelectionInterval(-1,-1);
         users.repaint();
     }
@@ -604,7 +623,7 @@ EVAPanel
 
         activity.setUsers(projectManager.getUserList(actUsers));
         activity.setProgress(progressSlider.getValue());
-        activity.setValue(Integer.parseInt(StringUtils.defaultIfEmpty(cost.getText().replaceAll(",", ""), "0")));
+        activity.setValue(Integer.parseInt(StringUtils.defaultIfEmpty(value.getText().replaceAll(",", ""), "0")));
     }
 
     @Override
@@ -647,7 +666,7 @@ EVAPanel
         projectDescription.setEnabled(enabled);
         progressSlider.setEnabled(enabled);
         users.setEnabled(enabled);
-        cost.setEnabled(enabled);
+        value.setEnabled(enabled);
     }
 
     protected void initMenus() {
