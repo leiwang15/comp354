@@ -37,7 +37,7 @@ public class EVATable extends JTable {
         int col = e.getColumn();
         int row = e.getFirstRow();
         if (col == 4 && StringUtils.isNotEmpty((String) getValueAt(row, col))) {
-            int ac = Integer.parseInt(((String) getValueAt(row, col)).replace(",", ""));
+            int ac = Integer.parseInt(((String) getValueAt(row, col)).replace(",", "").replace("$", ""));
             evaTab.getProjectManager().getCurrentProject().getEvaPoints().get(row).setActualCost(ac);
         }
     }

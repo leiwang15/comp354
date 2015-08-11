@@ -86,9 +86,9 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
     JButton btnSetEV;
 
     {
-        DF.setRoundingMode(RoundingMode.UP);
-        DECIMAL_FORMAT.setRoundingMode(RoundingMode.UP);
-        DOLLAR_FORMAT.setRoundingMode(RoundingMode.UP);
+        DF.setRoundingMode(RoundingMode.HALF_UP);
+        DECIMAL_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
+        DOLLAR_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
     }
     public MainRenderer(ProjectManager projectManager) {
         this.projectManager = projectManager;
@@ -600,8 +600,8 @@ EVAPanel
             }
         }
 
+        value.setText(DF.format(activity.getValue()));  //  call this before progressSlider.setValue()
         progressSlider.setValue(activity.getProgress());
-        value.setText(DF.format(activity.getValue()));
 //        users.setSelectionInterval(-1,-1);
         users.repaint();
     }

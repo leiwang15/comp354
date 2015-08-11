@@ -92,7 +92,7 @@ public class Activity extends DirtyAware {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(float value) {
 
         if (value != this.value) {
             this.value = value;
