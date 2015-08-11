@@ -183,8 +183,12 @@ public class ProjectManager {
         }
 
         if (currentProject.getEvaPoints() != null) {
+            if (currentProject.getEvaPoints().size()!=0 && currentProject.getEvaPoints().get(0).isNew()) {
+                new EVAController().deleteProject(currentProject.getProject_id());
+            }
             for (EarnedValuePoint point : currentProject.getEvaPoints()) {
                 if (point.isNew()) {
+
                     point.setProjectID(currentProject.getProject_id());
                     point.setDBID(new EVAController().add(point));
                     point.written();

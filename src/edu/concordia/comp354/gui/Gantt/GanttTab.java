@@ -25,7 +25,7 @@ import java.util.*;
 public class GanttTab extends ActivityEntry {
 
     public GanttTab(MainRenderer mainRenderer) {
-        super(mainRenderer,ProjectManager.GANTT);
+        super(mainRenderer, ProjectManager.GANTT);
     }
 
     protected void initializeTab() {

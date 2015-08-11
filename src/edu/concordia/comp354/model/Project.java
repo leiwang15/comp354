@@ -271,7 +271,7 @@ public class Project extends DirtyAware {
                 evaPoints.add(new EarnedValuePoint(new EarnedValueAnalysis(activityNetwork, date, 0)));
             }
 
-            setDirty(DirtyLevels.NEW);
+            setDirty(DirtyLevels.MODIFIED);
         }
     }
 

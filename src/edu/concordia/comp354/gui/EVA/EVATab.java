@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class EVATab extends ActivityEntry implements EVARenderer {
@@ -179,7 +180,9 @@ public class EVATab extends ActivityEntry implements EVARenderer {
 
     @Override
     public void clear() {
-        fillTable(true);
+        getCurrentProject().setEvaPoints(new ArrayList<>());
+        fillTable(false);
+        getProjectManager().activityChanged();
         repaint();
     }
 

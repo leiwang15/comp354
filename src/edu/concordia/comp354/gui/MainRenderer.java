@@ -20,6 +20,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +48,7 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
     protected JMenuItem mntmNewProject;
     protected JMenuItem mntmSaveProject;
     protected JMenuItem mntmDeleteProject;
+    protected JMenuItem mntmClearAct;
     protected JList list;
     JSplitPane splitPane;
 
@@ -88,8 +90,11 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
 
     {
         DF.setRoundingMode(RoundingMode.HALF_UP);
+        DF.getDecimalFormatSymbols().setNaN("");
         DECIMAL_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
+        DECIMAL_FORMAT.getDecimalFormatSymbols().setNaN("");
         DOLLAR_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
+        DOLLAR_FORMAT.getDecimalFormatSymbols().setNaN("");
     }
 
     public MainRenderer(ProjectManager projectManager) {
@@ -830,6 +835,16 @@ EVAPanel
                 }
             });
 
+            mntmClearAct = new JMenuItem("Clear");
+            mnEdit.add(mntmClearAct);
+
+            mntmClearAct.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+
+                    clear();
+                }
+            });
+
             JMenu mnAnalysis = new JMenu("Analysis");
             menuBar.add(mnAnalysis);
 
@@ -919,6 +934,7 @@ EVAPanel
     @Override
     public void clear() {
         activityEntry.clear();
+        activityEntry.clearActivityDetails();
     }
 
     @Override
