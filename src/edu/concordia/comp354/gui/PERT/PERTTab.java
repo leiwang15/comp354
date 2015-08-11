@@ -10,6 +10,7 @@ import edu.concordia.comp354.gui.PMTableModel;
 import edu.concordia.comp354.gui.editors.PredecessorEditor;
 import edu.concordia.comp354.model.Activity;
 import edu.concordia.comp354.model.IActivityEntryRenderer;
+import edu.concordia.comp354.model.ProjectManager;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
 import sun.swing.table.DefaultTableCellHeaderRenderer;
@@ -37,12 +38,10 @@ public class PERTTab extends ActivityEntry implements IActivityEntryRenderer {
     public static DecimalFormat df = new DecimalFormat("##.##");
 
     public PERTTab(MainRenderer mainRenderer) {
-        super(mainRenderer);
+        super(mainRenderer, ProjectManager.PERT);
     }
 
     protected void initializeTab() {
-
-        setName("PERT");
 
         JPanel parentContainer = new JPanel();
         getMainRenderer().tabbedPane.addTab(getName(), null, this, null);

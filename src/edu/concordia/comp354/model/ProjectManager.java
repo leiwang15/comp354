@@ -27,6 +27,9 @@ public class ProjectManager {
     public static final String ROLE_MEMBER = "Project Member";
     public static final String NO_FILTER = "-";
     public static final int UNDEFINED = -1;
+    public static final String GANTT = "Gantt";
+    public static final String PERT = "Pert";
+    public static final String EVA = "EVA";
     private static final int PERIOD = 5;
     protected List<Project> projectList;
     private User currentUser;
@@ -256,9 +259,14 @@ public class ProjectManager {
     }
 
     public void activityChanged() {
-        getActivityEntryRenderer().fillActivityList();
-        getActivityNetwork().createAONNetwork();
-        getActivityNetwork().createPERTChart();
+        activityEntryRenderer.fillActivityList();
+
+        //  todo: refactor with Strategy Design
+        if (activityEntryRenderer.getName().equals(GANTT)) {
+            getActivityNetwork().createAONNetwork();
+        } else if (activityEntryRenderer.getName().equals(PERT)) {
+            getActivityNetwork().createPERTChart();
+        }
     }
 
     public void losingDetailFocus(int id) {

@@ -14,6 +14,7 @@ public interface IActivityEntryRenderer {
     int getRowHeight();
     int getXScale();
     int getXGap();
+    String getName();
 
     void setActivityList();
     void fillActivityList();

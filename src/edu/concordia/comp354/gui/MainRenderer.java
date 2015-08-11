@@ -885,6 +885,11 @@ EVAPanel
     }
 
     @Override
+    public String getName() {
+        return activityEntry.getName();
+    }
+
+    @Override
     public void setActivityList() {
         activityEntry.setActivityList();
     }

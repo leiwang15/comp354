@@ -9,6 +9,7 @@ import edu.concordia.comp354.gui.editors.IntegerEditor;
 import edu.concordia.comp354.gui.editors.PredecessorEditor;
 import edu.concordia.comp354.model.Activity;
 import edu.concordia.comp354.model.EVA.EarnedValueAnalysis;
+import edu.concordia.comp354.model.ProjectManager;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
 import sun.swing.table.DefaultTableCellHeaderRenderer;
 
@@ -24,12 +25,10 @@ import java.util.*;
 public class GanttTab extends ActivityEntry {
 
     public GanttTab(MainRenderer mainRenderer) {
-        super(mainRenderer);
+        super(mainRenderer,ProjectManager.GANTT);
     }
 
     protected void initializeTab() {
-
-        setName("Gantt");
 
         JPanel parentContainer = new JPanel();
         getMainRenderer().tabbedPane.addTab(getName(), null, this, null);

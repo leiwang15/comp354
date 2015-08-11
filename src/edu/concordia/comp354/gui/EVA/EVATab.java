@@ -33,12 +33,10 @@ public class EVATab extends ActivityEntry implements EVARenderer {
     private ChartPanel chartPanel;
 
     public EVATab(MainRenderer mainRenderer) {
-        super(mainRenderer);
+        super(mainRenderer, ProjectManager.EVA);
     }
 
     protected void initializeTab() {
-
-        setName("EVA");
 
         JPanel parentContainer = new JPanel();
         getMainRenderer().tabbedPane.addTab(getName(), null, this, null);

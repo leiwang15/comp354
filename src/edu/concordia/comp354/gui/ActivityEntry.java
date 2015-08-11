@@ -5,6 +5,7 @@ import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
 import edu.concordia.comp354.model.Activity;
 import edu.concordia.comp354.model.IActivityEntryRenderer;
+import edu.concordia.comp354.model.ProjectManager;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -33,8 +34,10 @@ public abstract class ActivityEntry extends BaseTab implements IActivityEntryRen
 	private int previousID = -1;
 	protected JSplitPane splitPane;
 
-	public ActivityEntry(MainRenderer mainRenderer) {
+	public ActivityEntry(MainRenderer mainRenderer, String name) {
 		super(mainRenderer);
+		setName(name);
+
 		createUIComponents();
 
 		graphComponent = new mxGraphComponent(new mxGraph());
