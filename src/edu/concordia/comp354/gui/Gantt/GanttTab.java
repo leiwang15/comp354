@@ -30,16 +30,9 @@ public class GanttTab extends ActivityEntry {
     protected void initializeTab() {
 
         setName("Gantt");
-//        setLayout(new BorderLayout());
-
-//        JPanel parentContainer = getMainRenderer().getParentContainer(this);
 
         JPanel parentContainer = new JPanel();
         getMainRenderer().tabbedPane.addTab(getName(), null, this, null);
-//        tabbedPane.addTab(panel.getName(), null, panel, null);
-//        parentPanel.add(panel);
-
-//        parentContainer = this;
 
         parentContainer.setLayout(new BorderLayout());
 
@@ -47,14 +40,6 @@ public class GanttTab extends ActivityEntry {
         parentContainer.setMaximumSize(dimension);
         parentContainer.setMinimumSize(dimension);
         parentContainer.setPreferredSize(dimension);
-//        Dimension dimension = new Dimension(150, 600);
-//        this.setLayout(new BorderLayout());
-//        this.setMaximumSize(dimension);
-//        this.setMinimumSize(dimension);
-//        this.setPreferredSize(dimension);
-
-//        parentContainer.addTab("Gantt", null, panel, null);
-//        parentContainer.add(this);
     }
 
     @Override
@@ -178,15 +163,13 @@ public class GanttTab extends ActivityEntry {
     }
 
     public void autoLayout(mxGraph graph) {
+//        charts.removeAll();
         charts.remove(graphComponent);
 
         graphComponent = new GanttPanel(this,graph);
-//        graphComponent = new mxGraphComponent(graph);
 
         charts.add(graphComponent, BorderLayout.CENTER);
 
-//        new mxHierarchicalLayout(graph, SwingConstants.WEST).execute(graph.getDefaultParent());
-//        new mxParallelEdgeLayout(graph, SwingConstants.WEST).execute(graph.getDefaultParent());
         charts.revalidate();
     }
 }

@@ -16,13 +16,11 @@ import java.awt.event.*;
  * Created by joao on 15.06.05.
  */
 public abstract class ActivityEntry extends BaseTab implements IActivityEntryRenderer, ActionListener, ItemListener {
-//	protected static final String DATE_FORMAT = "yyyy/MM/dd";
 	public static final String DATE_FORMAT = "d MMM, yyyy";
 
 	public static final int X_SCALE = 20;
 	protected static final int X_GAP = 0;
 
-	//    protected JPanel panel;
 	protected JTable table;
 	protected JPanel charts;
 	private JScrollPane tablePane;
@@ -37,13 +35,13 @@ public abstract class ActivityEntry extends BaseTab implements IActivityEntryRen
 
 	public ActivityEntry(MainRenderer mainRenderer) {
 		super(mainRenderer);
-		getMainRenderer().setActivityEntry(this);
-
 		createUIComponents();
 
 		graphComponent = new mxGraphComponent(new mxGraph());
 
 		previousID = -1;
+
+		getMainRenderer().setActivityEntry(this);
 	}
 
 	public PMTable getTable() {
@@ -88,11 +86,7 @@ public abstract class ActivityEntry extends BaseTab implements IActivityEntryRen
 		splitPane.setMinimumSize(minimumSize);
 		splitPane.setMaximumSize(new Dimension(-1, -1));
 
-//        panel = new JPanel(new BorderLayout(), false);
-//        panel.setSize(new Dimension(640, 480));
-//        panel.add(splitPane);
 		setLayout(new BorderLayout());
-//        setSize(new Dimension(640, 480));
 		add(splitPane);
 
 
@@ -299,4 +293,16 @@ public abstract class ActivityEntry extends BaseTab implements IActivityEntryRen
 	}
 
 	public abstract void deleteActivity();
+//
+//	@Override
+//	public void setVisible(boolean flag) {
+//		super.setVisible(flag);
+//
+////		table.setVisible(flag);
+//		charts.setVisible(flag);
+////		tablePane.setVisible(flag);
+////		chartPane.setVisible(flag);
+//		graphComponent.setVisible(flag);
+////		splitPane.setVisible(flag);
+//	}
 }

@@ -294,11 +294,9 @@ public class Project extends DirtyAware {
     }
 
     public int date2day(LocalDate date) {
-        DateCalculator<LocalDate> dateCalculator = LocalDateKitCalculatorsFactory.getDefaultInstance()
-                .getDateCalculator("Canada", HolidayHandlerType.BACKWARD);
+        DateCalculator<LocalDate> dateCalculator = ProjectManager.getDateCalculator();
 
-        DateCalculator<LocalDate> targetDateCalculator = LocalDateKitCalculatorsFactory.getDefaultInstance()
-                .getDateCalculator("Canada", HolidayHandlerType.BACKWARD);
+        DateCalculator<LocalDate> targetDateCalculator = ProjectManager.getDateCalculator();
 
         targetDateCalculator.setCurrentBusinessDate(start_date);    //  guarantees to be a working day
         LocalDate targetDate = targetDateCalculator.getCurrentBusinessDate();

@@ -8,7 +8,13 @@ import edu.concordia.comp354.gui.EVA.EVATab;
 import edu.concordia.comp354.model.EVA.EVARenderer;
 import edu.concordia.comp354.model.EVA.EarnedValueAnalysis;
 import edu.concordia.comp354.model.EVA.EarnedValuePoint;
+import net.objectlab.kit.datecalc.common.DateCalculator;
+import net.objectlab.kit.datecalc.common.HolidayHandlerType;
+import net.objectlab.kit.datecalc.jdk8.Jdk8WorkingWeek;
+import net.objectlab.kit.datecalc.jdk8.LocalDateCalculator;
+import net.objectlab.kit.datecalc.jdk8.LocalDateKitCalculatorsFactory;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -35,6 +41,7 @@ public class ProjectManager {
     List<User> userList;
     private Map<Integer, User> userIDMap;
     private String filterUserName;
+    static public Jdk8WorkingWeek workingWeek = new Jdk8WorkingWeek();
 
     public ProjectManager() {
         filterUserName = null;
@@ -255,7 +262,7 @@ public class ProjectManager {
     }
 
     public void losingDetailFocus(int id) {
-        if (id!= UNDEFINED && id < currentProject.getActivities().size()) {
+        if (id != UNDEFINED && id < currentProject.getActivities().size()) {
             Activity activity = currentProject.getActivities().get(id);
 
             activityDetailRenderer.getActivityDetailsFromUI(activity);
@@ -389,7 +396,6 @@ public class ProjectManager {
     }
 
     public void userFilterSelected(String userName) {
-//        System.out.println(userName);
         this.filterUserName = userName.equals(NO_FILTER) ? null : userName;
 
         if (activityEntryRenderer != null) {
@@ -465,5 +471,31 @@ public class ProjectManager {
 
     public void selectEVADate(String dateStr) {
         evaRenderer.selectEVADate(dateStr);
+    }
+
+    public static List<String> getWorkingWeek() {
+        List<String> workingDays = new ArrayList<>();
+        for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
+            if (workingWeek.isWorkingDayFromDateTimeConstant(dayOfWeek)) {
+                workingDays.add(dayOfWeek.toString());
+            }
+        }
+        return workingDays;
+    }
+
+    public static void setWorkingWeek(List<String> workingDays) {
+        workingWeek = new Jdk8WorkingWeek();
+        for (String workDay : workingDays) {
+            workingWeek = workingWeek.withWorkingDayFromDateTimeConstant(true, DayOfWeek.valueOf(workDay.toUpperCase()));
+        }
+    }
+
+    public static DateCalculator<LocalDate> getDateCalculator() {
+        LocalDateCalculator dateCalculator = LocalDateKitCalculatorsFactory.getDefaultInstance()
+                .getDateCalculator("Canada", HolidayHandlerType.FORWARD_UNLESS_MOVING_BACK);
+
+        dateCalculator.setWorkingWeek(workingWeek);
+
+        return dateCalculator;
     }
 }

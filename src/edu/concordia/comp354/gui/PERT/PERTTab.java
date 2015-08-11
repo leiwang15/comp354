@@ -9,7 +9,7 @@ import edu.concordia.comp354.gui.PMTable;
 import edu.concordia.comp354.gui.PMTableModel;
 import edu.concordia.comp354.gui.editors.PredecessorEditor;
 import edu.concordia.comp354.model.Activity;
-import edu.concordia.comp354.model.EVA.EarnedValueAnalysis;
+import edu.concordia.comp354.model.IActivityEntryRenderer;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
 import sun.swing.table.DefaultTableCellHeaderRenderer;
@@ -27,9 +27,10 @@ import java.util.Date;
 /**
  * Created by joao on 15.07.25.
  */
-public class PERTTab extends ActivityEntry {
+public class PERTTab extends ActivityEntry implements IActivityEntryRenderer {
 
     private static final String OPTIMISTIC = "Optimistic";
+    private static final String NORMAL = "Normal";
     private static final String PESSIMISTIC = "Pessimistic";
     private static final String EXPECTED = "Expected (t)";
     private static final String STDEV = "Stdev (s)";
@@ -42,9 +43,7 @@ public class PERTTab extends ActivityEntry {
     protected void initializeTab() {
 
         setName("PERT");
-//        setLayout(new BorderLayout());
 
-//        JPanel parentContainer = getMainRenderer().getParentContainer(this);
         JPanel parentContainer = new JPanel();
         getMainRenderer().tabbedPane.addTab(getName(), null, this, null);
 
@@ -54,15 +53,6 @@ public class PERTTab extends ActivityEntry {
         parentContainer.setMaximumSize(dimension);
         parentContainer.setMinimumSize(dimension);
         parentContainer.setPreferredSize(dimension);
-//        this.setLayout(new BorderLayout());
-//        Dimension dimension = new Dimension(150, 600);
-//        this.setMaximumSize(dimension);
-//        this.setMinimumSize(dimension);
-//        this.setPreferredSize(dimension);
-
-//        parentContainer.addTab("PERT", null, panel, null);
-//        parentContainer.add(panel);
-//        parentContainer.add(this);
     }
 
     protected void createEntryColumns() {
@@ -70,7 +60,7 @@ public class PERTTab extends ActivityEntry {
         columnNames = new String[]{PMTable.ID,
                 PMTable.NAME,
                 OPTIMISTIC,
-                PMTable.DURATION,
+                NORMAL,
                 PESSIMISTIC,
                 PMTable.START,
                 PMTable.FINISH,
@@ -83,14 +73,16 @@ public class PERTTab extends ActivityEntry {
 
         DefaultTableColumnModel scm = new DefaultTableColumnModel();
 
-        table = new PMTable(dtm, scm, this);
+//        table = new PMTable(dtm, scm, this);
+        table = new PERTTable(dtm, scm, this);
+
         table.setCellSelectionEnabled(true);
         table.addMouseListener(new PopClickListener());
 
         table.createDefaultColumnsFromModel();
 
         table.getColumn(OPTIMISTIC).setCellEditor(new JXTable.NumberEditor());
-        table.getColumn(PMTable.DURATION).setCellEditor(new JXTable.NumberEditor());
+        table.getColumn(NORMAL).setCellEditor(new JXTable.NumberEditor());
         table.getColumn(PESSIMISTIC).setCellEditor(new JXTable.NumberEditor());
         table.getColumn(PMTable.START).setCellEditor(new DatePickerCellEditor(new SimpleDateFormat(DATE_FORMAT)));
         table.getColumn(PMTable.FINISH).setCellEditor(new DatePickerCellEditor(new SimpleDateFormat(DATE_FORMAT)));
@@ -101,7 +93,7 @@ public class PERTTab extends ActivityEntry {
 
         table.getColumn(PMTable.ID).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
         table.getColumn(OPTIMISTIC).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
-        table.getColumn(PMTable.DURATION).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
+        table.getColumn(NORMAL).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
         table.getColumn(PESSIMISTIC).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
         table.getColumn(PMTable.START).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
         table.getColumn(PMTable.FINISH).setHeaderRenderer(new DefaultTableCellHeaderRenderer());
@@ -127,16 +119,6 @@ public class PERTTab extends ActivityEntry {
         table.getColumn(PMTable.START).setCellRenderer(tableCellRenderer);
         table.getColumn(PMTable.FINISH).setCellRenderer(tableCellRenderer);
     }
-
-//    public void autoResizeColumns() {
-//        table.getColumn(PMTable.ID).sizeWidthToFit();
-//        table.getColumn(OPTIMISTIC).sizeWidthToFit();
-//        table.getColumn(PMTable.DURATION).sizeWidthToFit();
-//        table.getColumn(PESSIMISTIC).sizeWidthToFit();
-//        table.getColumn(PMTable.START).sizeWidthToFit();
-//        table.getColumn(PMTable.FINISH).sizeWidthToFit();
-//        table.getColumn(PMTable.PREDECESSORS).sizeWidthToFit();
-//    }
 
     /*
             Set activities in grid

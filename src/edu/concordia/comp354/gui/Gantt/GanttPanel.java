@@ -6,6 +6,7 @@ import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
 import de.jollyday.ManagerParameters;
 import edu.concordia.comp354.gui.ActivityEntry;
+import edu.concordia.comp354.model.ProjectManager;
 import net.objectlab.kit.datecalc.common.DateCalculator;
 import net.objectlab.kit.datecalc.common.DefaultHolidayCalendar;
 import net.objectlab.kit.datecalc.common.HolidayCalendar;
@@ -65,9 +66,7 @@ public class GanttPanel extends mxGraphComponent {
 
 // ask for a LocalDate calculator for "Canada"
 // (even if a new set of holidays is registered, this one calculator is not affected
-        DateCalculator<LocalDate> dateCalculator = LocalDateKitCalculatorsFactory.getDefaultInstance()
-                .getDateCalculator("Canada", HolidayHandlerType.FORWARD);
-
+        DateCalculator<LocalDate> dateCalculator = ProjectManager.getDateCalculator();
 
         LocalDate date = activityEntry.getCurrentProject().getStart_date();
 

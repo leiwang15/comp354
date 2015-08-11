@@ -7,11 +7,9 @@ import edu.concordia.comp354.gui.PMTable;
 import edu.concordia.comp354.model.EVA.EVARenderer;
 import edu.concordia.comp354.model.EVA.EarnedValueAnalysis;
 import edu.concordia.comp354.model.EVA.EarnedValuePoint;
+import edu.concordia.comp354.model.ProjectManager;
 import net.objectlab.kit.datecalc.common.DateCalculator;
-import net.objectlab.kit.datecalc.common.HolidayHandlerType;
-import net.objectlab.kit.datecalc.jdk8.LocalDateKitCalculatorsFactory;
 import org.jfree.chart.ChartPanel;
-import org.jfree.data.xy.XYSeriesCollection;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -78,16 +76,15 @@ public class EVATab extends ActivityEntry implements EVARenderer {
             selector.removeAllItems();
             LocalDate startDate = getCurrentProject().getStart_date();
 
-            DateCalculator<LocalDate> dateCalculator = LocalDateKitCalculatorsFactory.getDefaultInstance()
-                    .getDateCalculator("Canada", HolidayHandlerType.FORWARD);
+            DateCalculator<LocalDate> dateCalculator = ProjectManager.getDateCalculator();
             for (EarnedValuePoint point : getCurrentProject().getEvaPoints()) {
                 dateCalculator.setStartDate(startDate);
                 dateCalculator.moveByBusinessDays(point.getDate());
                 selector.addItem(dateCalculator.getCurrentBusinessDate().format(DATE_FORMAT));
             }
-            if ( selectedItem != null ) {
+            if (selectedItem != null) {
                 selector.setSelectedItem(selectedItem);
-            }else {
+            } else {
                 selector.setSelectedIndex(0);
             }
         }
@@ -152,8 +149,7 @@ public class EVATab extends ActivityEntry implements EVARenderer {
         if (update) {
             getProjectManager().getActivityNetwork().createAONNetwork();
 
-            DateCalculator<LocalDate> dateCalculator = LocalDateKitCalculatorsFactory.getDefaultInstance()
-                    .getDateCalculator("Canada", HolidayHandlerType.FORWARD);
+            DateCalculator<LocalDate> dateCalculator = ProjectManager.getDateCalculator();
 
             if (getCurrentProject() != null) {
                 LocalDate start_date = getCurrentProject().getStart_date();
@@ -223,7 +219,7 @@ public class EVATab extends ActivityEntry implements EVARenderer {
 
         List<EarnedValuePoint> points = getCurrentProject().getEvaPoints();
 
-        Charts chart = new Charts("Earned Value Analysis",DATE, "Value",points,getCurrentProject().getStart_date());
+        Charts chart = new Charts("Earned Value Analysis", DATE, "Value ($)", points, getCurrentProject().getStart_date());
 
         if (chartPanel == null) {
             chartPanel = new ChartPanel(chart.chart);

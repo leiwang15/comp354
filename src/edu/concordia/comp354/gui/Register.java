@@ -118,7 +118,7 @@ public class Register {
 
 				if(password.equals(pwConfirm)){
 					User u = new User(firstName, lastName, role, userName, password);
-
+					projectManager.loadUsers();
 					JOptionPane.showMessageDialog(null, "User created successfully!");
 
 					userRegister.dispose();

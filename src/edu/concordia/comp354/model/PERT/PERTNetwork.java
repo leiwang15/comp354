@@ -34,8 +34,7 @@ public class PERTNetwork {
                             n = ++nextEventID;
                         }
                         eventEdge.destEvent = n;
-                    }
-                    else {
+                    } else {
                         n = nextEventID;
                     }
                 }
@@ -50,6 +49,9 @@ public class PERTNetwork {
         for (EventEdge leg : activityID2EventLeg.values()) {
             if (leg.destEvent == ProjectManager.UNDEFINED) {
                 leg.destEvent = nextEventID;
+            }
+            if (leg.orgEvent == ProjectManager.UNDEFINED) {
+                leg.orgEvent = 0;
             }
         }
 

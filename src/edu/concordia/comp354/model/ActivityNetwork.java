@@ -9,6 +9,7 @@ import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxEdgeStyle;
 import com.mxgraph.view.mxGraph;
+import edu.concordia.comp354.gui.ActivityEntry;
 import edu.concordia.comp354.gui.PERT.PERTBoxShape;
 import edu.concordia.comp354.gui.PERT.PERTEdge;
 import edu.concordia.comp354.model.AON.ActivityOnNode;
@@ -47,10 +48,6 @@ public class ActivityNetwork {
         renderer.fillActivityList();
     }
 
-//    public void fillTable(List<Activity> activities) {
-//        this.activities = activities;
-//    }
-
     public mxGraph createAONNetwork() {
 
         Map<String, Object> style = ganttGraph.getStylesheet().getDefaultEdgeStyle();
@@ -80,7 +77,7 @@ public class ActivityNetwork {
 
     public void linkAONNodes() {
 
-        activityID2mxCell = new HashMap<Integer, mxCell>();
+        activityID2mxCell = new HashMap<>();
 
         List<Activity> activities = projectManager.getCurrentProject().getActivities();
         for (int i = 0; i < activities.size(); i++) {
@@ -139,8 +136,6 @@ public class ActivityNetwork {
 
         pertGraph.setCellsSelectable(false);
         pertGraph.setCellsMovable(false);
-//        graph.setCellsEditable(false);
-//        graph.setCellsLocked(true);
 
         createPERTNetwork();
 
@@ -149,7 +144,6 @@ public class ActivityNetwork {
 
         return pertGraph;
     }
-
 
     public void createPERTNetwork() {
 
@@ -171,6 +165,7 @@ public class ActivityNetwork {
                     "rounded=1;editable=1;fillColor=white;strokeColor=black;shape=" + PERTBoxShape.SHAPE_PERTBOX);
 
             v.setValue(new PERTEvent(v, i + 1));
+
             events.add(v);
         }
 
@@ -192,7 +187,7 @@ public class ActivityNetwork {
 
 
     private void computeActualCalendarDuration(int projectDuration) {
-        DateCalculator<LocalDate> dateCalculator = LocalDateKitCalculatorsFactory.forwardCalculator("Canada");
+        DateCalculator<LocalDate> dateCalculator = ProjectManager.getDateCalculator();
 
         //  set and move from start date; destructive to dateCalculator. Must reset start date later
         assert getStartDate() != null : "getStartDate() == null";

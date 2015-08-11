@@ -23,6 +23,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by joao on 15.07.01.
@@ -39,9 +40,9 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
     protected JMenuItem mntmLogOut;
     protected JMenuItem mntmExit;
     protected JMenuItem mntmDeleteAct;
+    protected JMenuItem mntmWorkingWeekAct;
     protected JMenuItem mntmGANTTChart;
     protected JMenuItem mntmPERT;
-    protected JMenuItem mntmCriticalPath;
     protected JMenuItem mntmEarnedValue;
     protected JMenuItem mntmNewProject;
     protected JMenuItem mntmSaveProject;
@@ -67,7 +68,6 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
     public static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,###.##");
     public static DecimalFormat DOLLAR_FORMAT = new DecimalFormat("'$'#,###");
     public static DecimalFormat PERCENT_FORMAT = new DecimalFormat("#%");
-    public JPanel evaPanel;
     public JComboBox<String> evaDateSelector;
     public JTextField pvFld;
     public JTextField evFld;
@@ -83,6 +83,7 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
     public JTextField completedFld;
     JPanel leftPanel;
     public JPanel activityPanel;
+    public JPanel evaPanel;
     JButton btnSetEV;
 
     {
@@ -90,12 +91,9 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
         DECIMAL_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
         DOLLAR_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
     }
+
     public MainRenderer(ProjectManager projectManager) {
         this.projectManager = projectManager;
-
-//        DF.setRoundingMode(RoundingMode.UP);
-//        DECIMAL_FORMAT.setRoundingMode(RoundingMode.UP);
-//        DOLLAR_FORMAT.setRoundingMode(RoundingMode.UP);
 
         projectManager.setProjectRenderer(this);
         projectManager.setActivityDetailRenderer(this);
@@ -159,9 +157,13 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
     }
 
     protected void setActivityEntry(ActivityEntry activityEntry) {
-        this.activityEntry = activityEntry;
 
-//        projectManager.setActivityEntryRenderer(this.activityEntry);
+        if (this.activityEntry != null) {
+            this.activityEntry.setVisible(false);
+        }
+        this.activityEntry = activityEntry;
+        this.activityEntry.setVisible(true);
+
         projectManager.setActivityEntryRenderer(this);
     }
 
@@ -169,8 +171,6 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
 
         JPanel parentPanel = new JPanel();
         tabbedPane.addTab(panel.getName(), null, parentPanel, null);
-//        tabbedPane.addTab(panel.getName(), null, panel, null);
-//        parentPanel.add(panel);
 
         return parentPanel;
     }
@@ -261,7 +261,9 @@ public class MainRenderer implements IActivityEntryRenderer, IActivityDetailRend
 
         userFilter.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                projectManager.userFilterSelected(((JComboBox<String>) e.getSource()).getSelectedItem().toString());
+                if (((JComboBox<String>) e.getSource()).getSelectedItem() != null) {
+                    projectManager.userFilterSelected(((JComboBox<String>) e.getSource()).getSelectedItem().toString());
+                }
             }
         });
 
@@ -538,9 +540,11 @@ EVAPanel
     }
 
     public void populateUsers() {
-
+        userFilter.removeAllItems();
         userFilter.addItem(ProjectManager.NO_FILTER);
 
+        users.setListData(new Vector());    //  clear
+        checkboxMap.clear();
         for (String userName : projectManager.getUserNames()) {
             JCheckBox checkbox = new JCheckBox(userName);
 
@@ -562,7 +566,6 @@ EVAPanel
     }
 
     private void projectSelected(ListSelectionEvent e) {
-//        if (!e.getValueIsAdjusting()) {
 
         if (projectList.getSelectedValue() == null) {
             projectList.setSelectedIndex(0);
@@ -572,7 +575,6 @@ EVAPanel
 
             selectProject(s);
         }
-//        }
     }
 
     private void selectProject(String s) {
@@ -602,7 +604,6 @@ EVAPanel
 
         value.setText(DF.format(activity.getValue()));  //  call this before progressSlider.setValue()
         progressSlider.setValue(activity.getProgress());
-//        users.setSelectionInterval(-1,-1);
         users.repaint();
     }
 
@@ -642,10 +643,6 @@ EVAPanel
         } else {
             setEnabled(false);
         }
-
-//        if (projectList.getSelectedIndex() != i) {
-//            projectList.setSelectedIndex(i);
-//        }
     }
 
     @Override
@@ -656,9 +653,7 @@ EVAPanel
     public void setEnabled(boolean enabled) {
         setDetailEnabled(enabled);
 
-//       if ( activityEntry !=null) {
         activityEntry.setEnabled(enabled);
-//       }
     }
 
     public void setDetailEnabled(boolean enabled) {
@@ -819,22 +814,52 @@ EVAPanel
                 }
             });
 
+            mntmWorkingWeekAct = new JMenuItem("Edit Working Week");
+            mnEdit.add(mntmWorkingWeekAct);
+
+            mntmWorkingWeekAct.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+
+                    try {
+                        WorkingWeekDialog dialog = new WorkingWeekDialog();
+                        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                        dialog.setVisible(true);
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                    }
+                }
+            });
+
             JMenu mnAnalysis = new JMenu("Analysis");
             menuBar.add(mnAnalysis);
 
             mntmGANTTChart = new JMenuItem("Gantt Chart");
             mnAnalysis.add(mntmGANTTChart);
-
+            mntmGANTTChart.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    selectTab(0);
+                }
+            });
 
             mntmPERT = new JMenuItem("PERT Chart");
             mnAnalysis.add(mntmPERT);
-
-            mntmCriticalPath = new JMenuItem("Critical Path Analysis");
-            mnAnalysis.add(mntmCriticalPath);
+            mntmPERT.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    selectTab(1);
+                }
+            });
 
             mntmEarnedValue = new JMenuItem("Earned Value Analysis");
-            mnAnalysis.add(mntmEarnedValue);
+            mntmEarnedValue.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    selectTab(2);
+                }
+            });
 
+            mnAnalysis.add(mntmEarnedValue);
         }
     }
 

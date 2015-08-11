@@ -67,17 +67,19 @@ public class PMTableModelPERT extends PMTableModel {
                         pessimistic = Integer.parseInt(StringUtils.defaultIfEmpty((String) getValueAt(j, PESSIMISTIC_COL), "0"));
                     }
                 }
-                activity.setDuration(pessimistic);
+                activity.setPessimistic(pessimistic);
 
                 ArrayList<Integer> predecessors = new ArrayList<Integer>();
 
                 String predStr = (String) getValueAt(j, PRED_COL);
                 if (StringUtils.isNotEmpty(predStr)) {
                     for (String p : predStr.split(",")) {
-                        predecessors.add(Integer.parseInt(StringUtils.defaultString(p.trim(), "0")));
+                        if ( StringUtils.isNotEmpty(p)) {
+                            predecessors.add(Integer.parseInt(StringUtils.defaultString(p.trim(), "0")));
+                        }
                     }
-                    activity.setPredecessors(predecessors);
                 }
+                activity.setPredecessors(predecessors);
             }
         }
 //        System.out.println(activityList);
