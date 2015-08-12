@@ -16,11 +16,13 @@ import java.util.List;
 public class WorkingWeekDialog extends JDialog {
 
     private final JPanel contentPanel = new JPanel();
+    private final ProjectManager projectManager;
 
     /**
      * Create the dialog.
      */
-    public WorkingWeekDialog() {
+    public WorkingWeekDialog(ProjectManager projectManager) {
+        this.projectManager = projectManager;
         setBounds(100, 100, 282, 243);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -92,6 +94,7 @@ public class WorkingWeekDialog extends JDialog {
                         }
 
                         ProjectManager.setWorkingWeek(workingDays);
+                        projectManager.activityChanged();
                         WorkingWeekDialog.this.dispose();
                     }
                 });

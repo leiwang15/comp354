@@ -826,7 +826,7 @@ EVAPanel
                 public void actionPerformed(ActionEvent e) {
 
                     try {
-                        WorkingWeekDialog dialog = new WorkingWeekDialog();
+                        WorkingWeekDialog dialog = new WorkingWeekDialog(projectManager);
                         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
                         dialog.setVisible(true);
                     } catch (Exception exception) {
