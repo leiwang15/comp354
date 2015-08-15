@@ -9,7 +9,6 @@ import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxEdgeStyle;
 import com.mxgraph.view.mxGraph;
-import edu.concordia.comp354.gui.ActivityEntry;
 import edu.concordia.comp354.gui.PERT.PERTBoxShape;
 import edu.concordia.comp354.gui.PERT.PERTEdge;
 import edu.concordia.comp354.model.AON.ActivityOnNode;
@@ -17,8 +16,6 @@ import edu.concordia.comp354.model.PERT.EventEdge;
 import edu.concordia.comp354.model.PERT.PERTEvent;
 import edu.concordia.comp354.model.PERT.PERTNetwork;
 import net.objectlab.kit.datecalc.common.DateCalculator;
-import net.objectlab.kit.datecalc.common.HolidayHandlerType;
-import net.objectlab.kit.datecalc.jdk8.LocalDateKitCalculatorsFactory;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -184,7 +181,6 @@ public class ActivityNetwork {
 
         ((PERTEvent) (events.get(0).getValue())).forwardPass(pertGraph);
     }
-
 
     private void computeActualCalendarDuration(int projectDuration) {
         DateCalculator<LocalDate> dateCalculator = ProjectManager.getDateCalculator();

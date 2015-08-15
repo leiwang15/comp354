@@ -413,6 +413,7 @@ EVAPanel
         pvFld = new JTextField();
         pvFld.setBounds(51, 89, 100, 28);
         evaPanel.add(pvFld);
+        pvFld.setEditable(false);
         pvFld.setColumns(10);
 
         JLabel lblEv = new JLabel("EV:");
@@ -422,6 +423,7 @@ EVAPanel
         evFld = new JTextField();
         evFld.setBounds(51, 123, 100, 28);
         evaPanel.add(evFld);
+        evFld.setEditable(false);
         evFld.setColumns(10);
 
         JLabel lblAc = new JLabel("AC:");
@@ -431,6 +433,7 @@ EVAPanel
         acFld = new JTextField();
         acFld.setBounds(51, 155, 100, 28);
         evaPanel.add(acFld);
+        acFld.setEditable(false);
         acFld.setColumns(10);
 
         JLabel lblBac = new JLabel("BAC:");
@@ -440,6 +443,7 @@ EVAPanel
         bacFld = new JTextField();
         bacFld.setBounds(51, 189, 100, 28);
         evaPanel.add(bacFld);
+        bacFld.setEditable(false);
         bacFld.setColumns(10);
 
         JLabel lblPerformanceIndicators = new JLabel("Performance Indicators");
@@ -453,6 +457,7 @@ EVAPanel
         svFld = new JTextField();
         svFld.setBounds(51, 251, 100, 28);
         evaPanel.add(svFld);
+        svFld.setEditable(false);
         svFld.setColumns(10);
 
         JLabel lblCv = new JLabel("CV:");
@@ -462,6 +467,7 @@ EVAPanel
         cvFld = new JTextField();
         cvFld.setBounds(51, 285, 100, 28);
         evaPanel.add(cvFld);
+        cvFld.setEditable(false);
         cvFld.setColumns(10);
 
         JLabel lblCpi = new JLabel("CPI:");
@@ -471,6 +477,7 @@ EVAPanel
         cpiFld = new JTextField();
         cpiFld.setBounds(51, 317, 100, 28);
         evaPanel.add(cpiFld);
+        cpiFld.setEditable(false);
         cpiFld.setColumns(10);
 
         JLabel lblSpi = new JLabel("SPI:");
@@ -480,6 +487,7 @@ EVAPanel
         spiFld = new JTextField();
         spiFld.setBounds(51, 351, 100, 28);
         evaPanel.add(spiFld);
+        spiFld.setEditable(false);
         spiFld.setColumns(10);
 
         JLabel lblEac = new JLabel("EAC:");
@@ -489,6 +497,7 @@ EVAPanel
         eacFld = new JTextField();
         eacFld.setBounds(51, 385, 100, 28);
         evaPanel.add(eacFld);
+        eacFld.setEditable(false);
         eacFld.setColumns(10);
 
         JLabel lblEtc = new JLabel("ETC:");
@@ -498,6 +507,7 @@ EVAPanel
         etcFld = new JTextField();
         etcFld.setBounds(51, 419, 100, 28);
         evaPanel.add(etcFld);
+        etcFld.setEditable(false);
         etcFld.setColumns(10);
 
         JLabel lblVac = new JLabel("VAC:");
@@ -507,6 +517,7 @@ EVAPanel
         vacFld = new JTextField();
         vacFld.setBounds(51, 451, 100, 28);
         evaPanel.add(vacFld);
+        vacFld.setEditable(false);
         vacFld.setColumns(10);
 
         JLabel lblCompleted = new JLabel("Completed:");
@@ -516,6 +527,7 @@ EVAPanel
         completedFld = new JTextField();
         completedFld.setBounds(77, 484, 53, 28);
         evaPanel.add(completedFld);
+        completedFld.setEditable(false);
         completedFld.setColumns(10);
 
         btnSetEV = new JButton("Set EV");
